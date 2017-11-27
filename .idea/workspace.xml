@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8c849286-a000-4bb2-9e08-82f4c761e9f6" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/scheme/onvif.go" />
-      <change beforePath="$PROJECT_DIR$/main/main.go" afterPath="$PROJECT_DIR$/main/main.go" />
-      <change beforePath="$PROJECT_DIR$/soap.go" afterPath="$PROJECT_DIR$/soap.go" />
-      <change beforePath="$PROJECT_DIR$/wsdl/media (1).wsdl" afterPath="" />
-    </list>
+    <list default="true" id="8c849286-a000-4bb2-9e08-82f4c761e9f6" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
