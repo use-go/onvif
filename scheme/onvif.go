@@ -3,7 +3,7 @@ package scheme
 //Types
 
 type TypeWorker interface {
-	GetProperties() []interface{}
+	GetProperties() *[]interface{}
 }
 
 type ContinuousMove struct {
@@ -14,6 +14,6 @@ type ContinuousMove struct {
 }
 
 
-func (t *ContinuousMove) GetProperties() []interface{} {
-	return []interface{}{t.ReferenceToken, t.Pan, t.Tilt, t.Zoom, t.Timeout}
+func (t *ContinuousMove) GetProperties() *[]interface{} {
+	return &[]interface{}{t.ReferenceToken, t.Pan, t.Tilt, t.Zoom, t.Timeout}
 }
