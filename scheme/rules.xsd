@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2008-2016 by ONVIF: Open Network Video Interface Forum. All rights reserved.
+
+Recipients of this document may copy, distribute, publish, or display this document so long as this copyright notice, license and disclaimer are retained with all copies of the document. No license is granted to modify this document.
+
+THIS DOCUMENT IS PROVIDED "AS IS," AND THE CORPORATION AND ITS MEMBERS AND THEIR AFFILIATES, MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THIS DOCUMENT ARE SUITABLE FOR ANY PURPOSE; OR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, PUNITIVE OR CONSEQUENTIAL DAMAGES, ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THIS DOCUMENT, WHETHER OR NOT (1) THE CORPORATION, MEMBERS OR THEIR AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, OR (2) SUCH DAMAGES WERE REASONABLY FORESEEABLE, AND ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THIS DOCUMENT.  THE FOREGOING DISCLAIMER AND LIMITATION ON LIABILITY DO NOT APPLY TO, INVALIDATE, OR LIMIT REPRESENTATIONS AND WARRANTIES MADE BY THE MEMBERS AND THEIR RESPECTIVE AFFILIATES TO THE CORPORATION AND OTHER MEMBERS IN CERTAIN WRITTEN POLICIES OF THE CORPORATION.
+-->
+<xs:schema	xmlns:axt="http://www.onvif.org/ver20/analytics" 
+			xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+			xmlns:tt="http://www.onvif.org/ver10/schema"
+			targetNamespace="http://www.onvif.org/ver20/analytics" elementFormDefault="qualified" version="16.12">
+
+	<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="../../../ver10/schema/onvif.xsd"/>
+
+	<!--===============================-->
+	<xs:complexType name="MotionRegionConfigOptions">
+		<xs:sequence>
+			<xs:element name="MaxRegions" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						The total number of Motion Region Detector rules that can be created on the 
+						device.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DisarmSupport" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						True if the device supports disarming a Motion Region Detector rule.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PolygonSupport" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						True if the device supports defining a region using a Polygon instead of a 
+						Rectangle.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PolygonLimits" type="tt:IntRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						For devices that support Polygons with limitations on the number of sides, 
+						provides the minimum and maximum number of sides that can be defined in the 
+						Polygon.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SingleSensitivitySupport" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates the device can only support one sensitivity level for all defines 
+						motion detection regions. Changing the sensitivity for one region would be 
+						applied to all regions.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RuleNotification" type="xs:boolean" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						True if the device will include the Name of the Rule to indicate the region 
+						that motion was detected in.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+
+	<!--===============================-->
+	<xs:element name="MotionRegionConfig">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="tt:Polygon" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+							Provides the points of a Polygon in the VideoSourceConfiguration's Bounds 
+							element. If the device does not support Polygons, this structure must contain 
+							four points that represent a Rectangle.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="Armed" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates if the Motion Region is Armed (detecting motion) or Disarmed (motion is 
+						not being detected).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Sensitivity" type="xs:float">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates the sensitivity level of the motion detector for this region. The 
+						sensitivity value is normalized where 0 represents the lower sensitivity where 
+						significant motion is required to trigger an alarm and 1 represents the higher 
+						sensitivity where very little motion is required to trigger an alarm.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>		
+			<xs:anyAttribute processContents="lax"/>
+		</xs:complexType>
+	</xs:element>	
+</xs:schema>

@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<?xml-stylesheet type="text/xsl" href="onvif-schema-viewer.xsl"?>-->
+<!--
+Copyright (c) 2008-2017 by ONVIF: Open Network Video Interface Forum. All rights reserved.
+
+Recipients of this document may copy, distribute, publish, or display this document so long as this copyright notice, license and disclaimer are retained with all copies of the document. No license is granted to modify this document.
+
+THIS DOCUMENT IS PROVIDED "AS IS," AND THE CORPORATION AND ITS MEMBERS AND THEIR AFFILIATES, MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THIS DOCUMENT ARE SUITABLE FOR ANY PURPOSE; OR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, PUNITIVE OR CONSEQUENTIAL DAMAGES, ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THIS DOCUMENT, WHETHER OR NOT (1) THE CORPORATION, MEMBERS OR THEIR AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, OR (2) SUCH DAMAGES WERE REASONABLY FORESEEABLE, AND ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THIS DOCUMENT.  THE FOREGOING DISCLAIMER AND LIMITATION ON LIABILITY DO NOT APPLY TO, INVALIDATE, OR LIMIT REPRESENTATIONS AND WARRANTIES MADE BY THE MEMBERS AND THEIR RESPECTIVE AFFILIATES TO THE CORPORATION AND OTHER MEMBERS IN CERTAIN WRITTEN POLICIES OF THE CORPORATION.
+-->
+<xs:schema	xmlns:ttr="http://www.onvif.org/ver20/analytics/radiometry"
+			xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+			xmlns:tt="http://www.onvif.org/ver10/schema"
+			targetNamespace="http://www.onvif.org/ver20/analytics/radiometry" elementFormDefault="qualified" version="1.0">
+
+	<xs:import namespace="http://www.onvif.org/ver10/schema" schemaLocation="../../ver10/schema/onvif.xsd"/>
+
+	<!-- Radiometry Analytics Module Options ===============================-->
+    <xs:complexType name="RadiometryModuleConfigOptions">
+	    <xs:sequence>
+	        <xs:element name="MaxMeasurementModules" type="xs:int">
+	            <xs:annotation>
+	                <xs:documentation>
+	                    The total number of temperature measurement modules that can be created on the
+	                    device, screen based or geolocated, of any type (spots or boxes).
+	                </xs:documentation>
+	            </xs:annotation>
+	        </xs:element>
+	        <xs:element name="MaxScreenSpots" type="xs:int">
+	            <xs:annotation>
+	                <xs:documentation>
+	                    The total number of spot measurement modules that can be loaded simultaneously on the
+	                    screen by the device. A value of 0 shall be used to indicate no support for Spots.
+	                </xs:documentation>
+	            </xs:annotation>
+	        </xs:element>
+	        <xs:element name="MaxScreenBoxes" type="xs:int">
+	         	<xs:annotation>
+	               	<xs:documentation>
+	                    The total number of box measurement modules that can be loaded simultaneously on the
+	                    screen by the device. A value of 0 shall be used to indicate no support for Boxes.
+	                </xs:documentation>
+	            </xs:annotation>
+            </xs:element>
+			<xs:element name="RadiometryParameterOptions" type="ttr:RadiometryParameterOptions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies valid ranges for the different radiometry parameters used for temperature calculation.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+            <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    	</xs:sequence>
+    	<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="RadiometryParameterOptions">
+		<xs:annotation>
+			<xs:documentation>
+				Describes valid ranges for the different radiometry parameters used for accurate temperature calculation. 
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ReflectedAmbientTemperature" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of temperature values, in Kelvin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Emissivity" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of emissivity values for the objects to measure.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DistanceToObject" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of distance between camera and object for a valid temperature reading, in meters.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RelativeHumidity" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of relative humidity values, in percentage.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AtmosphericTemperature" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of temperature values, in Kelvin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AtmosphericTransmittance" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of atmospheric transmittance values.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExtOpticsTemperature" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of temperature values, in Kelvin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExtOpticsTransmittance" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of external optics transmittance.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!--===============================-->
+
+	<xs:complexType name="RadiometrySpotModuleConfig">
+		<xs:sequence>        	
+			<xs:element name="ScreenCoords" type="tt:Vector">
+				<xs:annotation>
+					<xs:documentation>
+						Screen coordinates, if spot is currently on screen. Assumes normalized screen limits (-1.0, 1.0).
+					</xs:documentation>
+				</xs:annotation>  
+			</xs:element>                  
+			<xs:element name="AbsoluteCoords" type="tt:PTZVector" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Absolute orientation of the PTZ Vector with the Spot on screen. If no PTZVector is present 
+						the spot shall behave as a screen element, and stay on the same screen coordinates as the PTZ 
+						moves (like a head up display mask). If PTZVector is present the Spot element shall appear on
+						display only when contained in the Field of View. In this case SpotScreenCoords shall be 
+						reported as relative to PTZVector.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RadiometryParameters" type="ttr:RadiometryParameters" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Not present parameter means the Device shall use its value from Global Parameters in Thermal Service.
+					</xs:documentation>
+				</xs:annotation>    
+			</xs:element>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ItemID" type="tt:ReferenceToken">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier for this Spot Temperature Measurement Analytics Module.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Active" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>
+					Indicates if the Temperature Measurement Item is enabled to provide temperature readings.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>		
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+	
+
+	<xs:complexType name="RadiometryBoxModuleConfig">
+		<xs:sequence>        	
+			<xs:element name="ScreenCoords" type="tt:Rectangle"> 
+				<xs:annotation>
+					<xs:documentation>
+						Screen coordinates, if box is currently on screen. Assumes normalized screen limits (-1.0, 1.0).
+					</xs:documentation>
+				</xs:annotation>  
+			</xs:element>  
+			<xs:element name="AbsoluteCoords" type="tt:PTZVector" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Absolute orientation of the PTZ Vector with the Box on screen. If no PTZVector is present 
+						the box shall behave as a screen element, and stay on the same screen coordinates as the PTZ 
+						moves (like a head up display mask). If PTZVector is present the Box element shall appear on
+						display only when contained in the Field of View. In this case BoxScreenCoords shall be 
+						reported as relative to PTZVector.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RadiometryParameters" type="ttr:RadiometryParameters" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Not present parameter means the Device shall use its value from Global Parameters in Thermal Service.
+					</xs:documentation>
+				</xs:annotation>  
+			</xs:element>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ItemID" type="tt:ReferenceToken">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier for this Box Temperature Measurement Analytics Module.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Active" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>
+					Indicates if the Temperature Measurement Item is enabled to provide temperature readings.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>		
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>	
+
+	<!-- Radiometry Metadata Types -->	    
+	<xs:complexType name="SpotTemperatureReading">
+		<xs:sequence>
+	        <xs:element name="RadiometryParameters" type="ttr:RadiometryParameters" minOccurs="0">    
+		        <xs:annotation>
+		            <xs:documentation>
+		                Not present means Global Parameters from Thermal Service are being used. 
+		            </xs:documentation>
+		        </xs:annotation>
+	        </xs:element>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+	    </xs:sequence>
+		<xs:attribute name="ItemID" type="tt:ReferenceToken"/>
+		<xs:attribute name="SpotTemperature" type="xs:float" use="required"/>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="BoxTemperatureReading">
+        <xs:sequence>
+	        <xs:element name="RadiometryParameters" type="ttr:RadiometryParameters" minOccurs="0">
+		        <xs:annotation>
+		            <xs:documentation>
+		                Not present means Global Parameters from Thermal Service are being used. 
+		            </xs:documentation>
+		        </xs:annotation>
+	        </xs:element>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+	    </xs:sequence>
+		<xs:attribute name="ItemID" type="tt:ReferenceToken" use="required"/>
+        <xs:attribute name="MaxTemperature" type="xs:float" use="required"/>
+        <xs:attribute name="MinTemperature" type="xs:float" use="required"/>
+        <xs:attribute name="AverageTemperature" type="xs:float"/>
+		<xs:attribute name="MedianTemperature" type="xs:float"/>
+        <xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+
+	<!-- Aux Types -->
+	<xs:complexType name="RadiometryParameters">
+		<xs:sequence>
+			<xs:element name="ReflectedAmbientTemperature" type="xs:float" minOccurs="0"/>
+			<xs:element name="Emissivity" type="xs:float" minOccurs="0"/>
+			<xs:element name="DistanceToObject" type="xs:float" minOccurs="0"/>
+			<xs:element name="RelativeHumidity" type="xs:float" minOccurs="0"/>
+			<xs:element name="AtmosphericTemperature" type="xs:float" minOccurs="0"/>
+			<xs:element name="AtmosphericTransmittance" type="xs:float" minOccurs="0"/>
+			<xs:element name="ExtOpticsTemperature" type="xs:float" minOccurs="0"/>
+			<xs:element name="ExtOpticsTransmittance" type="xs:float" minOccurs="0"/>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+
+<!-- Radiometry Rule Options ===============================-->
+    <xs:complexType name="RadiometryRuleConfigOptions">
+	    <xs:sequence>
+			<xs:element name="RadiometryRuleOptions" type="ttr:RadiometryRuleOptions" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies valid ranges for thresholds and reference parameters used for triggering radiometric rules.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TemperatureConditionOptions" type="ttr:TemperatureCondition" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies valid rule conditions for temperature comparisions in radiometric rules.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TemperatureTypeOptions" type="ttr:TemperatureType" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies temperature measurement types provided by radiometry analytics modules in the device.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+            <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    	</xs:sequence>
+    	<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="RadiometryRuleOptions">
+		<xs:annotation>
+			<xs:documentation>
+				Describes valid ranges for radiometric rule condition thresholds and reference parameters.  
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ThresholdTemperature" type="tt:FloatRange">
+				<xs:annotation>
+					<xs:documentation>Valid range of temperature values, in Kelvin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ThresholdTime" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of hysteresis time interval for temperature conditions, in seconds.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HysteresisTemperature" type="tt:FloatRange" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Valid range of temperature hysteresis values, in Kelvin.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="TemperatureCondition">
+	  <xs:restriction base="xs:string">
+	    <xs:enumeration value="LessThan"/>
+	    <xs:enumeration value="MoreThan"/>
+	    <xs:enumeration value="EqualTo"/>
+	    <xs:enumeration value="Change"/>        <!-- proposed by Axis, Verona 2015 -->
+	  </xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TemperatureType">
+	  <xs:restriction base="xs:string">
+	    <xs:enumeration value="MaxTemp"/>
+	    <xs:enumeration value="MinTemp"/>
+	    <xs:enumeration value="AverageTemp"/>
+	    <xs:enumeration value="StdDeviation"/>
+	    <xs:enumeration value="MedianTemp"/>
+	    <xs:enumeration value="ISOCoverage"/>
+	  </xs:restriction>
+	</xs:simpleType>
+
+	<!--===============================-->
+	<xs:complexType name="RadiometryTemperatureRuleConfig">
+		<xs:sequence>
+			<xs:element name="TemperatureType" type="ttr:TemperatureType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates which of the temperature values provided by the input Analytics Module
+						shall be used by the rule. In the case of Analytics Modules providing a single
+						Temperature Value (e.g. Spot) this parameter is ignored, and is therefore optional.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RuleCondition" type="ttr:TemperatureCondition">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates the type of temperature condition to check.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ThresholdTemperature" type="xs:float">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates the temperature reference value the rule shall be checked against.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ThresholdTime" type="xs:duration">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates the time interval during which the rule condition shall be met to trigger an event.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="HysteresisTemperature" type="xs:float">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates the width in Kelvin of the temerature hysteresis band to be considered by the rule.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="RadiometryModuleID" type="tt:ReferenceToken">
+			<xs:annotation>
+				<xs:documentation>
+					Reference Token to the Temperature Measurement Analytics Module providing the Temperature on which rule is defined.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Enabled" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>
+					Indicates if the Temperature Rule is enabled to provide temperature alarm events.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:anyAttribute processContents="lax"/>
+	</xs:complexType>
+
+</xs:schema>
