@@ -9,6 +9,8 @@ import (
 	"crypto/sha1"
 	"fmt"
 	"log"
+	"net/http"
+	"bytes"
 )
 
 var xlmns = map[string]string {
@@ -142,6 +144,15 @@ func NewEnvelope( funcName string, data scheme.TypeWorker ) Envelope {
 
 }
 
-func sendSoap(env Envelope) {
+func SendSoap() {
+	hc := http.Client{}
 
+	env := NewEnvelope("GetSystemDateAndTime", nil)
+	soapReq, _ := xml.MarshalIndent(env, "", "  ")
+
+	req, _ := http.NewRequest("POST", "http://192.168.13.42", bytes.NewReader(soapReq))
+
+	resp, _ := hc.Do(req)
+
+	fmt.Println(resp)
 }
