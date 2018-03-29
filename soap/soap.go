@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"bytes"
+	"io/ioutil"
 )
 
 var xlmns = map[string]string {
@@ -26,6 +27,7 @@ var xlmns = map[string]string {
 	"dn":"http://www.onvif.org/ver10/network/wsdl",
 	"tns1":"http://www.onvif.org/ver10/topics",
 	"tpz":"http://www.onvif.org/ver20/ptz/wsdl",
+	"dev":"https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl",
 
 	"xsi":"http://www.w3.org/2001/XMLSchema-instance",
 	"xsd":"http://www.w3.org/2001/XMLSchema",
@@ -96,6 +98,10 @@ func generateToken(Username string, Nonce string, Created time.Time, Password st
 	return base64.StdEncoding.EncodeToString(hasher.Sum(nil))
 }
 
+//func (t *emptyInput)createSelfCloseTag() string {
+//	t.EmptyInput
+//}
+
 func NewEnvelope( funcName string, data scheme.TypeWorker ) Envelope {
 
 	/** Generating Nonce sequence **/
@@ -108,15 +114,12 @@ func NewEnvelope( funcName string, data scheme.TypeWorker ) Envelope {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Marshalling")
-	fmt.Println(string(output))
-	fmt.Println("end of Marshalling")
 
 	var soapData = Envelope{
 		XmlnsSoap:xlmns["soap"],
 		XmlnsXsd:xlmns["xsd"],
 		XmlnsXsi:xlmns["xsi"],
-		XmlnsWsdl:xlmns["tpz"],
+		XmlnsWsdl:xlmns["dev"],
 		XmlnsTt:xlmns["tt"],
 		XmlnsWsse:xlmns["wsse"],
 		XmlnsWsu:xlmns["wsu"],
@@ -140,19 +143,19 @@ func NewEnvelope( funcName string, data scheme.TypeWorker ) Envelope {
 		},
 	}
 
+
 	return soapData
 
 }
 
 func SendSoap() {
-	hc := http.Client{}
-
-	env := NewEnvelope("GetSystemDateAndTime", nil)
+	env := NewEnvelope("GetDNS", nil)
 	soapReq, _ := xml.MarshalIndent(env, "", "  ")
 
-	req, _ := http.NewRequest("POST", "http://192.168.13.42", bytes.NewReader(soapReq))
+	httpClient := new(http.Client)
+	resp, _ := httpClient.Post("http://192.168.13.53", "application/soap+xml; charset=utf-8", bytes.NewBufferString(string(soapReq)))
 
-	resp, _ := hc.Do(req)
+	b, _ := ioutil.ReadAll(resp.Body)
 
-	fmt.Println(resp)
+	fmt.Println(string(b))
 }
