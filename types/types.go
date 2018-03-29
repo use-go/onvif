@@ -101,7 +101,7 @@ type OSDTextConfigurationExtension struct {
 }
 
 type OSDImgConfiguration struct {
-	ImgPath anyURI
+	ImgPath AnyURI
 	Extension OSDImgConfigurationExtension
 }
 
@@ -483,7 +483,7 @@ type VideoEncoderConfiguration struct {
 	MPEG4 Mpeg4Configuration
 	H264 H264Configuration
 	Multicast MulticastConfiguration
-	SessionTimeout duration
+	SessionTimeout Duration
 }
 
 type VideoEncoding struct {
@@ -545,7 +545,7 @@ type AudioEncoderConfiguration struct {
 	Bitrate int
 	SampleRate int
 	Multicast MulticastConfiguration
-	SessionTimeout duration
+	SessionTimeout Duration
 }
 
 type AudioEncoding struct {
@@ -607,14 +607,14 @@ type PTZConfiguration struct {
 	PresetRamp 		int `xml:"PresetRamp,attr"`
 	PresetTourRamp 	int `xml:"PresetTourRamp,attr"`
 	NodeToken ReferenceToken
-	DefaultAbsolutePantTiltPositionSpace anyURI
-	DefaultAbsoluteZoomPositionSpace anyURI
-	DefaultRelativePanTiltTranslationSpace anyURI
-	DefaultRelativeZoomTranslationSpace anyURI
-	DefaultContinuousPanTiltVelocitySpace anyURI
-	DefaultContinuousZoomVelocitySpace anyURI
+	DefaultAbsolutePantTiltPositionSpace AnyURI
+	DefaultAbsoluteZoomPositionSpace AnyURI
+	DefaultRelativePanTiltTranslationSpace AnyURI
+	DefaultRelativeZoomTranslationSpace AnyURI
+	DefaultContinuousPanTiltVelocitySpace AnyURI
+	DefaultContinuousZoomVelocitySpace AnyURI
 	DefaultPTZSpeed PTZSpeed
-	DefaultPTZTimeout duration
+	DefaultPTZTimeout Duration
 	PanTiltLimits PanTiltLimits
 	ZoomLimits ZoomLimits
 	Extension PTZConfigurationExtension
@@ -628,12 +628,12 @@ type PTZSpeed struct {
 type Vector2D struct {
 	X 		float64 `xml:"x,attr"`
 	Y 		float64 `xml:"y,attr"`
-	Space 	anyURI 	`xml:"space,attr"`
+	Space 	AnyURI 	`xml:"space,attr"`
 }
 
 type Vector1D struct {
 	X 		float64 `xml:"x,attr"`
-	Space 	anyURI 	`xml:"space,attr"`
+	Space 	AnyURI 	`xml:"space,attr"`
 }
 
 type PanTiltLimits struct {
@@ -641,7 +641,7 @@ type PanTiltLimits struct {
 }
 
 type Space2DDescription struct {
-	URI anyURI
+	URI AnyURI
 	XRange FloatRange
 	YRange FloatRange
 }
@@ -651,7 +651,7 @@ type ZoomLimits struct {
 }
 
 type Space1DDescription struct {
-	URI anyURI
+	URI AnyURI
 	XRange FloatRange
 }
 
@@ -697,7 +697,7 @@ type MetadataConfiguration struct {
 	Events 							EventSubscription
 	Analytics 						bool
 	Multicast 						MulticastConfiguration
-	SessionTimeout 					duration
+	SessionTimeout 					Duration
 	AnalyticsEngineConfiguration 	AnalyticsEngineConfiguration
 	Extension 						MetadataConfigurationExtension
 }
@@ -733,7 +733,7 @@ type ProfileExtension struct {
 type AudioOutputConfiguration struct {
 	ConfigurationEntity
 	OutputToken ReferenceToken
-	SendPrimacy anyURI
+	SendPrimacy AnyURI
 	OutputLevel int
 }
 
