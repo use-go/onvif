@@ -380,3 +380,367 @@ type ImagingSettingsExtension204 struct {
 type VideoSourceExtension2 struct {
 	Any string
 }
+
+type AudioSource struct {
+	DeviceEntity
+	Channels int
+}
+
+type AudioOutput struct {
+	DeviceEntity
+}
+
+type Profile struct {
+	Token ReferenceToken 	`xml:"token,attr"`
+	Fixed bool 				`xml:"fixed,attr"`
+	Name Name
+	VideoSourceConfiguration VideoSourceConfiguration
+	AudioSourceConfiguration AudioSourceConfiguration
+	VideoEncoderConfiguration VideoEncoderConfiguration
+	AudioEncoderConfiguration AudioEncoderConfiguration
+	VideoAnalyticsConfiguration VideoAnalyticsConfiguration
+	PTZConfiguration PTZConfiguration
+	MetadataConfiguration MetadataConfiguration
+	Extension ProfileExtension
+}
+
+type VideoSourceConfiguration struct {
+	ConfigurationEntity
+	ViewMode string `xml:"ViewMode,attr"`
+	SourceToken ReferenceToken
+	Bounds IntRectangle
+	Extension VideoSourceConfigurationExtension
+}
+
+type ConfigurationEntity struct {
+	Token ReferenceToken `xml:"token,attr"`
+	Name Name
+	UseCount int
+}
+
+type VideoSourceConfigurationExtension struct {
+	Rotate Rotate
+	Extension VideoSourceConfigurationExtension2
+}
+
+type Rotate struct {
+	Mode RotateMode
+	Degree int
+	Extension RotateExtension
+}
+
+type RotateMode struct {
+	RotateMode string
+}
+
+type RotateExtension struct {
+	Any string
+}
+
+type VideoSourceConfigurationExtension2 struct {
+	LensDescription LensDescription
+	SceneOrientation SceneOrientation
+}
+
+type LensDescription struct {
+	FocalLength float64 `xml:"FocalLength,attr"`
+	Offset LensOffset
+	Projection LensProjection
+	XFactor float64
+}
+
+type LensOffset struct {
+	X float64 `xml:"x,attr"`
+	Y float64 `xml:"y,attr"`
+}
+
+type LensProjection struct {
+	Angle float64
+	Radius float64
+	Transmittance float64
+}
+
+type SceneOrientation struct {
+	Mode SceneOrientationMode
+	Orientation string
+}
+
+type SceneOrientationMode struct {
+	OrientationMode string
+}
+
+type AudioSourceConfiguration struct {
+	ConfigurationEntity
+	SourceToken ReferenceToken
+}
+
+type VideoEncoderConfiguration struct {
+	ConfigurationEntity
+	Encoding VideoEncoding
+	Resolution VideoResolution
+	Quality float64
+	RateControl VideoRateControl
+	MPEG4 Mpeg4Configuration
+	H264 H264Configuration
+	Multicast MulticastConfiguration
+	SessionTimeout duration
+}
+
+type VideoEncoding struct {
+	VideoEncoding string
+}
+
+type VideoRateControl struct {
+	FrameRateLimit int
+	EncodingInterval int
+	BitrateLimit int
+}
+
+type Mpeg4Configuration struct {
+	GovLength int
+	Mpeg4Profile Mpeg4Profile
+}
+
+type Mpeg4Profile struct {
+	Profile string
+}
+
+type H264Configuration struct {
+	GovLength int
+	H264Profile H264Profile
+}
+
+type H264Profile struct {
+	Profile string
+}
+
+type MulticastConfiguration struct {
+	Address IPAddress
+	Port int
+	TTL int
+	AutoStart bool
+}
+
+type IPAddress struct {
+	Type IPType
+	IPv4Address IPv4Address
+	IPv6Address IPv6Address
+}
+
+type IPType struct {
+	Type string
+}
+
+type IPv4Address struct {
+	Address token
+}
+
+type IPv6Address struct {
+	Address token
+}
+
+type AudioEncoderConfiguration struct {
+	ConfigurationEntity
+	Encoding AudioEncoding
+	Bitrate int
+	SampleRate int
+	Multicast MulticastConfiguration
+	SessionTimeout duration
+}
+
+type AudioEncoding struct {
+	Encoding string
+}
+
+type VideoAnalyticsConfiguration struct {
+	ConfigurationEntity
+	AnalyticsEngineConfiguration AnalyticsEngineConfiguration
+	RuleEngineConfiguration RuleEngineConfiguration
+}
+
+type AnalyticsEngineConfiguration struct {
+	AnalyticsModule Config
+	Extension AnalyticsEngineConfigurationExtension
+}
+
+type Config struct {
+	Name string `xml:"Name,attr"`
+	Type QName 	`xml:"Type,attr"`
+	Parameters ItemList
+}
+
+type ItemList struct {
+	SimpleItem
+	ElementItem
+	Extension ItemListExtension
+}
+
+type SimpleItem struct {
+	Name 	string 			`xml:"Name,attr"`
+	Value 	anySimpleType 	`xml:"Value,attr"`
+}
+
+type ElementItem struct {
+	Name string `xml:"Name,attr"`
+}
+
+type ItemListExtension struct {
+	Any string
+}
+
+type AnalyticsEngineConfigurationExtension struct {
+	Any string
+}
+
+type RuleEngineConfiguration struct {
+	Rule Config
+	Extension RuleEngineConfigurationExtension
+}
+
+type RuleEngineConfigurationExtension struct {
+	Any string
+}
+
+type PTZConfiguration struct {
+	ConfigurationEntity
+	MoveRamp 		int `xml:"MoveRamp,attr"`
+	PresetRamp 		int `xml:"PresetRamp,attr"`
+	PresetTourRamp 	int `xml:"PresetTourRamp,attr"`
+	NodeToken ReferenceToken
+	DefaultAbsolutePantTiltPositionSpace anyURI
+	DefaultAbsoluteZoomPositionSpace anyURI
+	DefaultRelativePanTiltTranslationSpace anyURI
+	DefaultRelativeZoomTranslationSpace anyURI
+	DefaultContinuousPanTiltVelocitySpace anyURI
+	DefaultContinuousZoomVelocitySpace anyURI
+	DefaultPTZSpeed PTZSpeed
+	DefaultPTZTimeout duration
+	PanTiltLimits PanTiltLimits
+	ZoomLimits ZoomLimits
+	Extension PTZConfigurationExtension
+}
+
+type PTZSpeed struct {
+	PanTilt Vector2D
+	Zoom Vector1D
+}
+
+type Vector2D struct {
+	X 		float64 `xml:"x,attr"`
+	Y 		float64 `xml:"y,attr"`
+	Space 	anyURI 	`xml:"space,attr"`
+}
+
+type Vector1D struct {
+	X 		float64 `xml:"x,attr"`
+	Space 	anyURI 	`xml:"space,attr"`
+}
+
+type PanTiltLimits struct {
+	Range Space2DDescription
+}
+
+type Space2DDescription struct {
+	URI anyURI
+	XRange FloatRange
+	YRange FloatRange
+}
+
+type ZoomLimits struct {
+	Range Space1DDescription
+}
+
+type Space1DDescription struct {
+	URI anyURI
+	XRange FloatRange
+}
+
+type PTZConfigurationExtension struct {
+	PTControlDirection PTControlDirection
+	Extension PTZConfigurationExtension2
+}
+
+type PTControlDirection struct {
+	EFlip EFlip
+	Reverse Reverse
+	Extension PTControlDirectionExtension
+}
+
+type EFlip struct {
+	Mode EFlipMode
+}
+
+type EFlipMode struct {
+	EFlipMode string
+}
+
+type Reverse struct {
+	Mode ReverseMode
+}
+
+type ReverseMode struct {
+	ReverseMode string
+}
+
+type PTControlDirectionExtension struct {
+	Any string
+}
+
+type PTZConfigurationExtension2 struct {
+	Any string
+}
+
+type MetadataConfiguration struct {
+	ConfigurationEntity
+	CompressionType 				string `xml:"CompressionType,attr"`
+	PTZStatus 						PTZFilter
+	Events 							EventSubscription
+	Analytics 						bool
+	Multicast 						MulticastConfiguration
+	SessionTimeout 					duration
+	AnalyticsEngineConfiguration 	AnalyticsEngineConfiguration
+	Extension 						MetadataConfigurationExtension
+}
+
+type PTZFilter struct {
+	Status bool
+	Position bool
+}
+
+type EventSubscription struct {
+	Filter FilterType
+	SubscriptionPolicy
+}
+
+type FilterType struct {
+	Any string
+}
+
+type SubscriptionPolicy struct {
+	Any string
+}
+
+type MetadataConfigurationExtension struct {
+	Any string
+}
+
+type ProfileExtension struct {
+	AudioOutputConfiguration AudioOutputConfiguration
+	AudioDecoderConfiguration AudioDecoderConfiguration
+	Extension ProfileExtension2
+}
+
+type AudioOutputConfiguration struct {
+	ConfigurationEntity
+	OutputToken ReferenceToken
+	SendPrimacy anyURI
+	OutputLevel int
+}
+
+type AudioDecoderConfiguration struct {
+	ConfigurationEntity
+}
+
+type ProfileExtension2 struct {
+	Any string
+}

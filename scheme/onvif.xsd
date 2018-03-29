@@ -8,7 +8,7 @@ Recipients of this document may copy, distribute, publish, or display this docum
 THIS DOCUMENT IS PROVIDED "AS IS," AND THE CORPORATION AND ITS MEMBERS AND THEIR AFFILIATES, MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR TITLE; THAT THE CONTENTS OF THIS DOCUMENT ARE SUITABLE FOR ANY PURPOSE; OR THAT THE IMPLEMENTATION OF SUCH CONTENTS WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
 IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, PUNITIVE OR CONSEQUENTIAL DAMAGES, ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THIS DOCUMENT, WHETHER OR NOT (1) THE CORPORATION, MEMBERS OR THEIR AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, OR (2) SUCH DAMAGES WERE REASONABLY FORESEEABLE, AND ARISING OUT OF OR RELATING TO ANY USE OR DISTRIBUTION OF THIS DOCUMENT.  THE FOREGOING DISCLAIMER AND LIMITATION ON LIABILITY DO NOT APPLY TO, INVALIDATE, OR LIMIT REPRESENTATIONS AND WARRANTIES MADE BY THE MEMBERS AND THEIR RESPECTIVE AFFILIATES TO THE CORPORATION AND OTHER MEMBERS IN CERTAIN WRITTEN POLICIES OF THE CORPORATION.
 -->
-<xs:schema xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2" xmlns:xop="http://www.w3.org/2004/08/xop/include" xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" targetNamespace="http://www.onvif.org/ver10/schema" elementFormDefault="qualified" version="17.06">
+<xs:schema xmlns:tt="http://www.onvif.org/ver10/schema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:wsnt="http://docs.oasis-open.org/wsn/b-2" xmlns:xop="http://www.w3.org/2004/08/xop/include" xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" targetNamespace="http://www.onvif.org/ver10/schema" elementFormDefault="qualified" version="17.12">
 	<xs:include schemaLocation="common.xsd"/>
 	<xs:import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="http://www.w3.org/2005/05/xmlmime"/>
 	<xs:import namespace="http://www.w3.org/2003/05/soap-envelope" schemaLocation="http://www.w3.org/2003/05/soap-envelope"/>
@@ -375,6 +375,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 					<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 					<xs:element name="Extension" type="tt:VideoSourceConfigurationExtension" minOccurs="0"/>
 				</xs:sequence>
+				<xs:attribute name="ViewMode" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Readonly parameter signalling Source configuration's view mode, for devices supporting different view modes as defined in tt:viewModes.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
 				<xs:anyAttribute processContents="lax"/>
 			</xs:extension>
 		</xs:complexContent>
@@ -510,6 +515,11 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 			</xs:element>
 			<xs:element name="Extension" type="tt:VideoSourceConfigurationOptionsExtension" minOccurs="0"/>
 		</xs:sequence>
+		<xs:attribute name="MaximumNumberOfProfiles" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>Maximum number of profiles.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:anyAttribute processContents="lax"/>
 	</xs:complexType>
 	<!--===============================-->
@@ -598,9 +608,57 @@ IN NO EVENT WILL THE CORPORATION OR ITS MEMBERS OR THEIR AFFILIATES BE LIABLE FO
 						and the device will return an InvalidArgs fault if missing. 
 					</xs:documentation>
 				</xs:annotation>
-			</xs:element>      
+			</xs:element>
 		</xs:sequence>
-	</xs:complexType>  
+	</xs:complexType>
+	<!--===============================-->
+	<xs:simpleType name="ViewModes">
+		<xs:annotation>
+			<xs:documentation>Source view modes supported by device.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="tt:Fisheye">
+				<xs:annotation>	
+					<xs:documentation>Undewarped viewmode from device supporting fisheye lens.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tt:360Panorama">
+				<xs:annotation>
+					<xs:documentation>360 degree panoramic view.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tt:180Panorama">
+				<xs:annotation>
+					<xs:documentation>180 degree panoramic view.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tt:Quad">
+				<xs:annotation>
+					<xs:documentation>View mode combining four streams in single Quad, eg., applicable for devices supporting four heads.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tt:Original">
+				<xs:annotation>
+					<xs:documentation>Unaltered view from the sensor.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tt:LeftHalf">
+				<xs:annotation>
+					<xs:documentation>Viewmode combining the left side sensors, applicable for devices supporting multiple sensors.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tt:RightHalf">
+				<xs:annotation>	
+					<xs:documentation>Viewmode combining the right side sensors, applicable for devices supporting multiple sensors.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="tt:Dewarp">
+				<xs:annotation>
+					<xs:documentation>Dewarped view mode for device supporting fisheye lens.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
 	<!--===============================-->
 	<!--   VideoEncoderConfiguration   -->
 	<!--===============================-->
@@ -3657,7 +3715,7 @@ decoding .A decoder shall decode every data it receives (according to its capabi
 	<!--===============================-->
 	<xs:complexType name="GeoLocation">
 		<xs:sequence>
-			<xs:any maxOccurs="unbounded"/>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>   <!-- first ONVIF then Vendor -->
 		</xs:sequence>
 		<xs:attribute name="lon" type="xs:double">
 			<xs:annotation>
@@ -3679,7 +3737,7 @@ decoding .A decoder shall decode every data it receives (according to its capabi
 	<!--===============================-->
 	<xs:complexType name="GeoOrientation">
 		<xs:sequence>
-			<xs:any maxOccurs="unbounded"/>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>   <!-- first ONVIF then Vendor -->
 		</xs:sequence>
 		<xs:attribute name="roll" type="xs:float">
 			<xs:annotation>
@@ -3701,7 +3759,7 @@ decoding .A decoder shall decode every data it receives (according to its capabi
 	<!--===============================-->
 	<xs:complexType name="LocalLocation">
 		<xs:sequence>
-			<xs:any maxOccurs="unbounded"/>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>   <!-- first ONVIF then Vendor -->
 		</xs:sequence>
 		<xs:attribute name="x" type="xs:float">
 			<xs:annotation>
@@ -3723,7 +3781,7 @@ decoding .A decoder shall decode every data it receives (according to its capabi
 	<!--===============================-->
 	<xs:complexType name="LocalOrientation">
 		<xs:sequence>
-			<xs:any maxOccurs="unbounded"/>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>   <!-- first ONVIF then Vendor -->
 		</xs:sequence>
 		<xs:attribute name="pan" type="xs:float">
 			<xs:annotation>
@@ -3767,7 +3825,7 @@ decoding .A decoder shall decode every data it receives (according to its capabi
 			</xs:element>
 		</xs:sequence>
 		<xs:attribute name="Entity" type="xs:string">
-			<xs:annotation><xs:documentation>Entity type the entry refers to as defined in tds:Entity.</xs:documentation></xs:annotation>
+			<xs:annotation><xs:documentation>Entity type the entry refers to, use a value from the tt:Entity enumeration.</xs:documentation></xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="Token" type="tt:ReferenceToken">
 			<xs:annotation><xs:documentation>Optional entity token.</xs:documentation></xs:annotation>
@@ -8689,11 +8747,31 @@ and sample rate. </xs:documentation>
 		<xs:sequence>
 			<xs:element name="ImagePath" type="xs:anyURI" maxOccurs="unbounded">
 				<xs:annotation>
-					<xs:documentation>List of avaiable uris of image.</xs:documentation>
+					<xs:documentation>List of available image URIs.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Extension" type="tt:OSDImgOptionsExtension" minOccurs="0"/>
 		</xs:sequence>
+		<xs:attribute name="FormatsSupported" type="tt:StringAttrList">
+			<xs:annotation>
+				<xs:documentation>List of supported image MIME types, such as "image/png".</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="MaxSize" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The maximum size (in bytes) of the image that can be uploaded.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="MaxWidth" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The maximum width (in pixels) of the image that can be uploaded.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="MaxHeight" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The maximum height (in pixels) of the image that can be uploaded.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 		<xs:anyAttribute processContents="lax"/>
 	</xs:complexType>
 	<!--===============================-->
