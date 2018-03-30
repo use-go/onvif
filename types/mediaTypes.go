@@ -845,7 +845,7 @@ type GetVideoSourceModes struct {
 
 
 type GetVideoSourceModesResponse struct {
-	VideoSourceModes trt:VideoSourceMode
+	VideoSourceModes VideoSourceMode
 
 }
 

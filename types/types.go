@@ -1,7 +1,10 @@
 package types
 
-//todo посмотреть все Extensions
-//todo что делать ч xs:any = Any
+//todo посмотреть все Extensions (Any string)
+//todo что делать с xs:any = Any
+//todo IntList и ему подобные. Проверить нужен ли слайс. Изменить на slice
+//todo посмотреть можно ли заменить StreamType и ему подобные типы на вмтроенные типы
+//todo оттестировать тип VideoSourceMode из-за Description-а
 
 type DeviceEntity struct {
 	Token ReferenceToken //required attribute
@@ -92,7 +95,7 @@ type Color struct {
 	X float64 `xml:"X,attr"`
 	Y float64 `xml:"Y,attr"`
 	Z float64 `xml:"Z,attr"`
-	Colorspace anyURI `xml:"Colorspace,attr"`
+	Colorspace AnyURI `xml:"Colorspace,attr"`
 }
 
 
@@ -334,7 +337,7 @@ type ImagingSettingsExtension202 struct {
 type IrCutFilterAutoAdjustment struct {
 	BoundaryType string
 	BoundaryOffset float64
-	ResponseTime duration
+	ResponseTime Duration
 	Extension IrCutFilterAutoAdjustmentExtension
 }
 
@@ -742,5 +745,293 @@ type AudioDecoderConfiguration struct {
 }
 
 type ProfileExtension2 struct {
+	Any string
+}
+
+type VideoSourceConfigurationOptions struct {
+	MaximumNumberOfProfiles int `xml:"MaximumNumberOfProfiles,attr"`
+	BoundsRange IntRectangleRange
+	VideoSourceTokensAvailable ReferenceToken
+	Extension VideoSourceConfigurationOptionsExtension
+}
+
+type VideoSourceConfigurationOptionsExtension struct {
+	Rotate RotateOptions
+	Extension VideoSourceConfigurationOptionsExtension2
+}
+
+type RotateOptions struct {
+	Mode RotateMode
+	DegreeList IntList
+	Extension RotateOptionsExtension
+}
+
+type IntList struct {
+	Items int
+}
+
+type RotateOptionsExtension struct {
+	Any string
+}
+
+type VideoSourceConfigurationOptionsExtension2 struct {
+	SceneOrientationMode SceneOrientationMode
+}
+
+type VideoEncoderConfigurationOptions struct {
+	QualityRange IntRange
+	JPEG JpegOptions
+	MPEG4 Mpeg4Options
+	H264 H264Options
+	Extension VideoEncoderOptionsExtension
+}
+
+type JpegOptions struct {
+	ResolutionsAvailable VideoResolution
+	FrameRateRange IntRange
+	EncodingIntervalRange IntRange
+}
+
+type Mpeg4Options struct {
+	ResolutionsAvailable VideoResolution
+	GovLengthRange IntRange
+	FrameRateRange IntRange
+	EncodingIntervalRange IntRange
+	Mpeg4ProfilesSupported Mpeg4Profile
+}
+
+type H264Options struct {
+	ResolutionsAvailable VideoResolution
+	GovLengthRange IntRange
+	FrameRateRange IntRange
+	EncodingIntervalRange IntRange
+	H264ProfilesSupported H264Profile
+}
+
+type VideoEncoderOptionsExtension struct {
+	JPEG JpegOptions2
+	MPEG4 Mpeg4Options2
+	H264 H264Options2
+	Extension VideoEncoderOptionsExtension2
+}
+
+type JpegOptions2 struct {
+	JpegOptions
+	BitrateRange IntRange
+}
+
+type Mpeg4Options2 struct {
+	Mpeg4Options
+	BitrateRange IntRange
+}
+
+type H264Options2 struct {
+	H264Options
+	BitrateRange IntRange
+}
+
+type VideoEncoderOptionsExtension2 struct {
+	Any string
+}
+
+type AudioSourceConfigurationOptions struct {
+	InputTokensAvailable ReferenceToken
+	Extension AudioSourceOptionsExtension
+}
+
+type AudioSourceOptionsExtension struct {
+	Any string
+}
+
+type AudioEncoderConfigurationOptions struct {
+	Options AudioEncoderConfigurationOption
+}
+
+type AudioEncoderConfigurationOption struct {
+	Encoding AudioEncoding
+	BitrateList IntList
+	SampleRateList IntList
+}
+
+type MetadataConfigurationOptions struct {
+	PTZStatusFilterOptions PTZStatusFilterOptions
+	Extension MetadataConfigurationOptionsExtension
+}
+
+type PTZStatusFilterOptions struct {
+	PanTiltStatusSupported bool
+	ZoomStatusSupported bool
+	PanTiltPositionSupported bool
+	ZoomPositionSupported bool
+	Extension PTZStatusFilterOptionsExtension
+}
+
+type PTZStatusFilterOptionsExtension struct {
+	Any string
+}
+
+type MetadataConfigurationOptionsExtension struct {
+	CompressionType string
+	Extension MetadataConfigurationOptionsExtension2
+}
+
+type MetadataConfigurationOptionsExtension2 struct {
+	Any string
+}
+
+type AudioOutputConfigurationOptions struct {
+	OutputTokensAvailable ReferenceToken
+	SendPrimacyOptions AnyURI
+	OutputLevelRange IntRange
+}
+
+type AudioDecoderConfigurationOptions struct {
+	AACDecOptions AACDecOptions
+	G711DecOptions G711DecOptions
+	G726DecOptions G726DecOptions
+	Extension AudioDecoderConfigurationOptionsExtension
+}
+
+type AACDecOptions struct {
+	Bitrate IntList
+	SampleRateRange IntList
+}
+
+type G711DecOptions struct {
+	Bitrate IntList
+	SampleRateRange IntList
+}
+
+type G726DecOptions struct {
+	Bitrate IntList
+	SampleRateRange IntList
+}
+
+type AudioDecoderConfigurationOptionsExtension struct {
+	Any string
+}
+
+type StreamSetup struct {
+	Stream StreamType
+	Transport Transport
+}
+
+type StreamType struct {
+	Type string
+}
+
+type Transport struct {
+	Protocol TransportProtocol
+	Tunnel Transport
+}
+
+//enum
+type TransportProtocol struct {
+	TransportProtocol string
+}
+
+type MediaUri struct {
+	Uri AnyURI
+	InvalidAfterConnect bool
+	InvalidAfterReboot bool
+	Timeout Duration
+}
+
+type VideoSourceMode struct {
+	Token 	ReferenceToken 	`xml:"token,attr"`
+	Enabled bool 			`xml:"Enabled,attr"`
+	MaxFramerate float64
+	MaxResolution VideoResolution
+	Encodings EncodingTypes
+	Reboot bool
+	Description Description
+	Extension VideoSourceModeExtension
+}
+
+type EncodingTypes struct {
+	EncodingTypes []string
+}
+
+type Description struct {
+	Description string
+}
+
+type VideoSourceModeExtension struct {
+	Any string
+}
+
+type OSDConfigurationOptions struct {
+	MaximumNumberOfOSDs MaximumNumberOfOSDs
+	Type OSDType
+	PositionOption string
+	TextOption OSDTextOptions
+	ImageOption OSDImgOptions
+	Extension OSDConfigurationOptionsExtension
+}
+
+type MaximumNumberOfOSDs struct {
+	Total 		int `xml:"Total,attr"`
+	Image 		int `xml:"Image,attr"`
+	PlainText 	int `xml:"PlainText,attr"`
+	Date 		int `xml:"Date,attr"`
+	Time 		int `xml:"Time,attr"`
+	DateAndTime int `xml:"DateAndTime,attr"`
+}
+
+type OSDTextOptions struct {
+	Type string
+	FontSizeRange IntRange
+	DateFormat string
+	TimeFormat string
+	FontColor OSDColorOptions
+	BackgroundColor OSDColorOptions
+	Extension OSDTextOptionsExtension
+}
+
+type OSDColorOptions struct {
+	Color ColorOptions
+	Transparent IntRange
+	Extension OSDColorOptionsExtension
+}
+
+type ColorOptions struct {
+	ColorList Color
+	ColorspaceRange ColorspaceRange
+}
+
+type ColorspaceRange struct {
+	X FloatRange
+	Y FloatRange
+	Z FloatRange
+	Colorspace AnyURI
+}
+
+type OSDColorOptionsExtension struct {
+	Any string
+}
+
+type OSDTextOptionsExtension struct {
+	Any string
+}
+
+type OSDImgOptions struct {
+	FormatsSupported 	StringAttrList `xml:"FormatsSupported,attr"`
+	MaxSize 			int 			`xml:"MaxSize,attr"`
+	MaxWidth 			int 			`xml:"MaxWidth,attr"`
+	MaxHeight 			int 			`xml:"MaxHeight,attr"`
+
+	ImagePath AnyURI
+	Extension OSDImgOptionsExtension
+}
+
+type StringAttrList struct {
+	AttrList []string
+}
+
+type OSDImgOptionsExtension struct {
+	Any string
+}
+
+type OSDConfigurationOptionsExtension struct {
 	Any string
 }
