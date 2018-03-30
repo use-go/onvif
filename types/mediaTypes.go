@@ -1,12 +1,12 @@
 package types
 
-type GetServiceCapabilities struct {
+type GetMediaServiceCapabilities struct {
 
 }
 
 
-type GetServiceCapabilitiesResponse struct {
-	Capabilities Capabilities
+type GetMediaServiceCapabilitiesResponse struct {
+	Capabilities MediaCapabilities
 
 }
 
@@ -932,11 +932,11 @@ type DeleteOSDResponse struct {
 
 }
 
-func FnGetServiceCapabilities (arg GetServiceCapabilities) {
+func FnGetMediaServiceCapabilities (arg GetServiceCapabilities) {
 
 }
 
-func FnGetServiceCapabilitiesResponse (arg GetServiceCapabilitiesResponse) {
+func FnGetMediaServiceCapabilitiesResponse (arg GetServiceCapabilitiesResponse) {
 
 }
 

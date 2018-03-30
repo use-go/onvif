@@ -6,8 +6,12 @@ package types
 //todo посмотреть можно ли заменить StreamType и ему подобные типы на вмтроенные типы
 //todo оттестировать тип VideoSourceMode из-за Description-а
 
+//todo в документации описать, что Capabilities повторяеся у каждого сервиса, поэтому у каждого свой Capabilities (MediaCapabilities)
+//todo AuxiliaryData и другие simpleTypes, как реализовать рестрикшн
+//todo Name и ему подобные необходимо изучить на наличие "List of..." ошибок
+
 type DeviceEntity struct {
-	Token ReferenceToken //required attribute
+	Token ReferenceToken `xml:"token,attr"`
 }
 
 type ReferenceToken struct {
@@ -116,7 +120,7 @@ type OSDConfigurationExtension struct {
 	Any string //While
 }
 
-type Capabilities struct {
+type MediaCapabilities struct {
 	SnapshotUri 		bool `xml:"SnapshotUri,attr"`
 	Rotation 			bool `xml:"Rotation,attr"`
 	VideoSourceMode 	bool `xml:"VideoSourceMode,attr"`
@@ -767,7 +771,7 @@ type RotateOptions struct {
 }
 
 type IntList struct {
-	Items int
+	Items []int
 }
 
 type RotateOptionsExtension struct {
@@ -1015,7 +1019,7 @@ type OSDTextOptionsExtension struct {
 }
 
 type OSDImgOptions struct {
-	FormatsSupported 	StringAttrList `xml:"FormatsSupported,attr"`
+	FormatsSupported 	StringAttrList 	`xml:"FormatsSupported,attr"`
 	MaxSize 			int 			`xml:"MaxSize,attr"`
 	MaxWidth 			int 			`xml:"MaxWidth,attr"`
 	MaxHeight 			int 			`xml:"MaxHeight,attr"`
@@ -1035,3 +1039,251 @@ type OSDImgOptionsExtension struct {
 type OSDConfigurationOptionsExtension struct {
 	Any string
 }
+
+//PTZ
+
+type PTZCapabilities struct {
+	EFlip 						Boolean `xml:"EFlip,attr"`
+	Reverse 					Boolean `xml:"Reverse,attr"`
+	GetCompatibleConfigurations Boolean `xml:"GetCompatibleConfigurations,attr"`
+	MoveStatus 					Boolean `xml:"MoveStatus,attr"`
+	StatusPosition 				Boolean `xml:"StatusPosition,attr"`
+}
+
+type PTZNode struct {
+	DeviceEntity
+	FixedHomePosition 	Boolean `xml:"FixedHomePosition,attr"`
+	GeoMove 			Boolean `xml:"GeoMove,attr"`
+	Name Name
+	SupportedPTZSpaces PTZSpaces
+	MaximumNumberOfPresets int
+	HomeSupported Boolean
+	AuxiliaryCommands AuxiliaryData
+	Extension PTZNodeExtension
+}
+
+type PTZSpaces struct {
+	AbsolutePanTiltPositionSpace Space2DDescription
+	AbsoluteZoomPositionSpace Space1DDescription
+	RelativePanTiltTranslationSpace Space2DDescription
+	RelativeZoomTranslationSpace Space1DDescription
+	ContinuousPanTiltVelocitySpace Space2DDescription
+	ContinuousZoomVelocitySpace Space1DDescription
+	PanTiltSpeedSpace Space1DDescription
+	ZoomSpeedSpace Space1DDescription
+	Extension PTZSpacesExtension
+}
+
+type PTZSpacesExtension struct {
+	Any string
+}
+
+type AuxiliaryData struct {
+	Data string
+}
+
+type PTZNodeExtension struct {
+	SupportedPresetTour PTZPresetTourSupported
+	Extension PTZNodeExtension2
+}
+
+type PTZPresetTourSupported struct {
+	MaximumNumberOfPresetTours int
+	PTZPresetTourOperation PTZPresetTourOperation
+	Extension PTZPresetTourSupportedExtension
+}
+
+type PTZPresetTourOperation struct {
+	Operation string
+}
+
+type PTZPresetTourSupportedExtension struct {
+	Any string
+}
+
+type PTZNodeExtension2 struct {
+	Any string
+}
+
+type PTZConfigurationOptions struct {
+	PTZRamps IntAttrList `xml:"PTZRamps,attr"`
+	Spaces PTZSpaces
+	PTZTimeout DurationRange
+	PTControlDirection PTControlDirectionOptions
+	Extension PTZConfigurationOptions2
+}
+
+type IntAttrList struct {
+	IntAttrList []int
+}
+
+type DurationRange struct {
+	Min Duration
+	Max Duration
+}
+
+type PTControlDirectionOptions struct {
+	EFlip EFlipOptions
+	Reverse ReverseOptions
+	Extension PTControlDirectionOptionsExtension
+}
+
+type EFlipOptions struct {
+	Mode EFlipMode
+	Extension EFlipOptionsExtension
+}
+
+type EFlipOptionsExtension struct {
+	Any string
+}
+
+type ReverseOptions struct {
+	Mode ReverseMode
+	Extension ReverseOptionsExtension
+}
+
+type ReverseOptionsExtension struct {
+	Any string
+}
+
+type PTControlDirectionOptionsExtension struct {
+	Any string
+}
+
+type PTZConfigurationOptions2 struct {
+	Any string
+}
+
+type PTZPreset struct {
+	Token ReferenceToken `xml:"token,attr"`
+	Name Name
+	PTZPosition PTZVector
+}
+
+type PTZVector struct {
+	PanTilt Vector2D
+	Zoom Vector1D
+}
+
+type PTZStatus struct {
+	Position PTZVector
+	MoveStatus PTZMoveStatus
+	Error string
+	UtcTime dateTime
+}
+
+type PTZMoveStatus struct {
+	PanTilt MoveStatus
+	Zoom MoveStatus
+}
+
+type MoveStatus struct {
+	Status string
+}
+
+type GeoLocation struct {
+	Lon 		double 	`xml:"lon,attr"`
+	Lat 		double 	`xml:"lat,attr"`
+	Elevation 	float 	`xml:"elevation,attr"`
+}
+
+type PresetTour struct {
+	Token ReferenceToken `xml:"token,attr"`
+	Name Name
+	Status PTZPresetTourStatus
+	AutoStart Boolean
+	StartingCondition PTZPresetTourStartingCondition
+	TourSpot PTZPresetTourSpot
+	Extension PTZPresetTourExtension
+}
+
+type PTZPresetTourStatus struct {
+	State PTZPresetTourState
+	CurrentTourSpot PTZPresetTourSpot
+	Extension PTZPresetTourStatusExtension
+}
+
+type PTZPresetTourState struct {
+	State string
+}
+
+type PTZPresetTourSpot struct {
+	PresetDetail PTZPresetTourPresetDetail
+	Speed PTZSpeed
+	StayTime Duration
+	Extension PTZPresetTourSpotExtension
+}
+
+type PTZPresetTourPresetDetail struct {
+	PresetToken ReferenceToken
+	Home Boolean
+	PTZPosition PTZVector
+	TypeExtension PTZPresetTourTypeExtension
+}
+
+type PTZPresetTourTypeExtension struct {
+	Any string
+}
+
+type PTZPresetTourSpotExtension struct {
+	Any string
+}
+
+type PTZPresetTourStatusExtension struct {
+	Any string
+}
+
+type PTZPresetTourStartingCondition struct {
+	RandomPresetOrder Boolean `xml:"RandomPresetOrder,attr"`
+
+	RecurringTime int
+	RecurringDuration Duration
+	Direction PTZPresetTourDirection
+	Extension PTZPresetTourStartingConditionExtension
+}
+
+type PTZPresetTourDirection struct {
+	Direction string
+}
+
+type PTZPresetTourStartingConditionExtension struct {
+	Any string
+}
+
+type PTZPresetTourExtension struct {
+	Any string
+}
+
+type PTZPresetTourOptions struct {
+	AutoStart Boolean
+	StartingCondition PTZPresetTourStartingConditionOptions
+	TourSpot PTZPresetTourSpotOptions
+}
+
+type PTZPresetTourStartingConditionOptions struct {
+	RecurringTime IntRange
+	RecurringDuration DurationRange
+	Direction PTZPresetTourDirection
+	Extension PTZPresetTourStartingConditionOptionsExtension
+}
+
+type PTZPresetTourStartingConditionOptionsExtension struct {
+	Any string
+}
+
+type PTZPresetTourSpotOptions struct {
+	PresetDetail PTZPresetTourPresetDetailOptions
+	StayTime DurationRange
+}
+
+type PTZPresetTourPresetDetailOptions struct {
+	PresetToken ReferenceToken
+	Home Boolean
+	PanTiltPositionSpace Space2DDescription
+	ZoomPositionSpace Space1DDescription
+	Extension PTZPresetTourPresetDetailOptionsExtension
+}
+
+type PTZPresetTourPresetDetailOptionsExtension struct {
+	Any string
+} 
