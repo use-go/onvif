@@ -1,4 +1,4 @@
-package PTZTypes
+package PTZ
 
 import "github.com/yakovlevdmv/goonvif/xsdTypes"
 import "github.com/yakovlevdmv/goonvif/xsdTypes/onvif"

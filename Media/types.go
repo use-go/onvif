@@ -1,4 +1,4 @@
-package MediaTypes
+package Media
 
 import "github.com/yakovlevdmv/goonvif/xsdTypes/onvif"
 

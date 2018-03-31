@@ -1,4 +1,4 @@
-package DeviceTypes
+package Device
 
 import (
 	"github.com/yakovlevdmv/goonvif/xsdTypes"
