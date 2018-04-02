@@ -8,9 +8,16 @@ import (
 	"encoding/hex"
 	"encoding/base64"
 	"net/url"
+	"strings"
+	"github.com/pkg/errors"
+	"regexp"
 )
 
-type anyType string;
+/*
+	TODO: XML SOURCE: https://www.w3.org/2001/05/datatypes.xsd
+ */
+
+type anyType struct {};
 
 type anySimpleType string
 
@@ -474,8 +481,196 @@ func (tp QName) NewQName(prefix, local string) QName {
 
 type NormalizedString String
 
-func (tp NormalizedString) NormalizedString(data String) NormalizedString {
-
+//TODO: check normalization
+func (tp NormalizedString) NewNormalizedString(data string) (NormalizedString, error) {
+	if strings.ContainsAny(data, "\r\n\t<>&") {
+		return NormalizedString(""), errors.New("String " + data + "  contains forbidden symbols")
+	}
+	return NormalizedString(data), nil
 }
 
+type Token NormalizedString
 
+func (tp Token) NewToken(data NormalizedString) (Token, error) {
+	trailing_leading_whitespaces := regexp.MustCompile(`^[\s\p{Zs}]+|[\s\p{Zs}]+$`)
+	multiple_whitespaces := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
+	//Removing trailing and leading whitespaces and multiple spaces
+	/*final := re_leadclose_whtsp.ReplaceAllString(data, "")
+	final = re_inside_whtsp.ReplaceAllString(final, " ")*/
+	if strings.ContainsAny(string(data), "\r\n\t<>&") || trailing_leading_whitespaces.MatchString(string(data)) || multiple_whitespaces.MatchString(string(data)) {
+		return Token(""), errors.New("String " + data + "  contains forbidden symbols or whitespaces")
+	}
+
+	return Token(data), nil
+}
+
+type Language Token
+
+func (tp Language) NewLanguage(data Token) (Language, error) {
+	//Pattern was given from https://www.w3.org/2001/05/datatypes.xsd
+	rgxp := regexp.MustCompile(`([a-zA-Z]{2}|[iI]-[a-zA-Z]+|[xX]-[a-zA-Z]{1,8})(-[a-zA-Z]{1,8})*`)
+	if rgxp.MatchString(string(data)) {
+		return Language(""), errors.New("String does not match pattern ([a-zA-Z]{2}|[iI]-[a-zA-Z]+|[xX]-[a-zA-Z]{1,8})(-[a-zA-Z]{1,8})*")
+	}
+	return Language(data), nil
+	}
+
+type NMTOKEN Token
+
+//TODO: check for valid symbols: https://www.w3.org/TR/xml/#NT-Nmtoken
+func (tp NMTOKEN) NewNMTOKEN(data string) NMTOKEN {
+	return NMTOKEN(data)
+}
+
+type NMTOKENS []NMTOKEN
+
+func (tp NMTOKENS) NewNMTOKENS(data []NMTOKEN) NMTOKENS {
+	result := make(NMTOKENS, len(data))
+	for i, j := range data {
+		result[i] = j
+	}
+	return result
+}
+
+type Name Token
+
+//TODO: implements https://www.w3.org/TR/xml/#NT-Name
+func (tp Name) NewName(data Token) Name {
+	return Name(data)
+}
+
+type NCName Name
+
+//TODO: https://www.w3.org/TR/REC-xml/#NT-Name and https://www.w3.org/TR/xml-names/#NT-NCName
+func (tp NCName) NewNCName(data Name) NCName {
+	return NCName(data)
+}
+
+//TODO: improve next types to correspond to XMLSchema
+type ID NCName
+
+func (tp ID) NewID(data NCName) ID {
+	return ID(data)
+}
+
+type IDREF NCName
+
+func (tp IDREF) NewIDREF(data NCName) IDREF {
+	return IDREF(data)
+}
+
+type IDREFS []IDREF
+
+func (tp IDREFS) NewIDREFS(data []IDREF) IDREFS {
+	result := make(IDREFS, len(data))
+	for i, j := range data {
+		result[i] = j
+	}
+	return result
+}
+
+type ENTITY NCName
+
+func (tp ENTITY) NewENTITY(data NCName) ENTITY {
+	return ENTITY(data)
+}
+
+type ENTITIES []ENTITY
+
+func (tp ENTITIES) NewENTITIES(data []ENTITY) ENTITIES {
+	result := make(ENTITIES, len(data))
+	for i, j := range data {
+		result[i] = j
+	}
+	return result
+}
+
+type Integer int64
+
+func (tp Integer) NewInteger(data int64) Integer {
+	return Integer(data)
+}
+
+type NonPositiveInteger int64
+
+func (tp NonPositiveInteger) NewNonPositiveInteger(data int64) (NonPositiveInteger, error) {
+	if data > 0 {
+		return 0, errors.New("Value must be less or equal to 0")
+	}
+	return NonPositiveInteger(data), nil
+}
+
+type NegativeInteger int64
+
+func (tp NegativeInteger) NewNegativeInteger(data int64) (NegativeInteger, error) {
+	if data >= 0 {
+		return 0, errors.New("Value must be less than 0")
+	}
+	return NegativeInteger(data), nil
+}
+
+type Long int64
+
+func (tp Long) NewLong(data int64) Long {
+	return Long(data)
+}
+
+type Int int32
+
+func (tp Int) NewInt(data int32) Int {
+	return Int(data)
+}
+
+type Short int16
+
+func (tp Short) NewShort(data int16) Short {
+	return Short(data)
+}
+
+type Byte int8
+
+func (tp Byte) NewByte(data int8) Byte {
+	return Byte(data)
+}
+
+type NonNegativeInteger int64
+
+func (tp NonNegativeInteger) NewNonNegativeInteger(data int64) (NonNegativeInteger, error) {
+	if data > 0 {
+		return 0, errors.New("Value must be more or equal to 0")
+	}
+	return NonNegativeInteger(data), nil
+}
+
+type UnsignedLong uint64
+
+func (tp UnsignedLong) NewUnsignedLong(data uint64) UnsignedLong {
+	return UnsignedLong(data)
+}
+
+type UnsignedInt uint32
+
+func (tp UnsignedInt) NewUnsignedInt(data uint32) UnsignedInt {
+	return UnsignedInt(data)
+}
+
+type UnsignedShort uint16
+
+func (tp UnsignedShort) NewUnsignedShort(data uint16) UnsignedShort {
+	return UnsignedShort(data)
+}
+
+type UnsignedByte uint8
+
+func (tp UnsignedByte) NewUnsignedByte(data uint8) UnsignedByte {
+	return UnsignedByte(data)
+}
+
+type PositiveInteger int64
+
+func (tp PositiveInteger) NewPositiveInteger(data int64) (PositiveInteger, error) {
+	if data >= 0 {
+		return 0, errors.New("Value must be more than 0")
+	}
+	return PositiveInteger(data), nil
+}

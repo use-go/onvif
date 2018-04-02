@@ -1,6 +1,21 @@
 package goonvif
 
-import "net"
+import (
+	"net"
+	"github.com/yakovlevdmv/goonvif/SOAP"
+	"encoding/xml"
+	"log"
+	"github.com/yakovlevdmv/goonvif/Networking"
+)
+
+type DeviceInfo struct {
+	Manufacturer string
+	Model string
+	FirmwareVersion string
+	SerialNumber string
+	HardwareId string
+
+}
 
 type Device struct {
 
@@ -9,16 +24,24 @@ type Device struct {
 	password string
 
 	token [64]uint8
+
+	endpoints map[string]string
+	info DeviceInfo
+
 }
 
-type Service struct {
-	name string
+//TODO: Get endpoint automatically
+func (dev Device) CallMethod(endpoint string, method interface{}) {
 
-	device *Device
-}
+	output, err := xml.MarshalIndent(method, "  ", "    ")
+	if err != nil {
+		log.Printf("error: %v\n", err)
+	} else {
+		log.Println("Marshalled struct: ", string(output))
+	}
+	soap := SOAP.BuildMethodSOAP(string(output))
 
-func NewService(name string, dev *Device) Service {
-	return Service{name:name, device:dev}
+	Networking.SendSoap(endpoint, soap.String())
 }
 
 
