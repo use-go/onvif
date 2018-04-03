@@ -6,69 +6,79 @@ import (
 )
 
 type GetServiceCapabilities struct {
-
+	XMLName string `xml:"wsdl:GetServiceCapabilities"`
 }
 
 
 type GetImagingSettings struct {
-	VideoSourceToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetImagingSettings"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
 
 }
 
 
 type SetImagingSettings struct {
-	VideoSourceToken onvif.ReferenceToken
-	ImagingSettings onvif.ImagingSettings20
-	ForcePersistence xsd.Boolean
+	XMLName string `xml:"wsdl:SetImagingSettings"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
+	ImagingSettings onvif.ImagingSettings20 `xml:"wsdl:ImagingSettings"`
+	ForcePersistence xsd.Boolean `xml:"wsdl:ForcePersistence"`
 
 }
 
 
 type GetOptions struct {
-	VideoSourceToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetOptions"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
 
 }
 
 
 type Move struct {
-	VideoSourceToken onvif.ReferenceToken
-	Focus onvif.FocusMove
+	XMLName string `xml:"wsdl:Move"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
+	Focus onvif.FocusMove `xml:"wsdl:Focus"`
 
 }
 
 
 type GetMoveOptions struct {
-	VideoSourceToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetMoveOptions"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
 
 }
 
 
 type Stop struct {
-	VideoSourceToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:Stop"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
 
 }
 
 
 type GetStatus struct {
-	VideoSourceToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetStatus"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
 
 }
 
 
 type GetPresets struct {
-	VideoSourceToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetPresets"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
 
 }
 
 
 type GetCurrentPreset struct {
-	VideoSourceToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetCurrentPreset"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
 
 }
 
 
 type SetCurrentPreset struct {
-	VideoSourceToken onvif.ReferenceToken
-	PresetToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:SetCurrentPreset"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
+	PresetToken onvif.ReferenceToken `xml:"wsdl:PresetToken"`
 
 }

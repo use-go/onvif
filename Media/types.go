@@ -1,6 +1,9 @@
 package Media
 
-import "github.com/yakovlevdmv/goonvif/xsd/onvif"
+import (
+	"github.com/yakovlevdmv/goonvif/xsd/onvif"
+	"github.com/yakovlevdmv/goonvif/xsd"
+)
 
 type Capabilities struct {
 	SnapshotUri 		bool `xml:"SnapshotUri,attr"`
@@ -28,7 +31,7 @@ type StreamingCapabilities struct {
 //Media main types
 
 type GetServiceCapabilities struct {
-
+	XMLName string `xml:"wsdl:GetServiceCapabilities"`
 }
 
 
@@ -39,7 +42,7 @@ type GetServiceCapabilitiesResponse struct {
 
 
 type GetVideoSources struct {
-
+	XMLName string `xml:"wsdl:GetVideoSources"`
 }
 
 
@@ -50,6 +53,7 @@ type GetVideoSourcesResponse struct {
 
 
 type GetAudioSources struct {
+	XMLName string `xml:"wsdl:GetAudioSources"`
 
 }
 
@@ -61,7 +65,7 @@ type GetAudioSourcesResponse struct {
 
 
 type GetAudioOutputs struct {
-
+	XMLName string `xml:"wsdl:GetAudioOutputs"`
 }
 
 
@@ -72,8 +76,9 @@ type GetAudioOutputsResponse struct {
 
 
 type CreateProfile struct {
-	Name onvif.Name
-	Token onvif.ReferenceToken
+	XMLName string `xml:"wsdl:CreateProfile"`
+	Name onvif.Name `xml:"wsdl:Name"`
+	Token onvif.ReferenceToken `xml:"wsdl:Token"`
 
 }
 
@@ -85,7 +90,8 @@ type CreateProfileResponse struct {
 
 
 type GetProfile struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetProfile"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -97,7 +103,7 @@ type GetProfileResponse struct {
 
 
 type GetProfiles struct {
-
+	XMLName string `xml:"wsdl:GetProfiles"`
 }
 
 
@@ -108,9 +114,9 @@ type GetProfilesResponse struct {
 
 
 type AddVideoEncoderConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:AddVideoEncoderConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 }
 
 
@@ -120,8 +126,8 @@ type AddVideoEncoderConfigurationResponse struct {
 
 
 type RemoveVideoEncoderConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemoveVideoEncoderConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -131,8 +137,9 @@ type RemoveVideoEncoderConfigurationResponse struct {
 
 
 type AddVideoSourceConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:AddVideoSourceConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -143,8 +150,8 @@ type AddVideoSourceConfigurationResponse struct {
 
 
 type RemoveVideoSourceConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemoveVideoSourceConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -154,8 +161,9 @@ type RemoveVideoSourceConfigurationResponse struct {
 
 
 type AddAudioEncoderConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:AddAudioEncoderConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -166,8 +174,8 @@ type AddAudioEncoderConfigurationResponse struct {
 
 
 type RemoveAudioEncoderConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemoveAudioEncoderConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -177,8 +185,9 @@ type RemoveAudioEncoderConfigurationResponse struct {
 
 
 type AddAudioSourceConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:AddAudioSourceConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -189,8 +198,8 @@ type AddAudioSourceConfigurationResponse struct {
 
 
 type RemoveAudioSourceConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemoveAudioSourceConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -200,9 +209,9 @@ type RemoveAudioSourceConfigurationResponse struct {
 
 
 type AddPTZConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:AddPTZConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 }
 
 
@@ -212,8 +221,8 @@ type AddPTZConfigurationResponse struct {
 
 
 type RemovePTZConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemovePTZConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -223,8 +232,9 @@ type RemovePTZConfigurationResponse struct {
 
 
 type AddVideoAnalyticsConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:AddVideoAnalyticsConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -235,8 +245,8 @@ type AddVideoAnalyticsConfigurationResponse struct {
 
 
 type RemoveVideoAnalyticsConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemoveVideoAnalyticsConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -246,9 +256,9 @@ type RemoveVideoAnalyticsConfigurationResponse struct {
 
 
 type AddMetadataConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:AddMetadataConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 }
 
 
@@ -258,8 +268,8 @@ type AddMetadataConfigurationResponse struct {
 
 
 type RemoveMetadataConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemoveMetadataConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -269,8 +279,9 @@ type RemoveMetadataConfigurationResponse struct {
 
 
 type AddAudioOutputConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:AddAudioOutputConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -281,8 +292,8 @@ type AddAudioOutputConfigurationResponse struct {
 
 
 type RemoveAudioOutputConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemoveAudioOutputConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -292,8 +303,9 @@ type RemoveAudioOutputConfigurationResponse struct {
 
 
 type AddAudioDecoderConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:AddAudioDecoderConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -304,8 +316,8 @@ type AddAudioDecoderConfigurationResponse struct {
 
 
 type RemoveAudioDecoderConfiguration struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:RemoveAudioDecoderConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -315,7 +327,8 @@ type RemoveAudioDecoderConfigurationResponse struct {
 
 
 type DeleteProfile struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:DeleteProfile"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -326,7 +339,7 @@ type DeleteProfileResponse struct {
 
 
 type GetVideoSourceConfigurations struct {
-
+	XMLName string `xml:"wsdl:GetVideoSourceConfigurations"`
 }
 
 
@@ -337,7 +350,7 @@ type GetVideoSourceConfigurationsResponse struct {
 
 
 type GetVideoEncoderConfigurations struct {
-
+	XMLName string `xml:"wsdl:GetVideoEncoderConfigurations"`
 }
 
 
@@ -348,7 +361,7 @@ type GetVideoEncoderConfigurationsResponse struct {
 
 
 type GetAudioSourceConfigurations struct {
-
+	XMLName string `xml:"wsdl:GetAudioSourceConfigurations"`
 }
 
 
@@ -359,6 +372,7 @@ type GetAudioSourceConfigurationsResponse struct {
 
 
 type GetAudioEncoderConfigurations struct {
+	XMLName string `xml:"wsdl:GetAudioEncoderConfigurations"`
 
 }
 
@@ -370,7 +384,7 @@ type GetAudioEncoderConfigurationsResponse struct {
 
 
 type GetVideoAnalyticsConfigurations struct {
-
+	XMLName string `xml:"wsdl:GetVideoAnalyticsConfigurations"`
 }
 
 
@@ -381,7 +395,7 @@ type GetVideoAnalyticsConfigurationsResponse struct {
 
 
 type GetMetadataConfigurations struct {
-
+	XMLName string `xml:"wsdl:GetMetadataConfigurations"`
 }
 
 
@@ -392,7 +406,7 @@ type GetMetadataConfigurationsResponse struct {
 
 
 type GetAudioOutputConfigurations struct {
-
+	XMLName string `xml:"wsdl:GetAudioOutputConfigurations"`
 }
 
 
@@ -403,7 +417,7 @@ type GetAudioOutputConfigurationsResponse struct {
 
 
 type GetAudioDecoderConfigurations struct {
-
+	XMLName string `xml:"wsdl:GetAudioDecoderConfigurations"`
 }
 
 
@@ -414,8 +428,8 @@ type GetAudioDecoderConfigurationsResponse struct {
 
 
 type GetVideoSourceConfiguration struct {
-	ConfigurationToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:GetVideoSourceConfiguration"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 }
 
 
@@ -426,7 +440,8 @@ type GetVideoSourceConfigurationResponse struct {
 
 
 type GetVideoEncoderConfiguration struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetVideoEncoderConfiguration"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -438,7 +453,8 @@ type GetVideoEncoderConfigurationResponse struct {
 
 
 type GetAudioSourceConfiguration struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetAudioSourceConfiguration"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -450,7 +466,8 @@ type GetAudioSourceConfigurationResponse struct {
 
 
 type GetAudioEncoderConfiguration struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetAudioEncoderConfiguration"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -462,7 +479,8 @@ type GetAudioEncoderConfigurationResponse struct {
 
 
 type GetVideoAnalyticsConfiguration struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetVideoAnalyticsConfiguration"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -474,7 +492,8 @@ type GetVideoAnalyticsConfigurationResponse struct {
 
 
 type GetMetadataConfiguration struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetMetadataConfiguration"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -486,7 +505,8 @@ type GetMetadataConfigurationResponse struct {
 
 
 type GetAudioOutputConfiguration struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetAudioOutputConfiguration"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -498,7 +518,8 @@ type GetAudioOutputConfigurationResponse struct {
 
 
 type GetAudioDecoderConfiguration struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetAudioDecoderConfiguration"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -510,8 +531,8 @@ type GetAudioDecoderConfigurationResponse struct {
 
 
 type GetCompatibleVideoEncoderConfigurations struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:GetCompatibleVideoEncoderConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -522,8 +543,8 @@ type GetCompatibleVideoEncoderConfigurationsResponse struct {
 
 
 type GetCompatibleVideoSourceConfigurations struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:GetCompatibleVideoSourceConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -534,7 +555,8 @@ type GetCompatibleVideoSourceConfigurationsResponse struct {
 
 
 type GetCompatibleAudioEncoderConfigurations struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetCompatibleAudioEncoderConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -546,7 +568,8 @@ type GetCompatibleAudioEncoderConfigurationsResponse struct {
 
 
 type GetCompatibleAudioSourceConfigurations struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetCompatibleAudioSourceConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -558,7 +581,8 @@ type GetCompatibleAudioSourceConfigurationsResponse struct {
 
 
 type GetCompatibleVideoAnalyticsConfigurations struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetCompatibleVideoAnalyticsConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -570,7 +594,8 @@ type GetCompatibleVideoAnalyticsConfigurationsResponse struct {
 
 
 type GetCompatibleMetadataConfigurations struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetCompatibleMetadataConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -582,7 +607,8 @@ type GetCompatibleMetadataConfigurationsResponse struct {
 
 
 type GetCompatibleAudioOutputConfigurations struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetCompatibleAudioOutputConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -594,7 +620,8 @@ type GetCompatibleAudioOutputConfigurationsResponse struct {
 
 
 type GetCompatibleAudioDecoderConfigurations struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetCompatibleAudioDecoderConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -606,8 +633,9 @@ type GetCompatibleAudioDecoderConfigurationsResponse struct {
 
 
 type SetVideoSourceConfiguration struct {
-	Configuration onvif.VideoSourceConfiguration
-	ForcePersistence bool
+	XMLName string `xml:"wsdl:SetVideoSourceConfiguration"`
+	Configuration onvif.VideoSourceConfiguration `xml:"wsdl:Configuration"`
+	ForcePersistence xsd.Boolean `xml:"wsdl:ForcePersistence"`
 
 }
 
@@ -618,8 +646,9 @@ type SetVideoSourceConfigurationResponse struct {
 
 
 type SetVideoEncoderConfiguration struct {
-	Configuration onvif.VideoEncoderConfiguration
-	ForcePersistence bool
+	XMLName string `xml:"wsdl:SetVideoEncoderConfiguration"`
+	Configuration onvif.VideoEncoderConfiguration `xml:"wsdl:Configuration"`
+	ForcePersistence xsd.Boolean `xml:"wsdl:ForcePersistence"`
 
 }
 
@@ -630,8 +659,9 @@ type SetVideoEncoderConfigurationResponse struct {
 
 
 type SetAudioSourceConfiguration struct {
-	Configuration onvif.AudioSourceConfiguration
-	ForcePersistence bool
+	XMLName string `xml:"wsdl:SetAudioSourceConfiguration"`
+	Configuration onvif.AudioSourceConfiguration `xml:"wsdl:Configuration"`
+	ForcePersistence xsd.Boolean `xml:"wsdl:ForcePersistence"`
 
 }
 
@@ -642,8 +672,9 @@ type SetAudioSourceConfigurationResponse struct {
 
 
 type SetAudioEncoderConfiguration struct {
-	Configuration onvif.AudioEncoderConfiguration
-	ForcePersistence bool
+	XMLName string `xml:"wsdl:SetAudioEncoderConfiguration"`
+	Configuration onvif.AudioEncoderConfiguration `xml:"wsdl:Configuration"`
+	ForcePersistence xsd.Boolean `xml:"wsdl:ForcePersistence"`
 
 }
 
@@ -654,8 +685,9 @@ type SetAudioEncoderConfigurationResponse struct {
 
 
 type SetVideoAnalyticsConfiguration struct {
-	Configuration onvif.VideoAnalyticsConfiguration
-	ForcePersistence bool
+	XMLName string `xml:"wsdl:SetVideoAnalyticsConfiguration"`
+	Configuration onvif.VideoAnalyticsConfiguration `xml:"wsdl:Configuration"`
+	ForcePersistence bool `xml:"wsdl:ForcePersistence"`
 
 }
 
@@ -666,8 +698,9 @@ type SetVideoAnalyticsConfigurationResponse struct {
 
 
 type SetMetadataConfiguration struct {
-	Configuration onvif.MetadataConfiguration
-	ForcePersistence bool
+	XMLName string `xml:"wsdl:GetDeviceInformation"`
+	Configuration onvif.MetadataConfiguration `xml:"wsdl:Configuration"`
+	ForcePersistence xsd.Boolean `xml:"wsdl:ForcePersistence"`
 
 }
 
@@ -678,8 +711,9 @@ type SetMetadataConfigurationResponse struct {
 
 
 type SetAudioOutputConfiguration struct {
-	Configuration onvif.AudioOutputConfiguration
-	ForcePersistence bool
+	XMLName string `xml:"wsdl:SetAudioOutputConfiguration"`
+	Configuration onvif.AudioOutputConfiguration `xml:"wsdl:Configuration"`
+	ForcePersistence bool `xml:"wsdl:ForcePersistence"`
 
 }
 
@@ -690,8 +724,9 @@ type SetAudioOutputConfigurationResponse struct {
 
 
 type SetAudioDecoderConfiguration struct {
-	Configuration onvif.AudioDecoderConfiguration
-	ForcePersistence bool
+	XMLName string `xml:"wsdl:SetAudioDecoderConfiguration"`
+	Configuration onvif.AudioDecoderConfiguration `xml:"wsdl:Configuration"`
+	ForcePersistence xsd.Boolean `xml:"wsdl:ForcePersistence"`
 
 }
 
@@ -702,8 +737,9 @@ type SetAudioDecoderConfigurationResponse struct {
 
 
 type GetVideoSourceConfigurationOptions struct {
-	ConfigurationToken onvif.ReferenceToken
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetVideoSourceConfigurationOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -715,8 +751,9 @@ type GetVideoSourceConfigurationOptionsResponse struct {
 
 
 type GetVideoEncoderConfigurationOptions struct {
-	ConfigurationToken onvif.ReferenceToken
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetVideoEncoderConfigurationOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -728,8 +765,9 @@ type GetVideoEncoderConfigurationOptionsResponse struct {
 
 
 type GetAudioSourceConfigurationOptions struct {
-	ConfigurationToken onvif.ReferenceToken
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetAudioSourceConfigurationOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -741,9 +779,9 @@ type GetAudioSourceConfigurationOptionsResponse struct {
 
 
 type GetAudioEncoderConfigurationOptions struct {
-	ConfigurationToken onvif.ReferenceToken
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:GetAudioEncoderConfigurationOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 }
 
 
@@ -754,8 +792,9 @@ type GetAudioEncoderConfigurationOptionsResponse struct {
 
 
 type GetMetadataConfigurationOptions struct {
-	ConfigurationToken onvif.ReferenceToken
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetMetadataConfigurationOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -767,8 +806,9 @@ type GetMetadataConfigurationOptionsResponse struct {
 
 
 type GetAudioOutputConfigurationOptions struct {
-	ConfigurationToken onvif.ReferenceToken
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetAudioOutputConfigurationOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -780,8 +820,9 @@ type GetAudioOutputConfigurationOptionsResponse struct {
 
 
 type GetAudioDecoderConfigurationOptions struct {
-	ConfigurationToken onvif.ReferenceToken
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetAudioDecoderConfigurationOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -793,7 +834,8 @@ type GetAudioDecoderConfigurationOptionsResponse struct {
 
 
 type GetGuaranteedNumberOfVideoEncoderInstances struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetGuaranteedNumberOfVideoEncoderInstances"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -808,8 +850,9 @@ type GetGuaranteedNumberOfVideoEncoderInstancesResponse struct {
 
 
 type GetStreamUri struct {
-	StreamSetup onvif.StreamSetup
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetStreamUri"`
+	StreamSetup onvif.StreamSetup `xml:"wsdl:StreamSetup"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -821,8 +864,8 @@ type GetStreamUriResponse struct {
 
 
 type StartMulticastStreaming struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:StartMulticastStreaming"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -832,8 +875,8 @@ type StartMulticastStreamingResponse struct {
 
 
 type StopMulticastStreaming struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:StopMulticastStreaming"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -843,8 +886,8 @@ type StopMulticastStreamingResponse struct {
 
 
 type SetSynchronizationPoint struct {
-	ProfileToken onvif.ReferenceToken
-
+	XMLName string `xml:"wsdl:SetSynchronizationPoint"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 }
 
 
@@ -854,7 +897,8 @@ type SetSynchronizationPointResponse struct {
 
 
 type GetSnapshotUri struct {
-	ProfileToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetSnapshotUri"`
+	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
 
 }
 
@@ -866,7 +910,8 @@ type GetSnapshotUriResponse struct {
 
 
 type GetVideoSourceModes struct {
-	VideoSourceToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetVideoSourceModes"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
 
 }
 
@@ -878,8 +923,9 @@ type GetVideoSourceModesResponse struct {
 
 
 type SetVideoSourceMode struct {
-	VideoSourceToken onvif.ReferenceToken
-	VideoSourceModeToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:SetVideoSourceMode"`
+	VideoSourceToken onvif.ReferenceToken `xml:"wsdl:VideoSourceToken"`
+	VideoSourceModeToken onvif.ReferenceToken `xml:"wsdl:VideoSourceModeToken"`
 
 }
 
@@ -891,7 +937,8 @@ type SetVideoSourceModeResponse struct {
 
 
 type GetOSDs struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetOSDs"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -903,7 +950,8 @@ type GetOSDsResponse struct {
 
 
 type GetOSD struct {
-	OSDToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetOSD"`
+	OSDToken onvif.ReferenceToken `xml:"wsdl:OSDToken"`
 
 }
 
@@ -915,7 +963,8 @@ type GetOSDResponse struct {
 
 
 type GetOSDOptions struct {
-	ConfigurationToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:GetOSDOptions"`
+	ConfigurationToken onvif.ReferenceToken `xml:"wsdl:ConfigurationToken"`
 
 }
 
@@ -927,7 +976,8 @@ type GetOSDOptionsResponse struct {
 
 
 type SetOSD struct {
-	OSD onvif.OSDConfiguration
+	XMLName string `xml:"wsdl:SetOSD"`
+	OSD onvif.OSDConfiguration `xml:"wsdl:OSD"`
 
 }
 
@@ -938,7 +988,8 @@ type SetOSDResponse struct {
 
 
 type CreateOSD struct {
-	OSD onvif.OSDConfiguration
+	XMLName string `xml:"wsdl:CreateOSD"`
+	OSD onvif.OSDConfiguration `xml:"wsdl:OSD"`
 
 }
 
@@ -950,7 +1001,8 @@ type CreateOSDResponse struct {
 
 
 type DeleteOSD struct {
-	OSDToken onvif.ReferenceToken
+	XMLName string `xml:"wsdl:DeleteOSD"`
+	OSDToken onvif.ReferenceToken `xml:"wsdl:OSDToken"`
 
 }
 
