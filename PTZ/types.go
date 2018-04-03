@@ -1,14 +1,14 @@
 package PTZ
 
-import "github.com/yakovlevdmv/goonvif/xsdTypes"
-import "github.com/yakovlevdmv/goonvif/xsdTypes/onvif"
+import "github.com/yakovlevdmv/goonvif/xsd"
+import "github.com/yakovlevdmv/goonvif/xsd/onvif"
 
 type Capabilities struct {
-	EFlip 						xsdTypes.Boolean `xml:"EFlip,attr"`
-	Reverse 					xsdTypes.Boolean `xml:"Reverse,attr"`
-	GetCompatibleConfigurations xsdTypes.Boolean `xml:"GetCompatibleConfigurations,attr"`
-	MoveStatus 					xsdTypes.Boolean `xml:"MoveStatus,attr"`
-	StatusPosition 				xsdTypes.Boolean `xml:"StatusPosition,attr"`
+	EFlip 						xsd.Boolean `xml:"EFlip,attr"`
+	Reverse 					xsd.Boolean `xml:"Reverse,attr"`
+	GetCompatibleConfigurations xsd.Boolean `xml:"GetCompatibleConfigurations,attr"`
+	MoveStatus 					xsd.Boolean `xml:"MoveStatus,attr"`
+	StatusPosition 				xsd.Boolean `xml:"StatusPosition,attr"`
 }
 
 
@@ -73,7 +73,7 @@ type GetConfigurationsResponse struct {
 
 type SetConfiguration struct {
 	PTZConfiguration onvif.PTZConfiguration
-	ForcePersistence xsdTypes.Boolean
+	ForcePersistence xsd.Boolean
 
 }
 
@@ -185,7 +185,7 @@ type SetHomePositionResponse struct {
 type ContinuousMove struct {
 	ProfileToken onvif.ReferenceToken
 	Velocity onvif.PTZSpeed
-	Timeout xsdTypes.Duration
+	Timeout xsd.Duration
 
 }
 
@@ -237,8 +237,8 @@ type GeoMove struct {
 	ProfileToken onvif.ReferenceToken
 	Target onvif.GeoLocation
 	Speed onvif.PTZSpeed
-	AreaHeight xsdTypes.Float
-	AreaWidth xsdTypes.Float
+	AreaHeight xsd.Float
+	AreaWidth xsd.Float
 
 }
 
@@ -250,8 +250,8 @@ type GeoMoveResponse struct {
 
 type Stop struct {
 	ProfileToken onvif.ReferenceToken
-	PanTilt xsdTypes.Boolean
-	Zoom xsdTypes.Boolean
+	PanTilt xsd.Boolean
+	Zoom xsd.Boolean
 
 }
 

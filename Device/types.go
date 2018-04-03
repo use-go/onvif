@@ -1132,4 +1132,3 @@ type DeleteGeoLocation struct {
 type DeleteGeoLocationResponse struct {
 
 }
-

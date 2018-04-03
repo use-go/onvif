@@ -1,6 +1,6 @@
 package Media
 
-import "github.com/yakovlevdmv/goonvif/xsdTypes/onvif"
+import "github.com/yakovlevdmv/goonvif/xsd/onvif"
 
 type Capabilities struct {
 	SnapshotUri 		bool `xml:"SnapshotUri,attr"`
