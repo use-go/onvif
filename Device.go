@@ -2,9 +2,11 @@ package goonvif
 
 import (
 	"net"
-	"github.com/yakovlevdmv/goonvif/SOAP"
 	"encoding/xml"
 	"log"
+	"fmt"
+	"github.com/beevik/etree"
+	"github.com/yakovlevdmv/gosoap"
 	"github.com/yakovlevdmv/goonvif/Networking"
 )
 
@@ -30,6 +32,21 @@ type Device struct {
 
 }
 
+func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
+	doc := etree.NewDocument()
+	if err := doc.ReadFromString(msg); err != nil {
+		log.Println("Got error")
+		return "", err
+	}
+	element := doc.Root()
+
+	soap := gosoap.NewEmptySOAP()
+	soap.AddBodyContent(element)
+	soap.AddRootNamespace("wsdl", "http://www.onvif.org/ver10/device/wsdl")
+
+	return soap, nil
+}
+
 //TODO: Get endpoint automatically
 func (dev Device) CallMethod(endpoint string, method interface{}) {
 
@@ -39,7 +56,14 @@ func (dev Device) CallMethod(endpoint string, method interface{}) {
 	} else {
 		log.Println("Marshalled struct: ", string(output))
 	}
-	soap := SOAP.BuildMethodSOAP(string(output))
+
+	fmt.Println(string(output))
+	soap, err := buildMethodSOAP(string(output))
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Send soap\n")
+	fmt.Println(soap.String())
 
 	Networking.SendSoap(endpoint, soap.String())
 }
