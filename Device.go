@@ -6,12 +6,12 @@ import (
 	"log"
 	"fmt"
 	"github.com/beevik/etree"
-	"github.com/yakovlevdmv/gosoap"
 	"github.com/yakovlevdmv/goonvif/Networking"
 	"time"
 	"encoding/base64"
 	"crypto/sha1"
 	"github.com/elgs/gostrgen"
+	"github.com/yakovlevdmv/gosoap"
 )
 
 type DeviceInfo struct {
@@ -52,6 +52,7 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 		return "", err
 	}
 	element := doc.Root()
+
 
 	soap := gosoap.NewEmptySOAP()
 	soap.AddBodyContent(element)

@@ -915,7 +915,7 @@ type StreamType struct {
 
 type Transport struct {
 	Protocol TransportProtocol
-	Tunnel Transport
+	Tunnel *Transport
 }
 
 //enum
@@ -1846,7 +1846,7 @@ type NetworkZeroConfiguration struct {
 }
 
 type NetworkZeroConfigurationExtension struct {
-	Additional NetworkZeroConfiguration
+	Additional *NetworkZeroConfiguration
 	Extension NetworkZeroConfigurationExtension2
 }
 
