@@ -2,6 +2,8 @@ package Media
 
 import "github.com/yakovlevdmv/goonvif/xsd/onvif"
 
+const WSDL = "http://www.onvif.org/ver10/media/wsdl"
+
 type Capabilities struct {
 	SnapshotUri 		bool `xml:"SnapshotUri,attr"`
 	Rotation 			bool `xml:"Rotation,attr"`

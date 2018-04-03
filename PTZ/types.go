@@ -11,6 +11,8 @@ type Capabilities struct {
 	StatusPosition 				xsd.Boolean `xml:"StatusPosition,attr"`
 }
 
+const WSDL  = "http://www.onvif.org/ver20/ptz/wsdl"
+
 
 //PTZ main types
 
