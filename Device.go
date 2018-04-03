@@ -72,6 +72,7 @@ func (dev device) CallMethod(endpoint string, method interface{}) {
 	}
 
 	fmt.Println(string(output))
+
 	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		log.Fatal(err)
