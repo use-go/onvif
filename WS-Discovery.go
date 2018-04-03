@@ -13,7 +13,7 @@ const bufSize  = 5000
 func SendUDPMulticast (msg* string, interfaceName string) []string {
 	var result []string
 	data := []byte(*msg)
-	en0, err := net.InterfaceByName(interfaceName)
+	iface, err := net.InterfaceByName(interfaceName)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -26,12 +26,12 @@ func SendUDPMulticast (msg* string, interfaceName string) []string {
 	defer c.Close()
 
 	p := ipv4.NewPacketConn(c)
-	if err := p.JoinGroup(en0, &net.UDPAddr{IP: group}); err != nil {
+	if err := p.JoinGroup(iface, &net.UDPAddr{IP: group}); err != nil {
 		fmt.Println(err)
 	}
 
 	dst := &net.UDPAddr{IP: group, Port: 3702}
-	for _, ifi := range []*net.Interface{en0} {
+	for _, ifi := range []*net.Interface{iface} {
 		if err := p.SetMulticastInterface(ifi); err != nil {
 			fmt.Println(err)
 		}
