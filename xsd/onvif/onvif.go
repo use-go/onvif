@@ -4,6 +4,8 @@ import (
 	"github.com/yakovlevdmv/goonvif/xsd"
 )
 
+const ONVIF  = "http://www.onvif.org/ver10/schema"
+
 //TODO: rename package xsdTypes
 //TODO: enumerations
 //TODO: type <typeName> struct {Any string} convert to type <typeName> AnyType
@@ -1924,7 +1926,7 @@ type NetworkZeroConfigurationExtension2 xsd.AnyType
 
 
 type IPAddressFilter struct {
-	Type IPAddressFilterType `xml:"onvif:Type"`
+	Type string `xml:"onvif:Type"`
 	IPv4Address PrefixedIPv4Address `xml:"onvif:IPv4Address,omitempty"`
 	IPv6Address PrefixedIPv6Address `xml:"onvif:IPv6Address,omitempty"`
 	Extension IPAddressFilterExtension `xml:"onvif:Extension,omitempty"`

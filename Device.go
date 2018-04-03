@@ -12,6 +12,13 @@ import (
 	"crypto/sha1"
 	"github.com/elgs/gostrgen"
 	"github.com/yakovlevdmv/gosoap"
+	"reflect"
+	"strings"
+	"github.com/yakovlevdmv/goonvif/Device"
+	"github.com/yakovlevdmv/goonvif/Imaging"
+	"github.com/yakovlevdmv/goonvif/Media"
+	"github.com/yakovlevdmv/goonvif/PTZ"
+	"errors"
 )
 
 type DeviceInfo struct {
@@ -45,7 +52,7 @@ func (dev *device) AddAuthentification(username, password string) {
 	dev.password = password
 }
 
-func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
+func buildMethodSOAP(msg, space string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
 		log.Println("Got error")
@@ -56,9 +63,28 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 
 	soap := gosoap.NewEmptySOAP()
 	soap.AddBodyContent(element)
-	soap.AddRootNamespace("wsdl", "http://www.onvif.org/ver10/device/wsdl")
+	soap.AddRootNamespace("onvif", "http://www.onvif.org/ver10/device/wsdl")
+	soap.AddRootNamespace("wsdl", space)
 
 	return soap, nil
+}
+
+func setXMLNamespaces(strct interface{}) (string, error) {
+	pkgName := reflect.TypeOf( strct ).PkgPath()
+	pkgSplit := strings.Split(pkgName, "/")
+	pkgName = pkgSplit[len(pkgSplit)-1]
+	switch pkgName {
+	case "Device":
+		return Device.WSDL, nil
+	case "Imaging":
+		return Imaging.WSDL, nil
+	case "Media":
+		return Media.WSDL, nil
+	case "PTZ":
+		return PTZ.WSDL, nil
+	default:
+		return "", errors.New("Can't find Service")
+	}
 }
 
 //TODO: Get endpoint automatically
@@ -72,10 +98,18 @@ func (dev device) CallMethod(endpoint string, method interface{}) {
 	}
 
 	fmt.Println(string(output))
-	soap, err := buildMethodSOAP(string(output))
+
+	wsdlSpaces, err := setXMLNamespaces(method)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+
 	fmt.Println("Send soap\n")
 	fmt.Println(soap.String())
 
@@ -134,17 +168,15 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) {
 		log.Println("Marshalled struct: ", string(output))
 	}
 
-	soap, err := buildMethodSOAP(string(output))
+	wsdlSpaces, err := setXMLNamespaces(method)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	/**soap := gosoap.NewEmptySOAP()
-
-	soap.AddStringBodyContent(
-		//`<tds:SetHostname xmlns:tds="http://www.onvif.org/ver10/device/wsdl"><tds:Name>Test</tds:Name></tds:SetHostname>`,
-		`<tds:GetHostname xmlns:tds="http://www.onvif.org/ver10/device/wsdl" />`,
-	)*/
 
 	/** Generating Nonce sequence **/
 	charsToGenerate := 16

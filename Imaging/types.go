@@ -5,6 +5,8 @@ import (
 	"github.com/yakovlevdmv/goonvif/xsd"
 )
 
+const WSDL  = "http://www.onvif.org/ver20/imaging/wsdl"
+
 type GetServiceCapabilities struct {
 	XMLName string `xml:"wsdl:GetServiceCapabilities"`
 }
