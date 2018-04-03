@@ -455,7 +455,7 @@ type GetCapabilitiesResponse struct {
 
 
 type GetHostname struct {
-
+	XMLName string `xml:"wsdl:GetHostname"`
 }
 
 
