@@ -17,7 +17,7 @@ import (
 	TODO: XML SOURCE: https://www.w3.org/2001/05/datatypes.xsd
  */
 
-type AnyType interface{};
+type AnyType string;
 
 type AnySimpleType string
 
