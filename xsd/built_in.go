@@ -2,15 +2,15 @@ package xsd
 
 import (
 	"time"
-	"github.com/yakovlevdmv/iso8601"
+	iso8601 "github.com/yakovlevdmv/Golang-iso8601-duration"
 	"log"
 	"fmt"
 	"encoding/hex"
 	"encoding/base64"
 	"net/url"
 	"strings"
-	"github.com/pkg/errors"
 	"regexp"
+	"errors"
 )
 
 /*
