@@ -719,7 +719,11 @@ type SetIPAddressFilterResponse struct {
 
 }
 
-
+//This operation adds an IP filter address to a device.
+//If the device supports device access control based on
+//IP filtering rules (denied or accepted ranges of IP addresses),
+//the device shall support adding of IP filtering addresses through
+//the AddIPAddressFilter command.
 type AddIPAddressFilter struct {
 	XMLName string `xml:"wsdl:AddIPAddressFilter"`
 	IPAddressFilter onvif.IPAddressFilter `xml:"wsdl:IPAddressFilter"`
