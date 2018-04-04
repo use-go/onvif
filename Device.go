@@ -7,10 +7,6 @@ import (
 	"fmt"
 	"github.com/beevik/etree"
 	"github.com/yakovlevdmv/goonvif/Networking"
-	"time"
-	"encoding/base64"
-	"crypto/sha1"
-	"github.com/elgs/gostrgen"
 	"github.com/yakovlevdmv/gosoap"
 	"reflect"
 	"strings"
@@ -21,7 +17,8 @@ import (
 	"errors"
 )
 
-type DeviceInfo struct {
+//deviceInfo struct contains general information about ONVIF device
+type deviceInfo struct {
 	Manufacturer string
 	Model string
 	FirmwareVersion string
@@ -30,6 +27,8 @@ type DeviceInfo struct {
 
 }
 
+//deviceInfo struct represents an abstract ONVIF device.
+//It contains methods, which helps to communicate with ONVIF device
 type device struct {
 
 	xaddr net.IP
@@ -39,15 +38,20 @@ type device struct {
 	token [64]uint8
 
 	endpoints map[string]string
-	info DeviceInfo
+	info deviceInfo
 
 }
 
+//NewDevice function construct a ONVIF Device entity
 func NewDevice() *device {
 	return &device{}
 }
 
-func (dev *device) AddAuthentification(username, password string) {
+//Authenticate function authenticate client in the ONVIF Device.
+//Function takes <username> and <password> params.
+//You should use this function to allow authorized requests to the ONVIF Device
+//To change auth data call this function again.
+func (dev *device) Authenticate(username, password string) {
 	dev.login = username
 	dev.password = password
 }
@@ -87,85 +91,27 @@ func setXMLNamespaces(strct interface{}) (string, error) {
 	}
 }
 
-//TODO: Get endpoint automatically
-func (dev device) CallMethod(endpoint string, method interface{}) {
+//CallMethod functions call an method, defined <method> struct.
+//You should use Authenticate method to call authorized requests.
+func (dev device) CallMethod(endpoint string, method interface{}) (string, error) {
+	//TODO: Get endpoint automatically
+	if dev.login != "" && dev.password != "" {
+		return dev.CallAuthorizedMethod(endpoint, method)
+	} else {
+		return dev.CallNonAuthorizedMethod(endpoint, method)
+	}
+}
 
+//CallNonAuthorizedMethod functions call an method, defined <method> struct without authentication data
+func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+	//TODO: Get endpoint automatically
+	/*
+	Converting <method> struct to xml string representation
+	 */
 	output, err := xml.MarshalIndent(method, "  ", "    ")
 	if err != nil {
-		log.Printf("error: %v\n", err)
-	} else {
-		log.Println("Marshalled struct: ", string(output))
-	}
-
-	fmt.Println(string(output))
-
-	wsdlSpaces, err := setXMLNamespaces(method)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-
-	fmt.Println("Send soap\n")
-	fmt.Println(soap.String())
-
-	Networking.SendSoap(endpoint, soap.String())
-}
-
-/*************************
-	WS-Security types
-*************************/
-const (passwordType = "https://www.oasis-open.org/committees/download.php/13392/wss-v1.1-spec-pr-UsernameTokenProfile-01.htm#PasswordDigest")
-
-/*
-xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext1.0.xsd"
-
-xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility1.0.xsd"
-
- */
-type security struct {
-	XMLName xml.Name  `xml:"wsse:Security"`
-	Auth wsAuth
-}
-
-type password struct {
-	XMLName xml.Name `xml:"wsse:Password"`
-	Type string `xml:"Type,attr"`
-	Password string `xml:",chardata"`
-}
-
-type wsAuth struct {
-	XMLName xml.Name  `xml:"wsse:UsernameToken"`
-	Username string   `xml:"wsse:Username"`
-	Password password `xml:"wsse:Password"`
-	Nonce string      `xml:"wsse:Nonce"`
-	Created string    `xml:"wsse:Created"`
-}
-
-//Digest = B64ENCODE( SHA1( B64DECODE( Nonce ) + Date + Password ) )
-func generateToken(Username string, Nonce string, Created time.Time, Password string) string {
-
-	sDec, _ := base64.StdEncoding.DecodeString(Nonce)
-
-
-	hasher := sha1.New()
-	//hasher.Write([]byte((base64.StdEncoding.EncodeToString([]byte(Nonce)) + Created.Format(time.RFC3339) + Password)))
-	hasher.Write([]byte(string(sDec) + Created.Format(time.RFC3339) + Password))
-
-	return base64.StdEncoding.EncodeToString(hasher.Sum(nil))
-}
-
-
-func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) {
-	output, err := xml.MarshalIndent(method, "  ", "    ")
-	if err != nil {
-		log.Printf("error: %v\n", err)
-	} else {
-		log.Println("Marshalled struct: ", string(output))
+		log.Printf("error: %v\n", err.Error())
+		return "", err
 	}
 
 	wsdlSpaces, err := setXMLNamespaces(method)
@@ -173,44 +119,68 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) {
 		fmt.Println(err)
 	}
 
+	/*
+	Build an SOAP request with <method>
+	 */
+	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
+	if err != nil {
+		log.Printf("error: %v\n", err)
+		return "", err
+	}
+
+	/*
+	Sending request and returns the response
+	 */
+	return Networking.SendSoap(endpoint, soap.String()), nil
+}
+
+//CallMethod functions call an method, defined <method> struct with authentication data
+func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+	/*
+	Converting <method> struct to xml string representation
+	 */
+	output, err := xml.MarshalIndent(method, "  ", "    ")
+	if err != nil {
+		log.Printf("error: %v\n", err.Error())
+		return "", err
+	}
+
+	wsdlSpaces, err := setXMLNamespaces(method)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	/*
+	Build an SOAP request with <method>
+	 */
 	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	/** Generating Nonce sequence **/
-	charsToGenerate := 16
-	charSet := gostrgen.Lower | gostrgen.Digit
+	/*
+	Getting an WS-Security struct representation
+	 */
+	auth := newSecurity(dev.login, dev.password)
 
-	nonce, _ := gostrgen.RandGen(charsToGenerate, charSet, "", "")
-
-	auth := security{
-		Auth:wsAuth{
-			Username:dev.login,
-			Password:password {
-				Type:passwordType,
-				Password:generateToken(dev.login, nonce, time.Now(), dev.password),
-			},
-			Nonce: nonce,
-			Created: time.Now().Format(time.RFC3339),
-		},
-	}
-
+	/*
+	Adding WS-Security namespaces to root element of SOAP message
+	 */
 	soap.AddRootNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext1.0.xsd")
 	soap.AddRootNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility1.0.xsd")
 
 	soapReq, err := xml.MarshalIndent(auth, "", "  ")
 	if err != nil {
-		log.Panic(err.Error())
-		return
-	} else {
-		soap.AddStringHeaderContent(string(soapReq))
-
-		log.Println("Soap to send")
-		log.Println(soap.String())
-
+		log.Printf("error: %v\n", err.Error())
+		return "", err
 	}
+	/*
+	Adding WS-Security struct to SOAP header
+	 */
+	soap.AddStringHeaderContent(string(soapReq))
 
-	Networking.SendSoap(endpoint, soap.String())
-	//fmt.Println(string(output))
+	/*
+	Sending request and returns the response
+	 */
+	return Networking.SendSoap(endpoint, soap.String()), nil
 }
