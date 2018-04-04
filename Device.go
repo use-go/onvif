@@ -150,6 +150,10 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 		return "", err
 	}
 
+	soap.AddRootNamespaces(xlmns)
+
+	fmt.Println(soap.String())
+
 	/*
 	Sending request and returns the response
 	 */
@@ -191,6 +195,8 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	soap.AddRootNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext1.0.xsd")
 	soap.AddRootNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility1.0.xsd")
 
+	soap.AddRootNamespaces(xlmns)
+
 	soapReq, err := xml.MarshalIndent(auth, "", "  ")
 	if err != nil {
 		log.Printf("error: %v\n", err.Error())
@@ -202,6 +208,7 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	 */
 	soap.AddStringHeaderContent(string(soapReq))
 
+	fmt.Println(soap.String())
 	/*
 	Sending request and returns the response
 	 */
