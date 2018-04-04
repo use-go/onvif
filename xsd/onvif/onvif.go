@@ -4,8 +4,6 @@ import (
 	"github.com/yakovlevdmv/goonvif/xsd"
 )
 
-const ONVIF  = "http://www.onvif.org/ver10/schema"
-
 //TODO: rename package xsdTypes
 //TODO: enumerations
 //TODO: type <typeName> struct {Any string} convert to type <typeName> AnyType
@@ -1869,27 +1867,3 @@ type Date struct {
 	Month xsd.Int `xml:"onvif:Month"`
 	Day xsd.Int `xml:"onvif:Day"`
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

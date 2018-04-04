@@ -6,20 +6,30 @@ import (
 	"log"
 	"fmt"
 	"github.com/beevik/etree"
-	"github.com/yakovlevdmv/goonvif/Networking"
+	"github.com/yakovlevdmv/goonvif/networking"
 	"time"
 	"encoding/base64"
 	"crypto/sha1"
 	"github.com/elgs/gostrgen"
 	"github.com/yakovlevdmv/gosoap"
-	"reflect"
-	"strings"
-	"github.com/yakovlevdmv/goonvif/Device"
-	"github.com/yakovlevdmv/goonvif/Imaging"
-	"github.com/yakovlevdmv/goonvif/Media"
-	"github.com/yakovlevdmv/goonvif/PTZ"
-	"errors"
 )
+
+var xlmns = map[string]string {
+	"onvif":"http://www.onvif.org/ver10/schema",
+	"tds":"http://www.onvif.org/ver10/device/wsdl",
+	"trt":"http://www.onvif.org/ver10/media/wsdl",
+	"tev":"http://www.onvif.org/ver10/events/wsdl",
+	"tpz":"http://www.onvif.org/ver20/ptz/wsdl",
+	"timg":"http://www.onvif.org/ver20/imaging/wsdl",
+	"xmime":"http://www.w3.org/2005/05/xmlmime",
+	"wsnt":"http://docs.oasis-open.org/wsn/b-2",
+	"xop":"http://www.w3.org/2004/08/xop/include",
+	"wsa":"http://www.w3.org/2005/08/addressing",
+	"wstop":"http://docs.oasis-open.org/wsn/t-1",
+	"wsntw":"http://docs.oasis-open.org/wsn/bw-2",
+	"wsrf-rw":"http://docs.oasis-open.org/wsrf/rw-2",
+	"wsaw":"http://www.w3.org/2006/05/addressing/wsdl",
+}
 
 type DeviceInfo struct {
 	Manufacturer string
@@ -52,7 +62,7 @@ func (dev *device) AddAuthentification(username, password string) {
 	dev.password = password
 }
 
-func buildMethodSOAP(msg, space string) (gosoap.SoapMessage, error) {
+func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
 		log.Println("Got error")
@@ -64,27 +74,8 @@ func buildMethodSOAP(msg, space string) (gosoap.SoapMessage, error) {
 	soap := gosoap.NewEmptySOAP()
 	soap.AddBodyContent(element)
 	soap.AddRootNamespace("onvif", "http://www.onvif.org/ver10/device/wsdl")
-	soap.AddRootNamespace("wsdl", space)
 
 	return soap, nil
-}
-
-func setXMLNamespaces(strct interface{}) (string, error) {
-	pkgName := reflect.TypeOf( strct ).PkgPath()
-	pkgSplit := strings.Split(pkgName, "/")
-	pkgName = pkgSplit[len(pkgSplit)-1]
-	switch pkgName {
-	case "Device":
-		return Device.WSDL, nil
-	case "Imaging":
-		return Imaging.WSDL, nil
-	case "Media":
-		return Media.WSDL, nil
-	case "PTZ":
-		return PTZ.WSDL, nil
-	default:
-		return "", errors.New("Can't find Service")
-	}
 }
 
 //TODO: Get endpoint automatically
@@ -99,12 +90,11 @@ func (dev device) CallMethod(endpoint string, method interface{}) {
 
 	fmt.Println(string(output))
 
-	wsdlSpaces, err := setXMLNamespaces(method)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
+	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -113,7 +103,7 @@ func (dev device) CallMethod(endpoint string, method interface{}) {
 	fmt.Println("Send soap\n")
 	fmt.Println(soap.String())
 
-	Networking.SendSoap(endpoint, soap.String())
+	networking.SendSoap(endpoint, soap.String())
 }
 
 /*************************
@@ -168,12 +158,11 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) {
 		log.Println("Marshalled struct: ", string(output))
 	}
 
-	wsdlSpaces, err := setXMLNamespaces(method)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
+	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -211,6 +200,6 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) {
 
 	}
 
-	Networking.SendSoap(endpoint, soap.String())
+	networking.SendSoap(endpoint, soap.String())
 	//fmt.Println(string(output))
 }

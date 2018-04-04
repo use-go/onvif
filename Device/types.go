@@ -5,8 +5,6 @@ import (
 	"github.com/yakovlevdmv/goonvif/xsd/onvif"
 )
 
-const WSDL  = "http://www.onvif.org/ver10/device/wsdl"
-
 type Service struct {
 	Namespace xsd.AnyURI
 	XAddr     xsd.AnyURI
