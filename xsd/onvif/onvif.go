@@ -6,8 +6,6 @@ import (
 
 // BUG(r): Enum types implemented as simple string
 
-const ONVIF  = "http://www.onvif.org/ver10/schema"
-
 //TODO: enumerations
 //TODO: type <typeName> struct {Any string} convert to type <typeName> AnyType
 //TODO: process restrictions
@@ -1874,27 +1872,3 @@ type Date struct {
 	Month xsd.Int `xml:"onvif:Month"`
 	Day xsd.Int `xml:"onvif:Day"`
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

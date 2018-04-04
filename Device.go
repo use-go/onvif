@@ -6,17 +6,27 @@ import (
 	"log"
 	"fmt"
 	"github.com/beevik/etree"
-	"github.com/yakovlevdmv/goonvif/Networking"
+	"github.com/yakovlevdmv/goonvif/networking"
 	"github.com/yakovlevdmv/gosoap"
-	"reflect"
-	"strings"
-	"github.com/yakovlevdmv/goonvif/Device"
-	"github.com/yakovlevdmv/goonvif/Imaging"
-	"github.com/yakovlevdmv/goonvif/Media"
-	"github.com/yakovlevdmv/goonvif/PTZ"
-	"errors"
 	"strconv"
 )
+
+var xlmns = map[string]string {
+	"onvif":"http://www.onvif.org/ver10/schema",
+	"tds":"http://www.onvif.org/ver10/device/wsdl",
+	"trt":"http://www.onvif.org/ver10/media/wsdl",
+	"tev":"http://www.onvif.org/ver10/events/wsdl",
+	"tpz":"http://www.onvif.org/ver20/ptz/wsdl",
+	"timg":"http://www.onvif.org/ver20/imaging/wsdl",
+	"xmime":"http://www.w3.org/2005/05/xmlmime",
+	"wsnt":"http://docs.oasis-open.org/wsn/b-2",
+	"xop":"http://www.w3.org/2004/08/xop/include",
+	"wsa":"http://www.w3.org/2005/08/addressing",
+	"wstop":"http://docs.oasis-open.org/wsn/t-1",
+	"wsntw":"http://docs.oasis-open.org/wsn/bw-2",
+	"wsrf-rw":"http://docs.oasis-open.org/wsrf/rw-2",
+	"wsaw":"http://www.w3.org/2006/05/addressing/wsdl",
+}
 
 type DeviceType int
 
@@ -86,7 +96,7 @@ func (dev *device) Authenticate(username, password string) {
 	dev.password = password
 }
 
-func buildMethodSOAP(msg, space string) (gosoap.SoapMessage, error) {
+func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
 		log.Println("Got error")
@@ -98,28 +108,11 @@ func buildMethodSOAP(msg, space string) (gosoap.SoapMessage, error) {
 	soap := gosoap.NewEmptySOAP()
 	soap.AddBodyContent(element)
 	soap.AddRootNamespace("onvif", "http://www.onvif.org/ver10/device/wsdl")
-	soap.AddRootNamespace("wsdl", space)
 
 	return soap, nil
 }
 
-func setXMLNamespaces(strct interface{}) (string, error) {
-	pkgName := reflect.TypeOf( strct ).PkgPath()
-	pkgSplit := strings.Split(pkgName, "/")
-	pkgName = pkgSplit[len(pkgSplit)-1]
-	switch pkgName {
-	case "Device":
-		return Device.WSDL, nil
-	case "Imaging":
-		return Imaging.WSDL, nil
-	case "Media":
-		return Media.WSDL, nil
-	case "PTZ":
-		return PTZ.WSDL, nil
-	default:
-		return "", errors.New("Can't find Service")
-	}
-}
+
 
 //CallMethod functions call an method, defined <method> struct.
 //You should use Authenticate method to call authorized requests.
@@ -144,7 +137,6 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 		return "", err
 	}
 
-	wsdlSpaces, err := setXMLNamespaces(method)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -152,7 +144,7 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 	/*
 	Build an SOAP request with <method>
 	 */
-	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
+	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		log.Printf("error: %v\n", err)
 		return "", err
@@ -161,7 +153,7 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 	/*
 	Sending request and returns the response
 	 */
-	return Networking.SendSoap(endpoint, soap.String()), nil
+	return networking.SendSoap(endpoint, soap.String()), nil
 }
 
 //CallMethod functions call an method, defined <method> struct with authentication data
@@ -175,15 +167,15 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 		return "", err
 	}
 
-	wsdlSpaces, err := setXMLNamespaces(method)
 	if err != nil {
 		fmt.Println(err)
 	}
 
+
 	/*
 	Build an SOAP request with <method>
 	 */
-	soap, err := buildMethodSOAP(string(output), wsdlSpaces)
+	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -204,6 +196,7 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 		log.Printf("error: %v\n", err.Error())
 		return "", err
 	}
+
 	/*
 	Adding WS-Security struct to SOAP header
 	 */
@@ -212,5 +205,5 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	/*
 	Sending request and returns the response
 	 */
-	return Networking.SendSoap(endpoint, soap.String()), nil
+	return networking.SendSoap(endpoint, soap.String()), nil
 }

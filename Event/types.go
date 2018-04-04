@@ -4,8 +4,6 @@ import (
 	"github.com/yakovlevdmv/goonvif/xsd"
 )
 
-//const WSDL = "http://www.onvif.org/ver10/events/wsdl"
-
 type FilterType struct { //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 	Any string
 }
