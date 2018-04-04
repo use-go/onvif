@@ -54,8 +54,8 @@ type IntRange struct {
 }
 
 type FloatRange struct {
-	Min float64
-	Max float64
+	Min float64 `xml:"onvif:Min"`
+	Max float64 `xml:"onvif:Max"`
 }
 
 type OSDConfiguration struct {
@@ -468,24 +468,7 @@ type IPAddress struct {
 	IPv6Address IPv6Address `xml:"onvif:IPv6Address"`
 }
 
-type IPType int
-
-func (ipType IPType) String() string {
-	names := [...]string{
-		"IPv4",
-		"IPv6",
-	}
-	if ipType < IPV4 || ipType > IPV6 {
-		return "Unknown"
-	}
-	return names[ipType]
-}
-
-const (
-	IPV4 IPType = iota
-	IPV6
-)
-
+type IPType xsd.String
 
 type IPv4Address xsd.Token
 
@@ -550,23 +533,23 @@ type PTZConfiguration struct {
 	MoveRamp                               int `xml:"MoveRamp,attr"`
 	PresetRamp                             int `xml:"PresetRamp,attr"`
 	PresetTourRamp                         int `xml:"PresetTourRamp,attr"`
-	NodeToken                              ReferenceToken
-	DefaultAbsolutePantTiltPositionSpace   xsd.AnyURI
-	DefaultAbsoluteZoomPositionSpace       xsd.AnyURI
-	DefaultRelativePanTiltTranslationSpace xsd.AnyURI
-	DefaultRelativeZoomTranslationSpace    xsd.AnyURI
-	DefaultContinuousPanTiltVelocitySpace  xsd.AnyURI
-	DefaultContinuousZoomVelocitySpace     xsd.AnyURI
-	DefaultPTZSpeed                        PTZSpeed
-	DefaultPTZTimeout                      xsd.Duration
-	PanTiltLimits                          PanTiltLimits
-	ZoomLimits                             ZoomLimits
-	Extension                              PTZConfigurationExtension
+	NodeToken                              ReferenceToken `xml:"onvif:NodeToken"`
+	DefaultAbsolutePantTiltPositionSpace   xsd.AnyURI `xml:"onvif:DefaultAbsolutePantTiltPositionSpace"`
+	DefaultAbsoluteZoomPositionSpace       xsd.AnyURI `xml:"onvif:DefaultAbsoluteZoomPositionSpace"`
+	DefaultRelativePanTiltTranslationSpace xsd.AnyURI `xml:"onvif:DefaultRelativePanTiltTranslationSpace"`
+	DefaultRelativeZoomTranslationSpace    xsd.AnyURI `xml:"onvif:DefaultRelativeZoomTranslationSpace"`
+	DefaultContinuousPanTiltVelocitySpace  xsd.AnyURI `xml:"onvif:DefaultContinuousPanTiltVelocitySpace"`
+	DefaultContinuousZoomVelocitySpace     xsd.AnyURI `xml:"onvif:DefaultContinuousZoomVelocitySpace"`
+	DefaultPTZSpeed                        PTZSpeed `xml:"onvif:DefaultPTZSpeed"`
+	DefaultPTZTimeout                      xsd.Duration `xml:"onvif:DefaultPTZTimeout"`
+	PanTiltLimits                          PanTiltLimits `xml:"onvif:PanTiltLimits"`
+	ZoomLimits                             ZoomLimits `xml:"onvif:ZoomLimits"`
+	Extension                              PTZConfigurationExtension `xml:"onvif:Extension"`
 }
 
 type PTZSpeed struct {
-	PanTilt Vector2D
-	Zoom Vector1D
+	PanTilt Vector2D `xml:"onvif:PanTilt"`
+	Zoom Vector1D `xml:"onvif:Zoom"`
 }
 
 type Vector2D struct {
@@ -581,50 +564,46 @@ type Vector1D struct {
 }
 
 type PanTiltLimits struct {
-	Range Space2DDescription
+	Range Space2DDescription `xml:"onvif:Range"`
 }
 
 type Space2DDescription struct {
-	URI    xsd.AnyURI
-	XRange FloatRange
-	YRange FloatRange
+	URI    xsd.AnyURI `xml:"onvif:URI"`
+	XRange FloatRange `xml:"onvif:XRange"`
+	YRange FloatRange `xml:"onvif:YRange"`
 }
 
 type ZoomLimits struct {
-	Range Space1DDescription
+	Range Space1DDescription `xml:"onvif:Range"`
 }
 
 type Space1DDescription struct {
-	URI    xsd.AnyURI
-	XRange FloatRange
+	URI    xsd.AnyURI `xml:"onvif:URI"`
+	XRange FloatRange `xml:"onvif:XRange"`
 }
 
 type PTZConfigurationExtension struct {
-	PTControlDirection PTControlDirection
-	Extension PTZConfigurationExtension2
+	PTControlDirection PTControlDirection `xml:"onvif:PTControlDirection"`
+	Extension PTZConfigurationExtension2 `xml:"onvif:Extension"`
 }
 
 type PTControlDirection struct {
-	EFlip EFlip
-	Reverse Reverse
-	Extension PTControlDirectionExtension
+	EFlip EFlip `xml:"onvif:EFlip"`
+	Reverse Reverse `xml:"onvif:Reverse"`
+	Extension PTControlDirectionExtension `xml:"onvif:Extension"`
 }
 
 type EFlip struct {
-	Mode EFlipMode
+	Mode EFlipMode `xml:"onvif:Mode"`
 }
 
-type EFlipMode struct {
-	EFlipMode string
-}
+type EFlipMode xsd.String
 
 type Reverse struct {
-	Mode ReverseMode
+	Mode ReverseMode `xml:"onvif:Mode"`
 }
 
-type ReverseMode struct {
-	ReverseMode string
-}
+type ReverseMode xsd.String
 
 type PTControlDirectionExtension xsd.AnyType
 
@@ -981,10 +960,7 @@ type PTZPresetTourSupported struct {
 	Extension PTZPresetTourSupportedExtension
 }
 
-type PTZPresetTourOperation struct {
-	Operation string
-}
-
+type PTZPresetTourOperation xsd.String
 type PTZPresetTourSupportedExtension xsd.AnyType
 
 type PTZNodeExtension2 xsd.AnyType
@@ -1037,8 +1013,8 @@ type PTZPreset struct {
 }
 
 type PTZVector struct {
-	PanTilt Vector2D
-	Zoom Vector1D
+	PanTilt Vector2D `xml:"onvif:PanTilt"`
+	Zoom Vector1D `xml:"onvif:Zoom"`
 }
 
 type PTZStatus struct {
@@ -1065,36 +1041,34 @@ type GeoLocation struct {
 
 type PresetTour struct {
 	Token             ReferenceToken `xml:"token,attr"`
-	Name              Name
-	Status            PTZPresetTourStatus
-	AutoStart         xsd.Boolean
-	StartingCondition PTZPresetTourStartingCondition
-	TourSpot          PTZPresetTourSpot
-	Extension         PTZPresetTourExtension
+	Name              Name `xml:"onvif:Name"`
+	Status            PTZPresetTourStatus `xml:"onvif:Status"`
+	AutoStart         xsd.Boolean `xml:"onvif:AutoStart"`
+	StartingCondition PTZPresetTourStartingCondition `xml:"onvif:StartingCondition"`
+	TourSpot          PTZPresetTourSpot `xml:"onvif:TourSpot"`
+	Extension         PTZPresetTourExtension `xml:"onvif:Extension"`
 }
 
 type PTZPresetTourStatus struct {
-	State PTZPresetTourState
-	CurrentTourSpot PTZPresetTourSpot
-	Extension PTZPresetTourStatusExtension
+	State PTZPresetTourState `xml:"onvif:State"`
+	CurrentTourSpot PTZPresetTourSpot `xml:"onvif:CurrentTourSpot"`
+	Extension PTZPresetTourStatusExtension `xml:"onvif:Extension"`
 }
 
-type PTZPresetTourState struct {
-	State string
-}
+type PTZPresetTourState xsd.String
 
 type PTZPresetTourSpot struct {
-	PresetDetail PTZPresetTourPresetDetail
-	Speed        PTZSpeed
-	StayTime     xsd.Duration
-	Extension    PTZPresetTourSpotExtension
+	PresetDetail PTZPresetTourPresetDetail `xml:"onvif:PresetDetail"`
+	Speed        PTZSpeed `xml:"onvif:Speed"`
+	StayTime     xsd.Duration `xml:"onvif:StayTime"`
+	Extension    PTZPresetTourSpotExtension `xml:"onvif:Extension"`
 }
 
 type PTZPresetTourPresetDetail struct {
-	PresetToken   ReferenceToken
-	Home          xsd.Boolean
-	PTZPosition   PTZVector
-	TypeExtension PTZPresetTourTypeExtension
+	PresetToken   ReferenceToken `xml:"onvif:PresetToken"`
+	Home          xsd.Boolean `xml:"onvif:Home"`
+	PTZPosition   PTZVector `xml:"onvif:PTZPosition"`
+	TypeExtension PTZPresetTourTypeExtension `xml:"onvif:TypeExtension"`
 }
 
 type PTZPresetTourTypeExtension xsd.AnyType
@@ -1105,15 +1079,13 @@ type PTZPresetTourStatusExtension xsd.AnyType
 
 type PTZPresetTourStartingCondition struct {
 	RandomPresetOrder xsd.Boolean `xml:"RandomPresetOrder,attr"`
-	RecurringTime     int
-	RecurringDuration xsd.Duration
-	Direction         PTZPresetTourDirection
-	Extension         PTZPresetTourStartingConditionExtension
+	RecurringTime     xsd.Int `xml:"onvif:RecurringTime"`
+	RecurringDuration xsd.Duration `xml:"onvif:RecurringDuration"`
+	Direction         PTZPresetTourDirection `xml:"onvif:Direction"`
+	Extension         PTZPresetTourStartingConditionExtension `xml:"onvif:Extension"`
 }
 
-type PTZPresetTourDirection struct {
-	Direction string
-}
+type PTZPresetTourDirection xsd.String
 
 type PTZPresetTourStartingConditionExtension xsd.AnyType
 
@@ -1156,23 +1128,7 @@ type OnvifVersion struct {
 	Minor int
 }
 
-type SetDateTimeType int
-
-func (setDateTimeType SetDateTimeType) String() string {
-	names := [...]string{
-		"Manual",
-		"NTP",
-	}
-	if setDateTimeType < MANUAL || setDateTimeType > NTP {
-		return "Unknown"
-	}
-	return names[setDateTimeType]
-}
-
-const (
-	MANUAL SetDateTimeType = iota
-	NTP
-)
+type SetDateTimeType xsd.String
 
 
 type TimeZone struct {
@@ -1223,41 +1179,9 @@ type Scope struct {
 	ScopeItem xsd.AnyURI
 }
 
-type ScopeDefinition int
+type ScopeDefinition xsd.String
 
-func (scopeDefinition ScopeDefinition) String() string {
-	names := [...]string{
-		"Fixed",
-		"Configurable",
-	}
-	if scopeDefinition < FIXED || scopeDefinition > CONFIGURABLE {
-		return "Unknown"
-	}
-	return names[scopeDefinition]
-}
-
-const (
-	FIXED ScopeDefinition = iota
-	CONFIGURABLE
-)
-
-type DiscoveryMode int
-
-func (discoveryMode DiscoveryMode) String() string {
-	names := [...]string{
-		"Discoverable",
-		"NonDiscoverable",
-	}
-	if discoveryMode < DISCOVERABLE || discoveryMode > NONDISCOVERABLE {
-		return "Unknown"
-	}
-	return names[discoveryMode]
-}
-
-const (
-	DISCOVERABLE DiscoveryMode = iota
-	NONDISCOVERABLE
-)
+type DiscoveryMode xsd.String
 
 type NetworkHost struct {
 	Type 		NetworkHostType `xml:"onvif:Type"`
@@ -1267,25 +1191,7 @@ type NetworkHost struct {
 	Extension 	NetworkHostExtension `xml:"onvif:Extension"`
 }
 
-type NetworkHostType int
-
-func (networkHostType NetworkHostType) String() string {
-	names := [...]string{
-		"IPv4",
-		"IPv6",
-		"DNS",
-	}
-	if networkHostType < IPv4 || networkHostType > DNS {
-		return "Unknown"
-	}
-	return names[networkHostType]
-}
-
-const (
-	IPv4 NetworkHostType = iota
-	IPv6
-	DNS
-)
+type NetworkHostType xsd.String
 
 type NetworkHostExtension xsd.String
 
@@ -1302,59 +1208,11 @@ type User struct {
 	Extension UserExtension `xml:"onvif:Extension"`
 }
 
-type UserLevel int
-
-func (userLevel UserLevel) String() string {
-	names := [...]string{
-		"Administrator",
-		"Operator",
-		"User",
-		"Anonymous",
-		"Extended",
-	}
-	if userLevel < ADMINISTRATOR || userLevel > EXTENDED_USER_LEVEL {
-		return "Unknown"
-	}
-	return names[userLevel]
-}
-
-const (
-	ADMINISTRATOR UserLevel = iota
-	OPERATOR
-	USER
-	ANONYMOUS
-	EXTENDED_USER_LEVEL
-)
+type UserLevel xsd.String
 
 type UserExtension xsd.String
 
-type CapabilityCategory int
-
-func (capabilityCategory CapabilityCategory) String() string {
-	names := [...] string {
-		"All",
-		"Analytics",
-		"Device",
-		"Events",
-		"Imaging",
-		"Media",
-		"PTZ",
-	}
-	if capabilityCategory < ALL || capabilityCategory > PTZ {
-		return "Unknown"
-	}
-	return names[capabilityCategory]
-}
-
-const (
-	ALL CapabilityCategory = iota
-	ANALYTICS
-	DEVICE
-	EVENTS
-	IMAGING
-	MEDIA
-	PTZ
-)
+type CapabilityCategory xsd.String
 
 type Capabilities struct {
 	Analytics 	AnalyticsCapabilities
@@ -1591,24 +1449,7 @@ type DynamicDNSInformation struct {
 }
 
 //TODO: enumeration
-type DynamicDNSType int
-
-func (dynamicDNSType DynamicDNSType) String() string {
-	names := [...]string{
-		"Allow",
-		"Deny",
-	}
-	if dynamicDNSType < NOUPDATE || dynamicDNSType > SERVERUPDATES {
-		return "Unknown"
-	}
-	return names[dynamicDNSType]
-}
-
-const (
-	NOUPDATE DynamicDNSType = iota
-	CLIENTUPDATES
-	SERVERUPDATES
-)
+type DynamicDNSType xsd.String
 
 
 type DynamicDNSInformationExtension xsd.AnyType
@@ -1646,23 +1487,7 @@ type NetworkInterfaceConnectionSetting struct {
 }
 
 //TODO: enum
-type Duplex int
-
-func (duplex Duplex) String() string {
-	names := [...]string{
-		"Allow",
-		"Deny",
-	}
-	if duplex < FULL || duplex > HALF {
-		return "Unknown"
-	}
-	return names[duplex]
-}
-
-const (
-	FULL Duplex = iota
-	HALF
-)
+type Duplex xsd.String
 
 type NetworkInterfaceExtension struct {
 	InterfaceType IANA_IfTypes
@@ -1704,77 +1529,17 @@ type Dot11PSKPassphrase xsd.String
 type Dot11PSK xsd.HexBinary
 
 //TODO: enumeration
-type Dot11Cipher int
-
-func (dot11Cipher Dot11Cipher) String() string {
-	names := [...]string{
-		"CCMP",
-		"TKIP",
-		"Any",
-		"Extended",
-	}
-	if dot11Cipher < CCMP || dot11Cipher > EXTENDED_CIPHER {
-		return "Unknown"
-	}
-	return names[dot11Cipher]
-}
-
-const (
-	CCMP Dot11Cipher = iota
-	TKIP
-	ANY_CIPHER
-	EXTENDED_CIPHER
-)
+type Dot11Cipher xsd.String
 
 
 //TODO: enumeration
-type Dot11SecurityMode int
-
-func (dot11SecurityMode Dot11SecurityMode) String() string {
-	names := [...]string{
-		"None",
-		"WEP",
-		"PSK",
-		"Dot1X",
-		"Extended",
-	}
-	if dot11SecurityMode < NONE_SECURITY_MODE || dot11SecurityMode > EXTENDED_SECURITY_MODE {
-		return "Unknown"
-	}
-	return names[dot11SecurityMode]
-}
-
-const (
-	NONE_SECURITY_MODE Dot11SecurityMode = iota
-	WEP
-	PSK
-	DOT1X
-	EXTENDED_SECURITY_MODE
-)
+type Dot11SecurityMode xsd.String
 
 //TODO: restrictions
 type NetworkInterfaceConfigPriority xsd.Integer
 
 //TODO: enumeration
-type Dot11StationMode int
-
-func (dot11StationMode Dot11StationMode) String() string {
-	names := [...]string{
-		"Ad-hoc",
-		"Infrastructure",
-		"Extended",
-	}
-	if dot11StationMode < ADHOC || dot11StationMode > EXTENDED_STATION_MODE {
-		return "Unknown"
-	}
-	return names[dot11StationMode]
-}
-
-const (
-	ADHOC Dot11StationMode = iota
-	INFRASTRUCTURE
-	EXTENDED_STATION_MODE
-)
+type Dot11StationMode xsd.String
 
 
 //TODO: restrictions
@@ -1805,27 +1570,7 @@ type PrefixedIPv6Address struct {
 }
 
 //TODO: enumeration
-type IPv6DHCPConfiguration int
-
-func (ipv6DHCPConfiguration IPv6DHCPConfiguration) String() string {
-	names := [...]string{
-		"Auto",
-		"Stateful",
-		"Stateless",
-		"Off",
-	}
-	if ipv6DHCPConfiguration < AUTO || ipv6DHCPConfiguration > OFF {
-		return "Unknown"
-	}
-	return names[ipv6DHCPConfiguration]
-}
-
-const (
-	AUTO IPv6DHCPConfiguration = iota
-	STATEFUL
-	STATELESS
-	OFF
-)
+type IPv6DHCPConfiguration xsd.String
 
 type IPv4NetworkInterface struct {
 	Enabled xsd.Boolean
@@ -1884,26 +1629,7 @@ type NetworkProtocol struct {
 type NetworkProtocolExtension xsd.AnyType
 
 //TODO: enumeration
-type NetworkProtocolType int
-
-func (networkProtocolType NetworkProtocolType) String() string {
-	names := [...]string{
-		"HTTP",
-		"HTTPS",
-		"RTSP",
-	}
-	if networkProtocolType < HTTP || networkProtocolType > RTSP {
-		return "Unknown"
-	}
-	return names[networkProtocolType]
-}
-
-const (
-	HTTP NetworkProtocolType = iota
-	HTTPS
-	RTSP
-)
-
+type NetworkProtocolType xsd.String
 
 type NetworkGateway struct {
 	IPv4Address IPv4Address
@@ -1926,7 +1652,7 @@ type NetworkZeroConfigurationExtension2 xsd.AnyType
 
 
 type IPAddressFilter struct {
-	Type string `xml:"onvif:Type"`
+	Type IPAddressFilterType `xml:"onvif:Type"`
 	IPv4Address PrefixedIPv4Address `xml:"onvif:IPv4Address,omitempty"`
 	IPv6Address PrefixedIPv6Address `xml:"onvif:IPv6Address,omitempty"`
 	Extension IPAddressFilterExtension `xml:"onvif:Extension,omitempty"`
@@ -1935,23 +1661,7 @@ type IPAddressFilter struct {
 type IPAddressFilterExtension xsd.AnyType
 
 //TODO: enumeration
-type IPAddressFilterType int
-
-func (ipAddressFilterType IPAddressFilterType) String() string {
-	names := [...]string{
-		"Allow",
-		"Deny",
-	}
-	if ipAddressFilterType < ALLOW || ipAddressFilterType > DENY {
-		return "Unknown"
-	}
-	return names[ipAddressFilterType]
-}
-
-const (
-	ALLOW IPAddressFilterType = iota
-	DENY
-)
+type IPAddressFilterType xsd.String
 
 
 //TODO: attribite <xs:attribute ref="xmime:contentType" use="optional"/>
@@ -1982,62 +1692,14 @@ type RelayOutputSettings struct {
 }
 
 //TODO:enumeration
-type RelayIdleState int
-
-func (relayIdleState RelayIdleState) String() string {
-	names := [...]string{
-		"closed",
-		"open",
-	}
-	if relayIdleState < CLOSED || relayIdleState > OPEN {
-		return "Unknown"
-	}
-	return names[relayIdleState]
-}
-
-const (
-	CLOSED RelayIdleState = iota
-	OPEN
-)
+type RelayIdleState xsd.String
 
 
 //TODO: enumeration
-type RelayMode int
-
-func (relayMode RelayMode) String() string {
-	names := [...]string{
-		"Monostable",
-		"Bistable",
-	}
-	if relayMode < MONOSTABLE || relayMode > BISTABLE {
-		return "Unknown"
-	}
-	return names[relayMode]
-}
-
-const (
-	MONOSTABLE RelayMode = iota
-	BISTABLE
-)
+type RelayMode xsd.String
 
 //TODO: enumeration
-type RelayLogicalState int
-
-func (relayLogicalState RelayLogicalState) String() string {
-	names := [...]string{
-		"active",
-		"inactive",
-	}
-	if relayLogicalState < ACTIVE || relayLogicalState > INACTIVE {
-		return "Unknown"
-	}
-	return names[relayLogicalState]
-}
-
-const (
-	ACTIVE RelayLogicalState = iota
-	INACTIVE
-)
+type RelayLogicalState xsd.String
 
 type CertificateWithPrivateKey struct {
 	CertificateID xsd.Token `xml:"onvif:CertificateID"`
@@ -2113,31 +1775,7 @@ type Dot11Status struct {
 }
 
 //TODO: enumeration
-type Dot11SignalStrength int
-
-func (dot11SignalStrength Dot11SignalStrength) String() string {
-	names := [...]string{
-		"None",
-		"Very Bad",
-		"Bad",
-		"Good",
-		"Very Good",
-		"Extended",
-	}
-	if dot11SignalStrength < NONE || dot11SignalStrength > EXTENDED_SIGNAL_STRENGHT {
-		return "Unknown"
-	}
-	return names[dot11SignalStrength]
-}
-
-const (
-	NONE Dot11SignalStrength = iota
-	VERYBAD
-	BAD
-	GOOD
-	VERYGOOD
-	EXTENDED_SIGNAL_STRENGHT
-)
+type Dot11SignalStrength xsd.String
 
 
 type Dot11AvailableNetworks struct {
@@ -2153,27 +1791,7 @@ type Dot11AvailableNetworks struct {
 type Dot11AvailableNetworksExtension xsd.AnyType
 
 //TODO: enumeration
-type Dot11AuthAndMangementSuite int
-
-func (dot11AuthAndMangementSuite Dot11AuthAndMangementSuite) String() string {
-	names := [...]string{
-		"None",
-		"Dot1X",
-		"PSK",
-		"Extended",
-	}
-	if dot11AuthAndMangementSuite < NONE_DOT11_SUITE || dot11AuthAndMangementSuite > EXTENDED_DOT11_SUITE {
-		return "Unknown"
-	}
-	return names[dot11AuthAndMangementSuite]
-}
-
-const (
-	NONE_DOT11_SUITE Dot11AuthAndMangementSuite = iota
-	DOT1X_DOT11_SUITE
-	PSK_DOT11_SUITE
-	EXTENDED_DOT11_SUITE
-)
+type Dot11AuthAndMangementSuite xsd.String
 
 type SystemLogUriList struct {
 	SystemLog SystemLogUri
