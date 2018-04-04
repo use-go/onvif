@@ -15,7 +15,33 @@ import (
 	"github.com/yakovlevdmv/goonvif/Media"
 	"github.com/yakovlevdmv/goonvif/PTZ"
 	"errors"
+	"strconv"
 )
+
+type DeviceType int
+
+const (
+	NVD DeviceType = iota
+	NVS
+	NVA
+	NVT
+)
+
+func (devType DeviceType) String() string {
+	stringRepresentation := []string {
+		"NetworkVideoDisplay",
+		"NetworkVideoStorage",
+		"NetworkVideoAnalytics",
+		"NetworkVideoTransmitter",
+	}
+	i := uint8(devType)
+	switch {
+	case i <= uint8(NVT):
+		return stringRepresentation[i]
+	default:
+		return strconv.Itoa(int(i))
+	}
+}
 
 //deviceInfo struct contains general information about ONVIF device
 type deviceInfo struct {
@@ -39,6 +65,10 @@ type device struct {
 
 	endpoints map[string]string
 	info deviceInfo
+
+}
+
+func getAvailableDevicesAtEthernet(interfaceName string) {
 
 }
 
