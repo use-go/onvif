@@ -83,28 +83,28 @@ type MiscCapabilities struct {
 
 type StorageConfiguration struct {
 	onvif.DeviceEntity
-	Data StorageConfigurationData `xml:"wsdl:Data"`
+	Data StorageConfigurationData `xml:"tds:Data"`
 }
 
 type StorageConfigurationData struct {
 	Type xsd.String `xml:"type,attr"`
-	LocalPath xsd.AnyURI `xml:"wsdl:LocalPath"`
-	StorageUri xsd.AnyURI `xml:"wsdl:StorageUri"`
-	User UserCredential `xml:"wsdl:User"`
-	Extension xsd.AnyURI `xml:"wsdl:Extension"`
+	LocalPath xsd.AnyURI `xml:"tds:LocalPath"`
+	StorageUri xsd.AnyURI `xml:"tds:StorageUri"`
+	User UserCredential `xml:"tds:User"`
+	Extension xsd.AnyURI `xml:"tds:Extension"`
 }
 
 type UserCredential struct {
-	UserName xsd.String `xml:"wsdl:UserName"`
-	Password xsd.String `xml:"wsdl:Password"`
-	Extension xsd.AnyType `xml:"wsdl:Extension"`
+	UserName xsd.String `xml:"tds:UserName"`
+	Password xsd.String `xml:"tds:Password"`
+	Extension xsd.AnyType `xml:"tds:Extension"`
 }
 
 //Device main types
 
 type GetServices struct {
-	XMLName string `xml:"wsdl:GetServices"`
-	IncludeCapability xsd.Boolean `xml:"wsdl:IncludeCapability"`
+	XMLName string `xml:"tds:GetServices"`
+	IncludeCapability xsd.Boolean `xml:"tds:IncludeCapability"`
 
 }
 
@@ -116,7 +116,7 @@ type GetServicesResponse struct {
 
 
 type GetServiceCapabilities struct {
-	XMLName string `xml:"wsdl:GetServiceCapabilities"`
+	XMLName string `xml:"tds:GetServiceCapabilities"`
 
 }
 
@@ -127,7 +127,7 @@ type GetServiceCapabilitiesResponse struct {
 }
 
 type GetDeviceInformation struct {
-	XMLName string `xml:"wsdl:GetDeviceInformation"`
+	XMLName string `xml:"tds:GetDeviceInformation"`
 }
 
 
@@ -142,11 +142,11 @@ type GetDeviceInformationResponse struct {
 
 
 type SetSystemDateAndTime struct {
-	XMLName string `xml:"wsdl:SetSystemDateAndTime"`
-	DateTimeType    onvif.SetDateTimeType `xml:"wsdl:DateTimeType"`
-	DaylightSavings xsd.Boolean `xml:"wsdl:DaylightSavings"`
-	TimeZone        onvif.TimeZone `xml:"wsdl:TimeZone"`
-	UTCDateTime     onvif.DateTime `xml:"wsdl:UTCDateTime"`
+	XMLName string `xml:"tds:SetSystemDateAndTime"`
+	DateTimeType    onvif.SetDateTimeType `xml:"tds:DateTimeType"`
+	DaylightSavings xsd.Boolean `xml:"tds:DaylightSavings"`
+	TimeZone        onvif.TimeZone `xml:"tds:TimeZone"`
+	UTCDateTime     onvif.DateTime `xml:"tds:UTCDateTime"`
 }
 
 
@@ -156,7 +156,7 @@ type SetSystemDateAndTimeResponse struct {
 
 
 type GetSystemDateAndTime struct {
-	XMLName string `xml:"wsdl:GetSystemDateAndTime"`
+	XMLName string `xml:"tds:GetSystemDateAndTime"`
 
 }
 
@@ -168,8 +168,8 @@ type GetSystemDateAndTimeResponse struct {
 
 
 type SetSystemFactoryDefault struct {
-	XMLName string `xml:"wsdl:SetSystemFactoryDefault"`
-	FactoryDefault onvif.FactoryDefaultType `xml:"wsdl:FactoryDefault"`
+	XMLName string `xml:"tds:SetSystemFactoryDefault"`
+	FactoryDefault onvif.FactoryDefaultType `xml:"tds:FactoryDefault"`
 
 }
 
@@ -180,8 +180,8 @@ type SetSystemFactoryDefaultResponse struct {
 
 
 type UpgradeSystemFirmware struct {
-	XMLName string `xml:"wsdl:UpgradeSystemFirmware"`
-	Firmware onvif.AttachmentData `xml:"wsdl:Firmware"`
+	XMLName string `xml:"tds:UpgradeSystemFirmware"`
+	Firmware onvif.AttachmentData `xml:"tds:Firmware"`
 
 }
 
@@ -193,7 +193,7 @@ type UpgradeSystemFirmwareResponse struct {
 
 
 type SystemReboot struct {
-	XMLName string `xml:"wsdl:SystemReboot"`
+	XMLName string `xml:"tds:SystemReboot"`
 
 }
 
@@ -205,8 +205,8 @@ type SystemRebootResponse struct {
 
 //TODO: one or more repetitions
 type RestoreSystem struct {
-	XMLName string `xml:"wsdl:RestoreSystem"`
-	BackupFiles onvif.BackupFile `xml:"wsdl:BackupFiles"`
+	XMLName string `xml:"tds:RestoreSystem"`
+	BackupFiles onvif.BackupFile `xml:"tds:BackupFiles"`
 
 }
 
@@ -217,7 +217,7 @@ type RestoreSystemResponse struct {
 
 
 type GetSystemBackup struct {
-	XMLName string `xml:"wsdl:GetSystemBackup"`
+	XMLName string `xml:"tds:GetSystemBackup"`
 
 }
 
@@ -229,8 +229,8 @@ type GetSystemBackupResponse struct {
 
 
 type GetSystemLog struct {
-	XMLName string `xml:"wsdl:GetSystemLog"`
-	LogType onvif.SystemLogType `xml:"wsdl:LogType"`
+	XMLName string `xml:"tds:GetSystemLog"`
+	LogType onvif.SystemLogType `xml:"tds:LogType"`
 
 }
 
@@ -242,7 +242,7 @@ type GetSystemLogResponse struct {
 
 
 type GetSystemSupportInformation struct {
-	XMLName string `xml:"wsdl:GetSystemSupportInformation"`
+	XMLName string `xml:"tds:GetSystemSupportInformation"`
 
 }
 
@@ -254,7 +254,7 @@ type GetSystemSupportInformationResponse struct {
 
 
 type GetScopes struct {
-	XMLName string `xml:"wsdl:GetScopes"`
+	XMLName string `xml:"tds:GetScopes"`
 
 }
 
@@ -266,8 +266,8 @@ type GetScopesResponse struct {
 
 //TODO: one or more scopes
 type SetScopes struct {
-	XMLName string `xml:"wsdl:SetScopes"`
-	Scopes xsd.AnyURI `xml:"wsdl:Scopes"`
+	XMLName string `xml:"tds:SetScopes"`
+	Scopes xsd.AnyURI `xml:"tds:Scopes"`
 
 }
 
@@ -278,8 +278,8 @@ type SetScopesResponse struct {
 
 //TODO: list of scopes
 type AddScopes struct {
-	XMLName string `xml:"wsdl:AddScopes"`
-	ScopeItem xsd.AnyURI`xml:"wsdl:ScopeItem"`
+	XMLName string `xml:"tds:AddScopes"`
+	ScopeItem xsd.AnyURI`xml:"tds:ScopeItem"`
 
 }
 
@@ -290,7 +290,7 @@ type AddScopesResponse struct {
 
 //TODO: One or more repetitions
 type RemoveScopes struct {
-	XMLName string `xml:"wsdl:RemoveScopes"`
+	XMLName string `xml:"tds:RemoveScopes"`
 	ScopeItem xsd.AnyURI `xml:"onvif:ScopeItem"`
 
 }
@@ -303,7 +303,7 @@ type RemoveScopesResponse struct {
 
 
 type GetDiscoveryMode struct {
-	XMLName string `xml:"wsdl:GetDiscoveryMode"`
+	XMLName string `xml:"tds:GetDiscoveryMode"`
 
 }
 
@@ -315,8 +315,8 @@ type GetDiscoveryModeResponse struct {
 
 
 type SetDiscoveryMode struct {
-	XMLName string `xml:"wsdl:SetDiscoveryMode"`
-	DiscoveryMode onvif.DiscoveryMode `xml:"wsdl:DiscoveryMode"`
+	XMLName string `xml:"tds:SetDiscoveryMode"`
+	DiscoveryMode onvif.DiscoveryMode `xml:"tds:DiscoveryMode"`
 
 }
 
@@ -327,7 +327,7 @@ type SetDiscoveryModeResponse struct {
 
 
 type GetRemoteDiscoveryMode struct {
-	XMLName string `xml:"wsdl:GetRemoteDiscoveryMode"`
+	XMLName string `xml:"tds:GetRemoteDiscoveryMode"`
 
 }
 
@@ -339,8 +339,8 @@ type GetRemoteDiscoveryModeResponse struct {
 
 
 type SetRemoteDiscoveryMode struct {
-	XMLName string `xml:"wsdl:SetRemoteDiscoveryMode"`
-	RemoteDiscoveryMode onvif.DiscoveryMode `xml:"wsdl:RemoteDiscoveryMode"`
+	XMLName string `xml:"tds:SetRemoteDiscoveryMode"`
+	RemoteDiscoveryMode onvif.DiscoveryMode `xml:"tds:RemoteDiscoveryMode"`
 
 }
 
@@ -351,7 +351,7 @@ type SetRemoteDiscoveryModeResponse struct {
 
 
 type GetDPAddresses struct {
-	XMLName string `xml:"wsdl:GetDPAddresses"`
+	XMLName string `xml:"tds:GetDPAddresses"`
 
 }
 
@@ -363,8 +363,8 @@ type GetDPAddressesResponse struct {
 
 
 type SetDPAddresses struct {
-	XMLName string `xml:"wsdl:SetDPAddresses"`
-	DPAddress onvif.NetworkHost `xml:"wsdl:DPAddress"`
+	XMLName string `xml:"tds:SetDPAddresses"`
+	DPAddress onvif.NetworkHost `xml:"tds:DPAddress"`
 
 }
 
@@ -375,7 +375,7 @@ type SetDPAddressesResponse struct {
 
 
 type GetEndpointReference struct {
-	XMLName string `xml:"wsdl:GetEndpointReference"`
+	XMLName string `xml:"tds:GetEndpointReference"`
 
 }
 
@@ -387,7 +387,7 @@ type GetEndpointReferenceResponse struct {
 
 
 type GetRemoteUser struct {
-	XMLName string `xml:"wsdl:GetRemoteUser"`
+	XMLName string `xml:"tds:GetRemoteUser"`
 
 }
 
@@ -399,8 +399,8 @@ type GetRemoteUserResponse struct {
 
 
 type SetRemoteUser struct {
-	XMLName string `xml:"wsdl:SetRemoteUser"`
-	RemoteUser onvif.RemoteUser `xml:"wsdl:RemoteUser"`
+	XMLName string `xml:"tds:SetRemoteUser"`
+	RemoteUser onvif.RemoteUser `xml:"tds:RemoteUser"`
 
 }
 
@@ -411,7 +411,7 @@ type SetRemoteUserResponse struct {
 
 
 type GetUsers struct {
-	XMLName string `xml:"wsdl:GetUsers"`
+	XMLName string `xml:"tds:GetUsers"`
 
 }
 
@@ -423,8 +423,8 @@ type GetUsersResponse struct {
 
 //TODO: List of users
 type CreateUsers struct {
-	XMLName string `xml:"wsdl:CreateUsers"`
-	User onvif.User `xml:"wsdl:User,omitempty"`
+	XMLName string `xml:"tds:CreateUsers"`
+	User onvif.User `xml:"tds:User,omitempty"`
 
 }
 
@@ -435,8 +435,8 @@ type CreateUsersResponse struct {
 
 //TODO: one or more Username
 type DeleteUsers struct {
-	XMLName xsd.String `xml:"wsdl:DeleteUsers"`
-	Username xsd.String `xml:"wsdl:Username"`
+	XMLName xsd.String `xml:"tds:DeleteUsers"`
+	Username xsd.String `xml:"tds:Username"`
 
 }
 
@@ -447,8 +447,8 @@ type DeleteUsersResponse struct {
 
 
 type SetUser struct {
-	XMLName string `xml:"wsdl:SetUser"`
-	User onvif.User `xml:"wsdl:User"`
+	XMLName string `xml:"tds:SetUser"`
+	User onvif.User `xml:"tds:User"`
 
 }
 
@@ -459,7 +459,7 @@ type SetUserResponse struct {
 
 
 type GetWsdlUrl struct {
-	XMLName string `xml:"wsdl:GetWsdlUrl"`
+	XMLName string `xml:"tds:GetWsdlUrl"`
 
 }
 
@@ -471,8 +471,8 @@ type GetWsdlUrlResponse struct {
 
 
 type GetCapabilities struct {
-	XMLName string `xml:"wsdl:GetCapabilities"`
-	Category onvif.CapabilityCategory `xml:"wsdl:Category"`
+	XMLName string `xml:"tds:GetCapabilities"`
+	Category onvif.CapabilityCategory `xml:"tds:Category"`
 
 }
 
@@ -484,7 +484,7 @@ type GetCapabilitiesResponse struct {
 
 
 type GetHostname struct {
-	XMLName string `xml:"wsdl:GetHostname"`
+	XMLName string `xml:"tds:GetHostname"`
 }
 
 
@@ -495,8 +495,8 @@ type GetHostnameResponse struct {
 
 
 type SetHostname struct {
-	XMLName string `xml:"wsdl:SetHostname"`
-	Name xsd.Token `xml:"wsdl:Name"`
+	XMLName string `xml:"tds:SetHostname"`
+	Name xsd.Token `xml:"tds:Name"`
 
 }
 
@@ -507,8 +507,8 @@ type SetHostnameResponse struct {
 
 
 type SetHostnameFromDHCP struct {
-	XMLName string `xml:"wsdl:SetHostnameFromDHCP"`
-	FromDHCP xsd.Boolean `xml:"wsdl:FromDHCP"`
+	XMLName string `xml:"tds:SetHostnameFromDHCP"`
+	FromDHCP xsd.Boolean `xml:"tds:FromDHCP"`
 
 }
 
@@ -520,7 +520,7 @@ type SetHostnameFromDHCPResponse struct {
 
 
 type GetDNS struct {
-	XMLName string `xml:"wsdl:GetDNS"`
+	XMLName string `xml:"tds:GetDNS"`
 
 }
 
@@ -532,10 +532,10 @@ type GetDNSResponse struct {
 
 
 type SetDNS struct {
-	XMLName string `xml:"wsdl:SetDNS"`
-	FromDHCP     xsd.Boolean `xml:"wsdl:FromDHCP"`
-	SearchDomain xsd.Token `xml:"wsdl:SearchDomain"`
-	DNSManual    onvif.IPAddress `xml:"wsdl:DNSManual"`
+	XMLName string `xml:"tds:SetDNS"`
+	FromDHCP     xsd.Boolean `xml:"tds:FromDHCP"`
+	SearchDomain xsd.Token `xml:"tds:SearchDomain"`
+	DNSManual    onvif.IPAddress `xml:"tds:DNSManual"`
 
 }
 
@@ -546,7 +546,7 @@ type SetDNSResponse struct {
 
 
 type GetNTP struct {
-	XMLName string `xml:"wsdl:GetNTP"`
+	XMLName string `xml:"tds:GetNTP"`
 
 }
 
@@ -558,9 +558,9 @@ type GetNTPResponse struct {
 
 
 type SetNTP struct {
-	XMLName string `xml:"wsdl:SetNTP"`
-	FromDHCP  xsd.Boolean `xml:"wsdl:FromDHCP"`
-	NTPManual onvif.NetworkHost `xml:"wsdl:NTPManual"`
+	XMLName string `xml:"tds:SetNTP"`
+	FromDHCP  xsd.Boolean `xml:"tds:FromDHCP"`
+	NTPManual onvif.NetworkHost `xml:"tds:NTPManual"`
 
 }
 
@@ -571,7 +571,7 @@ type SetNTPResponse struct {
 
 
 type GetDynamicDNS struct {
-	XMLName string `xml:"wsdl:GetDynamicDNS"`
+	XMLName string `xml:"tds:GetDynamicDNS"`
 
 }
 
@@ -583,10 +583,10 @@ type GetDynamicDNSResponse struct {
 
 
 type SetDynamicDNS struct {
-	XMLName string `xml:"wsdl:SetDynamicDNS"`
-	Type onvif.DynamicDNSType `xml:"wsdl:Type"`
-	Name onvif.DNSName `xml:"wsdl:Name"`
-	TTL  xsd.Duration `xml:"wsdl:TTL"`
+	XMLName string `xml:"tds:SetDynamicDNS"`
+	Type onvif.DynamicDNSType `xml:"tds:Type"`
+	Name onvif.DNSName `xml:"tds:Name"`
+	TTL  xsd.Duration `xml:"tds:TTL"`
 
 }
 
@@ -597,7 +597,7 @@ type SetDynamicDNSResponse struct {
 
 
 type GetNetworkInterfaces struct {
-	XMLName string `xml:"wsdl:GetNetworkInterfaces"`
+	XMLName string `xml:"tds:GetNetworkInterfaces"`
 
 }
 
@@ -609,9 +609,9 @@ type GetNetworkInterfacesResponse struct {
 
 
 type SetNetworkInterfaces struct {
-	XMLName string `xml:"wsdl:SetNetworkInterfaces"`
-	InterfaceToken onvif.ReferenceToken `xml:"wsdl:InterfaceToken"`
-	NetworkInterface onvif.NetworkInterfaceSetConfiguration `xml:"wsdl:NetworkInterface"`
+	XMLName string `xml:"tds:SetNetworkInterfaces"`
+	InterfaceToken onvif.ReferenceToken `xml:"tds:InterfaceToken"`
+	NetworkInterface onvif.NetworkInterfaceSetConfiguration `xml:"tds:NetworkInterface"`
 
 }
 
@@ -623,7 +623,7 @@ type SetNetworkInterfacesResponse struct {
 
 
 type GetNetworkProtocols struct {
-	XMLName string `xml:"wsdl:GetNetworkProtocols"`
+	XMLName string `xml:"tds:GetNetworkProtocols"`
 
 }
 
@@ -635,8 +635,8 @@ type GetNetworkProtocolsResponse struct {
 
 
 type SetNetworkProtocols struct {
-	XMLName string `xml:"wsdl:SetNetworkProtocols"`
-	NetworkProtocols onvif.NetworkProtocol `xml:"wsdl:NetworkProtocols"`
+	XMLName string `xml:"tds:SetNetworkProtocols"`
+	NetworkProtocols onvif.NetworkProtocol `xml:"tds:NetworkProtocols"`
 
 }
 
@@ -647,7 +647,7 @@ type SetNetworkProtocolsResponse struct {
 
 
 type GetNetworkDefaultGateway struct {
-	XMLName string `xml:"wsdl:GetNetworkDefaultGateway"`
+	XMLName string `xml:"tds:GetNetworkDefaultGateway"`
 
 }
 
@@ -659,9 +659,9 @@ type GetNetworkDefaultGatewayResponse struct {
 
 
 type SetNetworkDefaultGateway struct {
-	XMLName string `xml:"wsdl:SetNetworkDefaultGateway"`
-	IPv4Address onvif.IPv4Address `xml:"wsdl:IPv4Address"`
-	IPv6Address onvif.IPv6Address `xml:"wsdl:IPv6Address"`
+	XMLName string `xml:"tds:SetNetworkDefaultGateway"`
+	IPv4Address onvif.IPv4Address `xml:"tds:IPv4Address"`
+	IPv6Address onvif.IPv6Address `xml:"tds:IPv6Address"`
 
 }
 
@@ -672,7 +672,7 @@ type SetNetworkDefaultGatewayResponse struct {
 
 
 type GetZeroConfiguration struct {
-	XMLName string `xml:"wsdl:GetZeroConfiguration"`
+	XMLName string `xml:"tds:GetZeroConfiguration"`
 
 }
 
@@ -684,9 +684,9 @@ type GetZeroConfigurationResponse struct {
 
 
 type SetZeroConfiguration struct {
-	XMLName string `xml:"wsdl:SetZeroConfiguration"`
-	InterfaceToken onvif.ReferenceToken `xml:"wsdl:InterfaceToken"`
-	Enabled        xsd.Boolean `xml:"wsdl:Enabled"`
+	XMLName string `xml:"tds:SetZeroConfiguration"`
+	InterfaceToken onvif.ReferenceToken `xml:"tds:InterfaceToken"`
+	Enabled        xsd.Boolean `xml:"tds:Enabled"`
 
 }
 
@@ -697,7 +697,7 @@ type SetZeroConfigurationResponse struct {
 
 
 type GetIPAddressFilter struct {
-	XMLName string `xml:"wsdl:GetIPAddressFilter"`
+	XMLName string `xml:"tds:GetIPAddressFilter"`
 
 }
 
@@ -709,8 +709,8 @@ type GetIPAddressFilterResponse struct {
 
 
 type SetIPAddressFilter struct {
-	XMLName string `xml:"wsdl:SetIPAddressFilter"`
-	IPAddressFilter onvif.IPAddressFilter `xml:"wsdl:IPAddressFilter"`
+	XMLName string `xml:"tds:SetIPAddressFilter"`
+	IPAddressFilter onvif.IPAddressFilter `xml:"tds:IPAddressFilter"`
 
 }
 
@@ -725,8 +725,8 @@ type SetIPAddressFilterResponse struct {
 //the device shall support adding of IP filtering addresses through
 //the AddIPAddressFilter command.
 type AddIPAddressFilter struct {
-	XMLName string `xml:"wsdl:AddIPAddressFilter"`
-	IPAddressFilter onvif.IPAddressFilter `xml:"wsdl:IPAddressFilter"`
+	XMLName string `xml:"tds:AddIPAddressFilter"`
+	IPAddressFilter onvif.IPAddressFilter `xml:"tds:IPAddressFilter"`
 
 }
 
@@ -737,7 +737,7 @@ type AddIPAddressFilterResponse struct {
 
 
 type RemoveIPAddressFilter struct {
-	XMLName string `xml:"wsdl:RemoveIPAddressFilter"`
+	XMLName string `xml:"tds:RemoveIPAddressFilter"`
 	IPAddressFilter onvif.IPAddressFilter `xml:"onvif:IPAddressFilter"`
 
 }
@@ -749,7 +749,7 @@ type RemoveIPAddressFilterResponse struct {
 
 
 type GetAccessPolicy struct {
-	XMLName string `xml:"wsdl:GetAccessPolicy"`
+	XMLName string `xml:"tds:GetAccessPolicy"`
 }
 
 
@@ -760,8 +760,8 @@ type GetAccessPolicyResponse struct {
 
 
 type SetAccessPolicy struct {
-	XMLName string `xml:"wsdl:SetAccessPolicy"`
-	PolicyFile onvif.BinaryData `xml:"wsdl:PolicyFile"`
+	XMLName string `xml:"tds:SetAccessPolicy"`
+	PolicyFile onvif.BinaryData `xml:"tds:PolicyFile"`
 
 }
 
@@ -772,11 +772,11 @@ type SetAccessPolicyResponse struct {
 
 
 type CreateCertificate struct {
-	XMLName string `xml:"wsdl:CreateCertificate"`
-	CertificateID  xsd.Token `xml:"wsdl:CertificateID,omitempty"`
-	Subject        string `xml:"wsdl:Subject,omitempty"`
-	ValidNotBefore xsd.DateTime `xml:"wsdl:ValidNotBefore,omitempty"`
-	ValidNotAfter  xsd.DateTime `xml:"wsdl:ValidNotAfter,omitempty"`
+	XMLName string `xml:"tds:CreateCertificate"`
+	CertificateID  xsd.Token `xml:"tds:CertificateID,omitempty"`
+	Subject        string `xml:"tds:Subject,omitempty"`
+	ValidNotBefore xsd.DateTime `xml:"tds:ValidNotBefore,omitempty"`
+	ValidNotAfter  xsd.DateTime `xml:"tds:ValidNotAfter,omitempty"`
 
 }
 
@@ -788,7 +788,7 @@ type CreateCertificateResponse struct {
 
 
 type GetCertificates struct {
-	XMLName string `xml:"wsdl:GetCertificates"`
+	XMLName string `xml:"tds:GetCertificates"`
 }
 
 
@@ -799,7 +799,7 @@ type GetCertificatesResponse struct {
 
 
 type GetCertificatesStatus struct {
-	XMLName string `xml:"wsdl:GetCertificatesStatus"`
+	XMLName string `xml:"tds:GetCertificatesStatus"`
 
 }
 
@@ -811,8 +811,8 @@ type GetCertificatesStatusResponse struct {
 
 
 type SetCertificatesStatus struct {
-	XMLName string `xml:"wsdl:SetCertificatesStatus"`
-	CertificateStatus onvif.CertificateStatus `xml:"wsdl:CertificateStatus"`
+	XMLName string `xml:"tds:SetCertificatesStatus"`
+	CertificateStatus onvif.CertificateStatus `xml:"tds:CertificateStatus"`
 
 }
 
@@ -823,8 +823,8 @@ type SetCertificatesStatusResponse struct {
 
 //TODO: List of CertificateID
 type DeleteCertificates struct {
-	XMLName string `xml:"wsdl:DeleteCertificates"`
-	CertificateID xsd.Token `xml:"wsdl:CertificateID"`
+	XMLName string `xml:"tds:DeleteCertificates"`
+	CertificateID xsd.Token `xml:"tds:CertificateID"`
 
 }
 
@@ -835,10 +835,10 @@ type DeleteCertificatesResponse struct {
 
 //TODO: Откуда onvif:data = cid:21312413412
 type GetPkcs10Request struct {
-	XMLName string `xml:"wsdl:GetPkcs10Request"`
-	CertificateID xsd.Token `xml:"wsdl:CertificateID"`
-	Subject xsd.String `xml:"wsdl:Subject"`
-	Attributes onvif.BinaryData `xml:"wsdl:Attributes"`
+	XMLName string `xml:"tds:GetPkcs10Request"`
+	CertificateID xsd.Token `xml:"tds:CertificateID"`
+	Subject xsd.String `xml:"tds:Subject"`
+	Attributes onvif.BinaryData `xml:"tds:Attributes"`
 
 }
 
@@ -850,8 +850,8 @@ type GetPkcs10RequestResponse struct {
 
 //TODO: one or more NTVCertificate
 type LoadCertificates struct {
-	XMLName string `xml:"wsdl:LoadCertificates"`
-	NVTCertificate onvif.Certificate `xml:"wsdl:NVTCertificate"`
+	XMLName string `xml:"tds:LoadCertificates"`
+	NVTCertificate onvif.Certificate `xml:"tds:NVTCertificate"`
 
 }
 
@@ -862,7 +862,7 @@ type LoadCertificatesResponse struct {
 
 
 type GetClientCertificateMode struct {
-	XMLName string `xml:"wsdl:GetClientCertificateMode"`
+	XMLName string `xml:"tds:GetClientCertificateMode"`
 
 }
 
@@ -874,8 +874,8 @@ type GetClientCertificateModeResponse struct {
 
 
 type SetClientCertificateMode struct {
-	XMLName string `xml:"wsdl:SetClientCertificateMode"`
-	Enabled xsd.Boolean `xml:"wsdl:Enabled"`
+	XMLName string `xml:"tds:SetClientCertificateMode"`
+	Enabled xsd.Boolean `xml:"tds:Enabled"`
 
 }
 
@@ -886,7 +886,7 @@ type SetClientCertificateModeResponse struct {
 
 
 type GetRelayOutputs struct {
-	XMLName string `xml:"wsdl:GetRelayOutputs"`
+	XMLName string `xml:"tds:GetRelayOutputs"`
 
 }
 
@@ -898,9 +898,9 @@ type GetRelayOutputsResponse struct {
 
 
 type SetRelayOutputSettings struct {
-	XMLName string `xml:"wsdl:SetRelayOutputSettings"`
-	RelayOutputToken onvif.ReferenceToken `xml:"wsdl:RelayOutputToken"`
-	Properties onvif.RelayOutputSettings `xml:"wsdl:Properties"`
+	XMLName string `xml:"tds:SetRelayOutputSettings"`
+	RelayOutputToken onvif.ReferenceToken `xml:"tds:RelayOutputToken"`
+	Properties onvif.RelayOutputSettings `xml:"tds:Properties"`
 
 }
 
@@ -911,9 +911,9 @@ type SetRelayOutputSettingsResponse struct {
 
 
 type SetRelayOutputState struct {
-	XMLName string `xml:"wsdl:SetRelayOutputState"`
-	RelayOutputToken onvif.ReferenceToken `xml:"wsdl:RelayOutputToken"`
-	LogicalState onvif.RelayLogicalState `xml:"wsdl:LogicalState"`
+	XMLName string `xml:"tds:SetRelayOutputState"`
+	RelayOutputToken onvif.ReferenceToken `xml:"tds:RelayOutputToken"`
+	LogicalState onvif.RelayLogicalState `xml:"tds:LogicalState"`
 
 }
 
@@ -924,8 +924,8 @@ type SetRelayOutputStateResponse struct {
 
 
 type SendAuxiliaryCommand struct {
-	XMLName string `xml:"wsdl:SendAuxiliaryCommand"`
-	AuxiliaryCommand onvif.AuxiliaryData `xml:"wsdl:AuxiliaryCommand"`
+	XMLName string `xml:"tds:SendAuxiliaryCommand"`
+	AuxiliaryCommand onvif.AuxiliaryData `xml:"tds:AuxiliaryCommand"`
 
 }
 
@@ -937,7 +937,7 @@ type SendAuxiliaryCommandResponse struct {
 
 
 type GetCACertificates struct {
-	XMLName string `xml:"wsdl:GetCACertificates"`
+	XMLName string `xml:"tds:GetCACertificates"`
 }
 
 
@@ -948,8 +948,8 @@ type GetCACertificatesResponse struct {
 
 //TODO: one or more CertificateWithPrivateKey
 type LoadCertificateWithPrivateKey struct {
-	XMLName string `xml:"wsdl:LoadCertificateWithPrivateKey"`
-	CertificateWithPrivateKey onvif.CertificateWithPrivateKey `xml:"wsdl:CertificateWithPrivateKey"`
+	XMLName string `xml:"tds:LoadCertificateWithPrivateKey"`
+	CertificateWithPrivateKey onvif.CertificateWithPrivateKey `xml:"tds:CertificateWithPrivateKey"`
 
 }
 
@@ -960,8 +960,8 @@ type LoadCertificateWithPrivateKeyResponse struct {
 
 
 type GetCertificateInformation struct {
-	XMLName string `xml:"wsdl:GetCertificateInformation"`
-	CertificateID xsd.Token `xml:"wsdl:CertificateID"`
+	XMLName string `xml:"tds:GetCertificateInformation"`
+	CertificateID xsd.Token `xml:"tds:CertificateID"`
 
 }
 
@@ -973,8 +973,8 @@ type GetCertificateInformationResponse struct {
 
 
 type LoadCACertificates struct {
-	XMLName string `xml:"wsdl:LoadCACertificates"`
-	CACertificate onvif.Certificate `xml:"wsdl:CACertificate"`
+	XMLName string `xml:"tds:LoadCACertificates"`
+	CACertificate onvif.Certificate `xml:"tds:CACertificate"`
 
 }
 
@@ -985,8 +985,8 @@ type LoadCACertificatesResponse struct {
 
 
 type CreateDot1XConfiguration struct {
-	XMLName string `xml:"wsdl:CreateDot1XConfiguration"`
-	Dot1XConfiguration onvif.Dot1XConfiguration `xml:"wsdl:Dot1XConfiguration"`
+	XMLName string `xml:"tds:CreateDot1XConfiguration"`
+	Dot1XConfiguration onvif.Dot1XConfiguration `xml:"tds:Dot1XConfiguration"`
 
 }
 
@@ -997,8 +997,8 @@ type CreateDot1XConfigurationResponse struct {
 
 
 type SetDot1XConfiguration struct {
-	XMLName string `xml:"wsdl:SetDot1XConfiguration"`
-	Dot1XConfiguration onvif.Dot1XConfiguration `xml:"wsdl:Dot1XConfiguration"`
+	XMLName string `xml:"tds:SetDot1XConfiguration"`
+	Dot1XConfiguration onvif.Dot1XConfiguration `xml:"tds:Dot1XConfiguration"`
 
 }
 
@@ -1009,8 +1009,8 @@ type SetDot1XConfigurationResponse struct {
 
 
 type GetDot1XConfiguration struct {
-	XMLName string `xml:"wsdl:GetDot1XConfiguration"`
-	Dot1XConfigurationToken onvif.ReferenceToken `xml:"wsdl:Dot1XConfigurationToken"`
+	XMLName string `xml:"tds:GetDot1XConfiguration"`
+	Dot1XConfigurationToken onvif.ReferenceToken `xml:"tds:Dot1XConfigurationToken"`
 
 }
 
@@ -1022,7 +1022,7 @@ type GetDot1XConfigurationResponse struct {
 
 
 type GetDot1XConfigurations struct {
-	XMLName string `xml:"wsdl:GetDot1XConfigurations"`
+	XMLName string `xml:"tds:GetDot1XConfigurations"`
 
 }
 
@@ -1034,8 +1034,8 @@ type GetDot1XConfigurationsResponse struct {
 
 //TODO: Zero or more Dot1XConfigurationToken
 type DeleteDot1XConfiguration struct {
-	XMLName string `xml:"wsdl:DeleteDot1XConfiguration"`
-	Dot1XConfigurationToken onvif.ReferenceToken `xml:"wsdl:Dot1XConfigurationToken"`
+	XMLName string `xml:"tds:DeleteDot1XConfiguration"`
+	Dot1XConfigurationToken onvif.ReferenceToken `xml:"tds:Dot1XConfigurationToken"`
 
 }
 
@@ -1046,7 +1046,7 @@ type DeleteDot1XConfigurationResponse struct {
 
 
 type GetDot11Capabilities struct {
-	XMLName string `xml:"wsdl:GetDot11Capabilities"`
+	XMLName string `xml:"tds:GetDot11Capabilities"`
 
 }
 
@@ -1058,8 +1058,8 @@ type GetDot11CapabilitiesResponse struct {
 
 
 type GetDot11Status struct {
-	XMLName string `xml:"wsdl:GetDot11Status"`
-	InterfaceToken onvif.ReferenceToken `xml:"wsdl:InterfaceToken"`
+	XMLName string `xml:"tds:GetDot11Status"`
+	InterfaceToken onvif.ReferenceToken `xml:"tds:InterfaceToken"`
 
 }
 
@@ -1071,8 +1071,8 @@ type GetDot11StatusResponse struct {
 
 
 type ScanAvailableDot11Networks struct {
-	XMLName string `xml:"wsdl:ScanAvailableDot11Networks"`
-	InterfaceToken onvif.ReferenceToken `xml:"wsdl:InterfaceToken"`
+	XMLName string `xml:"tds:ScanAvailableDot11Networks"`
+	InterfaceToken onvif.ReferenceToken `xml:"tds:InterfaceToken"`
 
 }
 
@@ -1084,7 +1084,7 @@ type ScanAvailableDot11NetworksResponse struct {
 
 
 type GetSystemUris struct {
-	XMLName string `xml:"wsdl:GetSystemUris"`
+	XMLName string `xml:"tds:GetSystemUris"`
 
 }
 
@@ -1098,7 +1098,7 @@ type GetSystemUrisResponse struct {
 
 
 type StartFirmwareUpgrade struct {
-	XMLName string `xml:"wsdl:StartFirmwareUpgrade"`
+	XMLName string `xml:"tds:StartFirmwareUpgrade"`
 
 }
 
@@ -1112,7 +1112,7 @@ type StartFirmwareUpgradeResponse struct {
 
 
 type StartSystemRestore struct {
-	XMLName string `xml:"wsdl:StartSystemRestore"`
+	XMLName string `xml:"tds:StartSystemRestore"`
 
 }
 
@@ -1125,7 +1125,7 @@ type StartSystemRestoreResponse struct {
 
 
 type GetStorageConfigurations struct {
-	XMLName string `xml:"wsdl:GetStorageConfigurations"`
+	XMLName string `xml:"tds:GetStorageConfigurations"`
 
 }
 
@@ -1137,7 +1137,7 @@ type GetStorageConfigurationsResponse struct {
 
 
 type CreateStorageConfiguration struct {
-	XMLName string `xml:"wsdl:CreateStorageConfiguration"`
+	XMLName string `xml:"tds:CreateStorageConfiguration"`
 	StorageConfiguration StorageConfigurationData
 
 }
@@ -1150,8 +1150,8 @@ type CreateStorageConfigurationResponse struct {
 
 
 type GetStorageConfiguration struct {
-	XMLName string `xml:"wsdl:GetStorageConfiguration"`
-	Token onvif.ReferenceToken `xml:"wsdl:Token"`
+	XMLName string `xml:"tds:GetStorageConfiguration"`
+	Token onvif.ReferenceToken `xml:"tds:Token"`
 
 }
 
@@ -1163,8 +1163,8 @@ type GetStorageConfigurationResponse struct {
 
 
 type SetStorageConfiguration struct {
-	XMLName string `xml:"wsdl:SetStorageConfiguration"`
-	StorageConfiguration StorageConfiguration `xml:"wsdl:StorageConfiguration"`
+	XMLName string `xml:"tds:SetStorageConfiguration"`
+	StorageConfiguration StorageConfiguration `xml:"tds:StorageConfiguration"`
 
 }
 
@@ -1175,8 +1175,8 @@ type SetStorageConfigurationResponse struct {
 
 
 type DeleteStorageConfiguration struct {
-	XMLName string `xml:"wsdl:DeleteStorageConfiguration"`
-	Token onvif.ReferenceToken `xml:"wsdl:Token"`
+	XMLName string `xml:"tds:DeleteStorageConfiguration"`
+	Token onvif.ReferenceToken `xml:"tds:Token"`
 
 }
 
@@ -1187,7 +1187,7 @@ type DeleteStorageConfigurationResponse struct {
 
 
 type GetGeoLocation struct {
-	XMLName string `xml:"wsdl:GetGeoLocation"`
+	XMLName string `xml:"tds:GetGeoLocation"`
 
 }
 
@@ -1199,8 +1199,8 @@ type GetGeoLocationResponse struct {
 
 //TODO: one or more Location
 type SetGeoLocation struct {
-	XMLName string `xml:"wsdl:SetGeoLocation"`
-	Location onvif.LocationEntity `xml:"wsdl:Location"`
+	XMLName string `xml:"tds:SetGeoLocation"`
+	Location onvif.LocationEntity `xml:"tds:Location"`
 
 }
 
@@ -1211,8 +1211,8 @@ type SetGeoLocationResponse struct {
 
 
 type DeleteGeoLocation struct {
-	XMLName string `xml:"wsdl:DeleteGeoLocation"`
-	Location onvif.LocationEntity `xml:"wsdl:Location"`
+	XMLName string `xml:"tds:DeleteGeoLocation"`
+	Location onvif.LocationEntity `xml:"tds:Location"`
 
 }
 

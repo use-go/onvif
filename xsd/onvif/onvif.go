@@ -4,7 +4,8 @@ import (
 	"github.com/yakovlevdmv/goonvif/xsd"
 )
 
-//TODO: rename package xsdTypes
+// BUG(r): Enum types implemented as simple string
+
 //TODO: enumerations
 //TODO: type <typeName> struct {Any string} convert to type <typeName> AnyType
 //TODO: process restrictions
@@ -21,6 +22,7 @@ import (
 
 
 //todo Add in buit in
+
 type ContentType string // minLength value="3"
 type DNSName xsd.Token
 
@@ -468,8 +470,9 @@ type IPAddress struct {
 
 type IPType xsd.String
 
+//IPv4 address
 type IPv4Address xsd.Token
-
+//IPv6 address
 type IPv6Address xsd.Token
 
 type AudioEncoderConfiguration struct {
@@ -1582,6 +1585,7 @@ type IPv4Configuration struct {
 	DHCP xsd.Boolean
 }
 
+//optional, unbounded
 type PrefixedIPv4Address struct {
 	Address IPv4Address `xml:"onvif:Address"`
 	PrefixLength xsd.Int `xml:"onvif:PrefixLength"`
@@ -1658,6 +1662,7 @@ type IPAddressFilter struct {
 
 type IPAddressFilterExtension xsd.AnyType
 
+//enum { 'Allow', 'Deny' }
 //TODO: enumeration
 type IPAddressFilterType xsd.String
 

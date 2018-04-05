@@ -14,7 +14,7 @@ type Capabilities struct {
 //PTZ main types
 
 type GetServiceCapabilities struct {
-	XMLName string `xml:"wsdl:GetServiceCapabilities"`
+	XMLName string `xml:"tptz:GetServiceCapabilities"`
 }
 
 
@@ -25,7 +25,7 @@ type GetServiceCapabilitiesResponse struct {
 
 
 type GetNodes struct {
-	XMLName string `xml:"wsdl:GetNodes"`
+	XMLName string `xml:"tptz:GetNodes"`
 }
 
 
@@ -36,8 +36,8 @@ type GetNodesResponse struct {
 
 
 type GetNode struct {
-	XMLName string `xml:"wsdl:GetNode"`
-	NodeToken onvif.ReferenceToken `xml:"wsdl:NodeToken"`
+	XMLName string `xml:"tptz:GetNode"`
+	NodeToken onvif.ReferenceToken `xml:"tptz:NodeToken"`
 
 }
 
@@ -49,8 +49,8 @@ type GetNodeResponse struct {
 
 
 type GetConfiguration struct {
-	XMLName string `xml:"wsdl:GetConfiguration"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:GetConfiguration"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 }
 
 
@@ -61,7 +61,7 @@ type GetConfigurationResponse struct {
 
 
 type GetConfigurations struct {
-	XMLName string `xml:"wsdl:GetConfigurations"`
+	XMLName string `xml:"tptz:GetConfigurations"`
 }
 
 
@@ -72,9 +72,9 @@ type GetConfigurationsResponse struct {
 
 
 type SetConfiguration struct {
-	XMLName string `xml:"wsdl:SetConfiguration"`
-	PTZConfiguration onvif.PTZConfiguration `xml:"wsdl:PTZConfiguration"`
-	ForcePersistence xsd.Boolean `xml:"wsdl:ForcePersistence"`
+	XMLName string `xml:"tptz:SetConfiguration"`
+	PTZConfiguration onvif.PTZConfiguration `xml:"tptz:PTZConfiguration"`
+	ForcePersistence xsd.Boolean `xml:"tptz:ForcePersistence"`
 
 }
 
@@ -85,8 +85,8 @@ type SetConfigurationResponse struct {
 
 
 type GetConfigurationOptions struct {
-	XMLName string `xml:"wsdl:GetConfigurationOptions"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:GetConfigurationOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 
 }
 
@@ -98,9 +98,9 @@ type GetConfigurationOptionsResponse struct {
 
 
 type SendAuxiliaryCommand struct {
-	XMLName string `xml:"wsdl:SendAuxiliaryCommand"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	AuxiliaryData onvif.AuxiliaryData `xml:"wsdl:AuxiliaryData"`
+	XMLName string `xml:"tptz:SendAuxiliaryCommand"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	AuxiliaryData onvif.AuxiliaryData `xml:"tptz:AuxiliaryData"`
 
 }
 
@@ -112,8 +112,8 @@ type SendAuxiliaryCommandResponse struct {
 
 
 type GetPresets struct {
-	XMLName string `xml:"wsdl:GetPresets"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:GetPresets"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 }
 
 
@@ -124,10 +124,10 @@ type GetPresetsResponse struct {
 
 
 type SetPreset struct {
-	XMLName string `xml:"wsdl:SetPreset"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	PresetName xsd.String `xml:"wsdl:PresetName"`
-	PresetToken onvif.ReferenceToken `xml:"wsdl:PresetToken"`
+	XMLName string `xml:"tptz:SetPreset"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	PresetName xsd.String `xml:"tptz:PresetName"`
+	PresetToken onvif.ReferenceToken `xml:"tptz:PresetToken"`
 }
 
 
@@ -138,9 +138,9 @@ type SetPresetResponse struct {
 
 
 type RemovePreset struct {
-	XMLName string `xml:"wsdl:RemovePreset"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	PresetToken onvif.ReferenceToken `xml:"wsdl:PresetToken"`
+	XMLName string `xml:"tptz:RemovePreset"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	PresetToken onvif.ReferenceToken `xml:"tptz:PresetToken"`
 
 }
 
@@ -151,10 +151,10 @@ type RemovePresetResponse struct {
 
 
 type GotoPreset struct {
-	XMLName string `xml:"wsdl:GotoPreset"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	PresetToken onvif.ReferenceToken `xml:"wsdl:PresetToken"`
-	Speed onvif.PTZSpeed `xml:"wsdl:Speed"`
+	XMLName string `xml:"tptz:GotoPreset"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	PresetToken onvif.ReferenceToken `xml:"tptz:PresetToken"`
+	Speed onvif.PTZSpeed `xml:"tptz:Speed"`
 
 }
 
@@ -165,9 +165,9 @@ type GotoPresetResponse struct {
 
 
 type GotoHomePosition struct {
-	XMLName string `xml:"wsdl:GotoHomePosition"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	Speed onvif.PTZSpeed `xml:"wsdl:Speed"`
+	XMLName string `xml:"tptz:GotoHomePosition"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	Speed onvif.PTZSpeed `xml:"tptz:Speed"`
 
 }
 
@@ -178,8 +178,8 @@ type GotoHomePositionResponse struct {
 
 
 type SetHomePosition struct {
-	XMLName string `xml:"wsdl:SetHomePosition"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:SetHomePosition"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 }
 
 
@@ -189,10 +189,10 @@ type SetHomePositionResponse struct {
 
 
 type ContinuousMove struct {
-	XMLName string `xml:"wsdl:ContinuousMove"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	Velocity onvif.PTZSpeed `xml:"wsdl:Velocity"`
-	Timeout xsd.Duration `xml:"wsdl:Timeout"`
+	XMLName string `xml:"tptz:ContinuousMove"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	Velocity onvif.PTZSpeed `xml:"tptz:Velocity"`
+	Timeout xsd.Duration `xml:"tptz:Timeout"`
 
 }
 
@@ -203,10 +203,10 @@ type ContinuousMoveResponse struct {
 
 
 type RelativeMove struct {
-	XMLName string `xml:"wsdl:RelativeMove"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	Translation onvif.PTZVector `xml:"wsdl:Translation"`
-	Speed onvif.PTZSpeed `xml:"wsdl:Speed"`
+	XMLName string `xml:"tptz:RelativeMove"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	Translation onvif.PTZVector `xml:"tptz:Translation"`
+	Speed onvif.PTZSpeed `xml:"tptz:Speed"`
 
 }
 
@@ -217,8 +217,8 @@ type RelativeMoveResponse struct {
 
 
 type GetStatus struct {
-	XMLName string `xml:"wsdl:GetStatus"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:GetStatus"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 }
 
 
@@ -229,10 +229,10 @@ type GetStatusResponse struct {
 
 
 type AbsoluteMove struct {
-	XMLName string `xml:"wsdl:AbsoluteMove"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	Position onvif.PTZVector `xml:"wsdl:Position"`
-	Speed onvif.PTZSpeed `xml:"wsdl:Speed"`
+	XMLName string `xml:"tptz:AbsoluteMove"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	Position onvif.PTZVector `xml:"tptz:Position"`
+	Speed onvif.PTZSpeed `xml:"tptz:Speed"`
 
 }
 
@@ -243,12 +243,12 @@ type AbsoluteMoveResponse struct {
 
 
 type GeoMove struct {
-	XMLName string `xml:"wsdl:GeoMove"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	Target onvif.GeoLocation `xml:"wsdl:Target"`
-	Speed onvif.PTZSpeed `xml:"wsdl:Speed"`
-	AreaHeight xsd.Float `xml:"wsdl:AreaHeight"`
-	AreaWidth xsd.Float `xml:"wsdl:AreaWidth"`
+	XMLName string `xml:"tptz:GeoMove"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	Target onvif.GeoLocation `xml:"tptz:Target"`
+	Speed onvif.PTZSpeed `xml:"tptz:Speed"`
+	AreaHeight xsd.Float `xml:"tptz:AreaHeight"`
+	AreaWidth xsd.Float `xml:"tptz:AreaWidth"`
 
 }
 
@@ -259,10 +259,10 @@ type GeoMoveResponse struct {
 
 
 type Stop struct {
-	XMLName string `xml:"wsdl:Stop"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	PanTilt xsd.Boolean `xml:"wsdl:PanTilt"`
-	Zoom xsd.Boolean `xml:"wsdl:Zoom"`
+	XMLName string `xml:"tptz:Stop"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	PanTilt xsd.Boolean `xml:"tptz:PanTilt"`
+	Zoom xsd.Boolean `xml:"tptz:Zoom"`
 
 }
 
@@ -273,8 +273,8 @@ type StopResponse struct {
 
 
 type GetPresetTours struct {
-	XMLName string `xml:"wsdl:GetPresetTours"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:GetPresetTours"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 }
 
 
@@ -285,9 +285,9 @@ type GetPresetToursResponse struct {
 
 
 type GetPresetTour struct {
-	XMLName string `xml:"wsdl:GetPresetTour"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	PresetTourToken onvif.ReferenceToken `xml:"wsdl:PresetTourToken"`
+	XMLName string `xml:"tptz:GetPresetTour"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	PresetTourToken onvif.ReferenceToken `xml:"tptz:PresetTourToken"`
 
 }
 
@@ -299,9 +299,9 @@ type GetPresetTourResponse struct {
 
 
 type GetPresetTourOptions struct {
-	XMLName string `xml:"wsdl:GetPresetTourOptions"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	PresetTourToken onvif.ReferenceToken `xml:"wsdl:PresetTourToken"`
+	XMLName string `xml:"tptz:GetPresetTourOptions"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	PresetTourToken onvif.ReferenceToken `xml:"tptz:PresetTourToken"`
 
 }
 
@@ -313,8 +313,8 @@ type GetPresetTourOptionsResponse struct {
 
 
 type CreatePresetTour struct {
-	XMLName string `xml:"wsdl:CreatePresetTour"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:CreatePresetTour"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 
 }
 
@@ -326,9 +326,9 @@ type CreatePresetTourResponse struct {
 
 
 type ModifyPresetTour struct {
-	XMLName string `xml:"wsdl:ModifyPresetTour"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	PresetTour onvif.PresetTour `xml:"wsdl:PresetTour"`
+	XMLName string `xml:"tptz:ModifyPresetTour"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	PresetTour onvif.PresetTour `xml:"tptz:PresetTour"`
 
 }
 
@@ -339,8 +339,8 @@ type ModifyPresetTourResponse struct {
 
 
 type OperatePresetTour struct {
-	XMLName string `xml:"wsdl:OperatePresetTour"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:OperatePresetTour"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 	PresetTourToken onvif.ReferenceToken `xml:"onvif:PresetTourToken"`
 	Operation onvif.PTZPresetTourOperation `xml:"onvif:Operation"`
 
@@ -353,9 +353,9 @@ type OperatePresetTourResponse struct {
 
 
 type RemovePresetTour struct {
-	XMLName string `xml:"wsdl:RemovePresetTour"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
-	PresetTourToken onvif.ReferenceToken `xml:"wsdl:PresetTourToken"`
+	XMLName string `xml:"tptz:RemovePresetTour"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
+	PresetTourToken onvif.ReferenceToken `xml:"tptz:PresetTourToken"`
 
 }
 
@@ -366,8 +366,8 @@ type RemovePresetTourResponse struct {
 
 
 type GetCompatibleConfigurations struct {
-	XMLName string `xml:"wsdl:GetCompatibleConfigurations"`
-	ProfileToken onvif.ReferenceToken `xml:"wsdl:ProfileToken"`
+	XMLName string `xml:"tptz:GetCompatibleConfigurations"`
+	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 
 }
 

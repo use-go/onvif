@@ -1,14 +1,17 @@
 package goonvif
 
 import (
-	"net"
 	"encoding/xml"
 	"log"
 	"fmt"
 	"github.com/beevik/etree"
-	"github.com/yakovlevdmv/goonvif/networking"
 	"github.com/yakovlevdmv/gosoap"
 	"strconv"
+	"github.com/yakovlevdmv/WS-Discovery"
+	"github.com/yakovlevdmv/goonvif/Networking"
+	"reflect"
+	"strings"
+	"github.com/yakovlevdmv/goonvif/Device"
 )
 
 var xlmns = map[string]string {
@@ -16,8 +19,9 @@ var xlmns = map[string]string {
 	"tds":"http://www.onvif.org/ver10/device/wsdl",
 	"trt":"http://www.onvif.org/ver10/media/wsdl",
 	"tev":"http://www.onvif.org/ver10/events/wsdl",
-	"tpz":"http://www.onvif.org/ver20/ptz/wsdl",
+	"tptz":"http://www.onvif.org/ver20/ptz/wsdl",
 	"timg":"http://www.onvif.org/ver20/imaging/wsdl",
+	"tan":"http://www.onvif.org/ver20/analytics/wsdl",
 	"xmime":"http://www.w3.org/2005/05/xmlmime",
 	"wsnt":"http://docs.oasis-open.org/wsn/b-2",
 	"xop":"http://www.w3.org/2004/08/xop/include",
@@ -67,23 +71,60 @@ type deviceInfo struct {
 //It contains methods, which helps to communicate with ONVIF device
 type device struct {
 
-	xaddr net.IP
+	xaddr string
 	login string
 	password string
-
-	token [64]uint8
 
 	endpoints map[string]string
 	info deviceInfo
 
 }
 
-func getAvailableDevicesAtEthernet(interfaceName string) {
+func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) {
+	/*
+	Call an WS-Discovery Probe Message to Discover NVT type Devices
+	 */
+	devices := WS_Discovery.SendProbe(interfaceName, nil, []string{"dn:"+NVT.String()}, map[string]string{"dn":"http://www.onvif.org/ver10/network/wsdl"})
+	for _, j := range devices {
+		fmt.Println(j)
+	}
+}
 
+func (dev *device) getSupportedServices() {
+	resp, err := dev.CallMethod(Device.GetCapabilities{})
+	if err != nil {
+		log.Println(err.Error())
+		return
+	} else {
+		doc := etree.NewDocument()
+		if err := doc.ReadFromString(resp); err != nil {
+			log.Println(err.Error())
+			return
+		}
+		services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/*/XAddr")
+		for _, j := range services{
+			fmt.Println(j.Text())
+			fmt.Println(j.Parent().Tag)
+			dev.addEndpoint(j.Parent().Tag, j.Text())
+		}
+	}
 }
 
 //NewDevice function construct a ONVIF Device entity
-func NewDevice() *device {
+func NewDevice(xaddr string) *device {
+	dev := new(device)
+	dev.xaddr = xaddr
+	dev.endpoints = make(map[string]string)
+	dev.addEndpoint("Device", "http://"+xaddr+"/onvif/device_service")
+	dev.getSupportedServices()
+	return dev
+}
+
+func (dev *device)addEndpoint(Key, Value string) {
+	dev.endpoints[Key]=Value
+}
+
+func newDeviceEntity() *device {
 	return &device{}
 }
 
@@ -99,7 +140,7 @@ func (dev *device) Authenticate(username, password string) {
 func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
-		log.Println("Got error")
+		//log.Println("Got error")
 		return "", err
 	}
 	element := doc.Root()
@@ -116,7 +157,19 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 
 //CallMethod functions call an method, defined <method> struct.
 //You should use Authenticate method to call authorized requests.
-func (dev device) CallMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) CallMethod(method interface{}) (string, error) {
+	pkgPath := strings.Split(reflect.TypeOf(method).PkgPath(),"/")
+	pkg := pkgPath[len(pkgPath)-1]
+
+	var endpoint string
+	switch pkg {
+		case "Device": endpoint = dev.endpoints["Device"]
+		case "Event": endpoint = dev.endpoints["Event"]
+		case "Imaging": endpoint = dev.endpoints["Imaging"]
+		case "Media": endpoint = dev.endpoints["Media"]
+		case "PTZ": endpoint = dev.endpoints["PTZ"]
+	}
+
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
 		return dev.CallAuthorizedMethod(endpoint, method)
@@ -133,12 +186,8 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 	 */
 	output, err := xml.MarshalIndent(method, "  ", "    ")
 	if err != nil {
-		log.Printf("error: %v\n", err.Error())
+		//log.Printf("error: %v\n", err.Error())
 		return "", err
-	}
-
-	if err != nil {
-		fmt.Println(err)
 	}
 
 	/*
@@ -146,14 +195,16 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 	 */
 	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
-		log.Printf("error: %v\n", err)
+		//log.Printf("error: %v\n", err)
 		return "", err
 	}
+
+	soap.AddRootNamespaces(xlmns)
 
 	/*
 	Sending request and returns the response
 	 */
-	return networking.SendSoap(endpoint, soap.String()), nil
+	return networking.SendSoap(endpoint, soap.String())
 }
 
 //CallMethod functions call an method, defined <method> struct with authentication data
@@ -163,21 +214,17 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	 */
 	output, err := xml.MarshalIndent(method, "  ", "    ")
 	if err != nil {
-		log.Printf("error: %v\n", err.Error())
+		//log.Printf("error: %v\n", err.Error())
 		return "", err
 	}
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
 
 	/*
 	Build an SOAP request with <method>
 	 */
 	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
-		log.Fatal(err)
+		//log.Printf("error: %v\n", err.Error())
+		return "", err
 	}
 
 	/*
@@ -191,9 +238,11 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	soap.AddRootNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext1.0.xsd")
 	soap.AddRootNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility1.0.xsd")
 
+	soap.AddRootNamespaces(xlmns)
+
 	soapReq, err := xml.MarshalIndent(auth, "", "  ")
 	if err != nil {
-		log.Printf("error: %v\n", err.Error())
+		//log.Printf("error: %v\n", err.Error())
 		return "", err
 	}
 
@@ -205,5 +254,5 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	/*
 	Sending request and returns the response
 	 */
-	return networking.SendSoap(endpoint, soap.String()), nil
+	return networking.SendSoap(endpoint, soap.String())
 }
