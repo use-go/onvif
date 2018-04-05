@@ -4,9 +4,7 @@ import (
 	"github.com/yakovlevdmv/goonvif/xsd"
 )
 
-type FilterType struct { //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
-	Any string
-}
+type FilterType xsd.String
 
 //<xsd:union memberTypes="xsd:dateTime xsd:duration"/>
 type AbsoluteOrRelativeTimeType struct { //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
@@ -92,7 +90,7 @@ type TopicExpressionType struct { //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 //Event main types
 
 type GetServiceCapabilities struct {
-
+	XMLName string `xml:"tev:GetServiceCapabilities"`
 }
 
 
@@ -101,11 +99,12 @@ type GetServiceCapabilitiesResponse struct {
 
 }
 
-
+//BUG(r) Bad AbsoluteOrRelativeTimeType type
 type CreatePullPointSubscription struct {
-	Filter FilterType
-	InitialTerminationTime AbsoluteOrRelativeTimeType
-	SubscriptionPolicy SubscriptionPolicy
+	XMLName string `xml:"tev:CreatePullPointSubscription"`
+	Filter FilterType `xml:"tev:Filter"`
+	InitialTerminationTime AbsoluteOrRelativeTimeType `xml:"tev:InitialTerminationTime"`
+	SubscriptionPolicy SubscriptionPolicy `xml:"tev:SubscriptionPolicy"`
 
 }
 
@@ -167,7 +166,7 @@ type SubscribeCreationFailedFault struct {
 
 
 type GetEventProperties struct {
-
+	XMLName string `xml:"tev:GetEventProperties"`
 }
 
 
@@ -185,8 +184,9 @@ type GetEventPropertiesResponse struct {
 //Port type PullPointSubscription
 
 type PullMessages struct {
-	Timeout xsd.Duration
-	MessageLimit xsd.Int
+	XMLName string `xml:"tev:PullMessages"`
+	Timeout xsd.Duration `xml:"tev:Timeout"`
+	MessageLimit xsd.Int `xml:"tev:MessageLimit"`
 }
 
 type PullMessagesResponse struct {
@@ -201,8 +201,9 @@ type PullMessagesFaultResponse struct {
 }
 
 type Seek struct {
-	UtcTime xsd.DateTime
-	Reverse xsd.Boolean
+	XMLName string `xml:"tev:Seek"`
+	UtcTime xsd.DateTime `xml:"tev:UtcTime"`
+	Reverse xsd.Boolean `xml:"tev:Reverse"`
 }
 
 type SeekResponse struct {
@@ -210,7 +211,7 @@ type SeekResponse struct {
 }
 
 type SetSynchronizationPoint struct {
-
+	XMLName string `xml:"tev:SetSynchronizationPoint"`
 }
 
 type SetSynchronizationPointResponse struct {

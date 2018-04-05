@@ -4,17 +4,19 @@ import (
 	"net/http"
 	"bytes"
 	"io/ioutil"
-	"log"
 )
 
-func SendSoap(endpoint, message string) string {
+func SendSoap(endpoint, message string) (string, error) {
 	httpClient := new(http.Client)
 
-	resp, _ := httpClient.Post(endpoint, "application/soap+xml; charset=utf-8", bytes.NewBufferString(message))
+	resp, err := httpClient.Post(endpoint, "application/soap+xml; charset=utf-8", bytes.NewBufferString(message))
+	if err != nil {
+		return "", err
+	}
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
 
-	b, _ := ioutil.ReadAll(resp.Body)
-
-	log.Println(string(b))
-
-	return string(b)
+	return string(b),nil
 }
