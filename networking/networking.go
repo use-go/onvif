@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"bytes"
 	"io/ioutil"
-	"log"
 )
 
 func SendSoap(endpoint, message string) string {
@@ -14,7 +13,7 @@ func SendSoap(endpoint, message string) string {
 
 	b, _ := ioutil.ReadAll(resp.Body)
 
-	log.Println(string(b))
+	//log.Println(string(b))
 
 	return string(b)
 }
