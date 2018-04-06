@@ -7,11 +7,12 @@ import (
 	"github.com/beevik/etree"
 	"github.com/yakovlevdmv/gosoap"
 	"strconv"
-	"github.com/yakovlevdmv/WS-Discovery"
-	"github.com/yakovlevdmv/goonvif/Networking"
 	"reflect"
 	"strings"
 	"github.com/yakovlevdmv/goonvif/Device"
+	"github.com/yakovlevdmv/goonvif/networking"
+	"github.com/yakovlevdmv/WS-Discovery"
+	"errors"
 )
 
 var xlmns = map[string]string {
@@ -168,6 +169,10 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 		case "Imaging": endpoint = dev.endpoints["Imaging"]
 		case "Media": endpoint = dev.endpoints["Media"]
 		case "PTZ": endpoint = dev.endpoints["PTZ"]
+	}
+
+	if len(endpoint) == 0 {
+		return "", errors.New("Requested service is not implemented")
 	}
 
 	//TODO: Get endpoint automatically
