@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"bytes"
 	"io/ioutil"
-	"github.com/pkg/errors"
 	"strconv"
+	"errors"
 )
 
 func SendSoap(endpoint, message string) (string, error) {

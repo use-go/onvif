@@ -80,6 +80,10 @@ type device struct {
 
 }
 
+func (dev *device)GetServices() map[string]string {
+	return dev.endpoints
+}
+
 func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []device {
 	/*
 	Call an WS-Discovery Probe Message to Discover NVT type Devices
@@ -123,8 +127,8 @@ func NewDevice(xaddr string) (*device, error) {
 	systemDateTime := Device.GetDeviceInformation{}
 	_, err := dev.CallMethod(systemDateTime)
 	if err != nil {
-		panic(errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services"))
-		return nil, err
+		//panic(errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services"))
+		return nil, errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services")
 	}
 
 	dev.getSupportedServices()
@@ -133,10 +137,6 @@ func NewDevice(xaddr string) (*device, error) {
 
 func (dev *device)addEndpoint(Key, Value string) {
 	dev.endpoints[Key]=Value
-}
-
-func newDeviceEntity() *device {
-	return &device{}
 }
 
 //Authenticate function authenticate client in the ONVIF Device.
@@ -191,7 +191,7 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 		}
 
 		return resp, err*/
-		return dev.сallAuthorizedMethod(endpoint, method)
+		return dev.callAuthorizedMethod(endpoint, method)
 	} else {
 		/*resp, err := dev.сallAuthorizedMethod(endpoint, method)
 		if err != nil {
@@ -199,13 +199,13 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 			return resp, err
 		}
 		return resp, err*/
-		return dev.сallNonAuthorizedMethod(endpoint, method)
+		return dev.callNonAuthorizedMethod(endpoint, method)
 
 	}
 }
 
 //CallNonAuthorizedMethod functions call an method, defined <method> struct without authentication data
-func (dev device) сallNonAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (string, error) {
 	//TODO: Get endpoint automatically
 	/*
 	Converting <method> struct to xml string representation
@@ -234,7 +234,7 @@ func (dev device) сallNonAuthorizedMethod(endpoint string, method interface{}) 
 }
 
 //CallMethod functions call an method, defined <method> struct with authentication data
-func (dev device) сallAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (string, error) {
 	/*
 	Converting <method> struct to xml string representation
 	 */
