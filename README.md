@@ -65,6 +65,7 @@ if err != nil {
 
 Рассмторим, как организована отправка запросов в **Goonvif** на нескольких примерах.
 1. Метод GetCapabilities сервиса DeviceManagement
+
 Все необходимые типы данных определены в пакете [Device](Device/types.go).
 В файле (https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl) можно увидеть:
 ![GetCapabilities](img/exmp_GetCapabilities.png)
@@ -85,6 +86,7 @@ if err != nil {
 }
 ```
 2. Создание пользователя методом CreateUsers сервиса DeviceManagement
+
 Все необходимые типы данных определены в пакете [Device](Device/types.go).
 В файле (https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl) можно увидеть структуру запроса:
 ![CreateUsers](img/exmp_CreateUsers.png)
@@ -107,6 +109,7 @@ if err != nil {
 Некоторые камеры работают специфично. Это означает, что в зависимости от модели камеры можно не получить ошибки при неправильном запросе. Поэтому советую проверять точно ли выполнилась операция. Например, для метода CreateUsers вывести список всех пользователей и сравнить.
 
 3. Метод ContinuousMove сервиса PTZ
+
 Все необходимые типы данных определены в пакете [PTZ](PTZ/types.go).
 В файле (https://www.onvif.org/ver20/ptz/wsdl/ptz.wsdl) можно увидеть структуру запроса:
 ![ContinuousMove](img/exmp_ContinuousMove.png)
