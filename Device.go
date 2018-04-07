@@ -80,14 +80,17 @@ type device struct {
 
 }
 
-func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) {
+func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []device {
 	/*
 	Call an WS-Discovery Probe Message to Discover NVT type Devices
 	 */
 	devices := WS_Discovery.SendProbe(interfaceName, nil, []string{"dn:"+NVT.String()}, map[string]string{"dn":"http://www.onvif.org/ver10/network/wsdl"})
+	//nvtDevices := make([]device, len(devices))
 	for _, j := range devices {
 		fmt.Println(j)
+		//nvtDevices[i] = NewDevice()
 	}
+	return nil
 }
 
 func (dev *device) getSupportedServices() {
@@ -172,14 +175,14 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
-		return dev.CallAuthorizedMethod(endpoint, method)
+		return dev.сallAuthorizedMethod(endpoint, method)
 	} else {
-		return dev.CallNonAuthorizedMethod(endpoint, method)
+		return dev.сallNonAuthorizedMethod(endpoint, method)
 	}
 }
 
 //CallNonAuthorizedMethod functions call an method, defined <method> struct without authentication data
-func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) сallNonAuthorizedMethod(endpoint string, method interface{}) (string, error) {
 	//TODO: Get endpoint automatically
 	/*
 	Converting <method> struct to xml string representation
@@ -208,7 +211,7 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 }
 
 //CallMethod functions call an method, defined <method> struct with authentication data
-func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) сallAuthorizedMethod(endpoint string, method interface{}) (string, error) {
 	/*
 	Converting <method> struct to xml string representation
 	 */
