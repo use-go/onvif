@@ -12,6 +12,8 @@ import (
 	"strings"
 	"github.com/yakovlevdmv/goonvif/Device"
 	"errors"
+	"net/http"
+	"io/ioutil"
 )
 
 var xlmns = map[string]string {
@@ -98,13 +100,16 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []devi
 }
 
 func (dev *device) getSupportedServices() {
-	resp, err := dev.CallMethod(Device.GetCapabilities{})
+	resp, err := dev.CallMethod(Device.GetCapabilities{Category:"All"})
 	if err != nil {
 		//log.Println(err.Error())
 		return
 	} else {
 		doc := etree.NewDocument()
-		if err := doc.ReadFromString(resp); err != nil {
+
+		data, _ := ioutil.ReadAll(resp.Body)
+
+		if err := doc.ReadFromBytes(data); err != nil {
 			//log.Println(err.Error())
 			return
 		}
@@ -124,9 +129,10 @@ func NewDevice(xaddr string) (*device, error) {
 	dev.endpoints = make(map[string]string)
 	dev.addEndpoint("Device", "http://"+xaddr+"/onvif/device_service")
 
-	systemDateTime := Device.GetDeviceInformation{}
-	_, err := dev.CallMethod(systemDateTime)
-	if err != nil {
+	systemDateTime := Device.GetSystemDateAndTime{}
+	resp, err := dev.CallMethod(systemDateTime)
+
+	if err != nil || resp.StatusCode != http.StatusOK {
 		//panic(errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services"))
 		return nil, errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services")
 	}
@@ -169,7 +175,7 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 
 //CallMethod functions call an method, defined <method> struct.
 //You should use Authenticate method to call authorized requests.
-func (dev device) CallMethod(method interface{}) (string, error) {
+func (dev device) CallMethod(method interface{}) (*http.Response, error) {
 	pkgPath := strings.Split(reflect.TypeOf(method).PkgPath(),"/")
 	pkg := pkgPath[len(pkgPath)-1]
 
@@ -181,6 +187,8 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 		case "Media": endpoint = dev.endpoints["Media"]
 		case "PTZ": endpoint = dev.endpoints["PTZ"]
 	}
+
+	//fmt.Println("endpoint", endpoint)
 
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
@@ -205,7 +213,7 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 }
 
 //CallNonAuthorizedMethod functions call an method, defined <method> struct without authentication data
-func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (*http.Response, error) {
 	//TODO: Get endpoint automatically
 	/*
 	Converting <method> struct to xml string representation
@@ -213,7 +221,7 @@ func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (
 	output, err := xml.MarshalIndent(method, "  ", "    ")
 	if err != nil {
 		//log.Printf("error: %v\n", err.Error())
-		return "", err
+		return nil, err
 	}
 
 	/*
@@ -222,7 +230,7 @@ func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (
 	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		//log.Printf("error: %v\n", err)
-		return "", err
+		return nil, err
 	}
 
 	soap.AddRootNamespaces(xlmns)
@@ -234,14 +242,14 @@ func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (
 }
 
 //CallMethod functions call an method, defined <method> struct with authentication data
-func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (*http.Response, error) {
 	/*
 	Converting <method> struct to xml string representation
 	 */
 	output, err := xml.MarshalIndent(method, "  ", "    ")
 	if err != nil {
 		//log.Printf("error: %v\n", err.Error())
-		return "", err
+		return nil, err
 	}
 
 	/*
@@ -250,7 +258,7 @@ func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (str
 	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		//log.Printf("error: %v\n", err.Error())
-		return "", err
+		return nil, err
 	}
 
 	/*
@@ -269,7 +277,7 @@ func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (str
 	soapReq, err := xml.MarshalIndent(auth, "", "  ")
 	if err != nil {
 		//log.Printf("error: %v\n", err.Error())
-		return "", err
+		return nil, err
 	}
 
 	/*
