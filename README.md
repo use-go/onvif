@@ -52,10 +52,15 @@ if err != nil {
 Для работы с различными сервисами камерами необходимо отправить корректный SOAP запрос, в теле которого находится вызываемый метод и принимаемые им функции.
 **Goonvif** берет на себя работу по созданию корректного SOAP запроса и его отправке. В **Goonvif** определены структуры, для каждой функции каждого (поддерживаемого данной бибилиотекой) сервиса ONVIF:
 - [DeviceManagement Service](Device/types.go)
+
 - [Media Service] (Media/types.go)
+
 - [Imaging Service] (Imaging/types.go)
+
 - [PTZ Service] (PTZ/types.go)
+
 - [Analytics Service] (Analytics/types.go)
+
 [Список всех сервисов стандарта (и документация к ним)] (https://www.onvif.org/profiles/specifications/)
 
 Рассмторим, как организована отправка запросов в **Goonvif** на нескольких примерах.
@@ -63,6 +68,7 @@ if err != nil {
 Все необходимые типы данных определены в пакете [Device](Device/types.go).
 В файле (https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl) можно увидеть:
 ![GetCapabilities](img/exmp_GetCapabilities.png)
+
 Таким образом, Функция GetCapabilities принимает в качестве аргумента перечисление:
 `enum { 'All', 'Analytics', 'Device', 'Events', 'Imaging', 'Media', 'PTZ' }`
 Чтобы вызвать данный метод создадим объект `Device.GetCapabilities`:
