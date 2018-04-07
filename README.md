@@ -84,4 +84,24 @@ if err != nil {
     fmt.Println(resp)
 }
 ```
-2.
+2. Создание пользователя методом CreateUsers сервиса DeviceManagement
+Все необходимые типы данных определены в пакете [Device](Device/types.go).
+В файле (https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl) можно увидеть структуру запроса:
+![GetCapabilities](img/exmp_CreateUsers.png)
+
+Создадим объект `Device.CreateUsers`:
+```
+createUsers := Device.CreateUsers{User: onvif.User{Username:"korolev", Password:"qwerty", UserLevel:"User"}}
+resp, err := dev.CallMethod(createUsers)
+if err != nil {
+	log.Println(err)
+} else {
+	fmt.Println(resp)
+}
+```
+
+В данном примере можно наблюдать использования пакета onvif, в котором определено большинство типов, используемых в различных сервисах.
+Поэтому при создании структур запросов необходимо это учитывать.
+
+#####**ВАЖНО**
+Некоторые камеры работают специфично. Это означает, что в зависимости от модели камеры можно не получить ошибки при неправильном запросе. Поэтому советую проверять точно ли выполнилась операция. Например, для метода CreateUsers вывести список всех пользователей и сравнить.
