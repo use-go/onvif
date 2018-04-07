@@ -115,5 +115,53 @@ if err != nil {
 ![ContinuousMove](img/exmp_ContinuousMove.png)
 
 Так как данная команда определяется сервисом PTZ, необходимый тип находится в пакете [PTZ](PTZ/types.go).
+Из файла [PTZ](PTZ/types.go) можно заметить, что :
+> ProfileToken [ReferenceToken]
+> A reference to the **MediaProfile** that indicate what should be stopped.
+
+Таким образом, для того, чтобы начать работать с PTZ сервисом для начала необходимо получить **ProfileToken** сервиса **Media**. Как это сделать смотрите в примере 4. Сейчас же предположим, что нам известен нужный токен. Пусть ProfileToken = "Profile_1".
 
 Создадим объект `PTZ.ContinuousMove`:
+```
+move := PTZ.ContinuousMove{
+	ProfileToken:"Profile_1",
+	Velocity:onvif.PTZSpeed{
+		PanTilt:onvif.Vector2D{
+			X: 1,
+			Y: 1,
+		},
+		Zoom:onvif.Vector1D{X:0.5},
+	},
+}
+```
+
+**Заметим**, что объекты Velocity, PanTilt и Zoom определены в пакете onvif. Такая ситуация соответствует всем встроенным типам.
+
+Для вызова данной функции воспользуемся методом `func (dev device) CallMethod(method interface{}) (string, error)`:
+```
+resp, err := dev.CallMethod(capab)
+if err != nil {
+    log.Println(err)
+} else {
+    fmt.Println(resp)
+}
+```
+
+4. Получение списков Media профилей
+
+Все необходимые типы данных определены в пакете [Media](Media/types.go).
+В файле (https://www.onvif.org/ver10/media/wsdl/media.wsdl) можно увидеть структуру запроса:
+![ContinuousMove](img/exmp_GetProfiles.png)
+
+Вот пример создания и вызова запроса GetProfiles
+```
+resp, err := dev.CallMethod(Media.GetProfiles{})
+if err != nil {
+	panic (err)
+} else {
+	fmt.Println(readResponse(resp))
+}
+```
+
+**Важно** Обработка response'ов пока не реализована, поэтому данная задача ложится на Ваши плечи. Вы можете упростить обработку response при помощи библиотеки [etree](https://github.com/beevik/etree). Либо же воспользоваться сервисом (http://www.webtoolkitonline.com/xml-formatter.html)
+
