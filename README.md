@@ -4,7 +4,7 @@
 - Media
 - Imaging
 - PTZ
-- Video Analytics
+- Analytics
 # Dependencies
 [etree](https://github.com/beevik/etree)
 # Установка
@@ -31,15 +31,14 @@ dev, err := goonvif.NewDevice("192.168.13.42:80")
 вернет нулевой объект камеры и ошибку:
 > camera is not available at 192.168.13.42:80 or it does not support ONVIF services
 
-Модернизируем код, чтобы обрабатывать ошибку и получим:
+Модернизируем код, добавив обработку ошибки, и получим:
 ```
-	dev, err := goonvif.NewDevice("192.168.13.42:80")
-	if err != nil {
-		panic(err)
-	}
+dev, err := goonvif.NewDevice("192.168.13.42:80")
+if err != nil {
+    panic(err)
+}
 
-	///Работа с камерой
-
+///Работа с камерой
 ```
 ### Поддерживаемые ONVIF сервисы
 Теперь, когда камера доступна, можно приступать к работе с ней. Однако стандарт ONVIF имеет множество сервисов, точка доступа (endpoint) к которым не закреплена стандартом (кроме DeviceManagment: http://onvif_host/onvif/device_service).
@@ -49,3 +48,33 @@ dev, err := goonvif.NewDevice("192.168.13.42:80")
 библиотека одновременно обрабатывает поддерживаемые камерой сервисы. Таким образом чтобы получить поддерживаемые устройством сервисы, можно воспользоваться двумя путями:
 1. Вызвать метод GetCapabilities сервиса DeviceManagement(как это сделать будет рассмотрено дальше) и обработать ответ.
 2. Довериться библиотеке и вызвать функцию  `func (dev *device)GetServices() map[string]string`, которая вернет map[string]string, ключом которой является название сервиса, а значением - endpoint данного сервиса
+### Работка с камерой
+Для работы с различными сервисами камерами необходимо отправить корректный SOAP запрос, в теле которого находится вызываемый метод и принимаемые им функции.
+**Goonvif** берет на себя работу по созданию корректного SOAP запроса и его отправке. В **Goonvif** определены структуры, для каждой функции каждого (поддерживаемого данной бибилиотекой) сервиса ONVIF:
+- [DeviceManagement Service](Device/types.go)
+- [Media Service] (Media/types.go)
+- [Imaging Service] (Imaging/types.go)
+- [PTZ Service] (PTZ/types.go)
+- [Analytics Service] (Analytics/types.go)
+[Список всех сервисов стандарта (и документация к ним)] (https://www.onvif.org/profiles/specifications/)
+
+Рассмторим, как организована отправка запросов в **Goonvif** на нескольких примерах.
+1. Метод GetCapabilities сервиса DeviceManagement
+Все необходимые типы данных определены в пакете [Device](Device/types.go).
+В файле (https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl) можно увидеть:
+![GetCapabilities](img/exmp_GetCapabilities.png)
+Таким образом, Функция GetCapabilities принимает в качестве аргумента перечисление:
+`enum { 'All', 'Analytics', 'Device', 'Events', 'Imaging', 'Media', 'PTZ' }`
+Чтобы вызвать данный метод создадим объект `Device.GetCapabilities`:
+```
+capabilities := Device.GetCapabilities{Category:"All"}
+```
+Для вызова данной функции воспользуемся методом `func (dev device) CallMethod(method interface{}) (string, error)`:
+```
+resp, err := dev.CallMethod(capab)
+if err != nil {
+    log.Println(err)
+} else {
+    fmt.Println(resp)
+}
+```
