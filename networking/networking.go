@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"bytes"
 	"io/ioutil"
+	"github.com/pkg/errors"
+	"strconv"
 )
 
 func SendSoap(endpoint, message string) (string, error) {
@@ -13,10 +15,15 @@ func SendSoap(endpoint, message string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if resp.StatusCode != http.StatusOK {
+		return "", errors.New("error: got HTTP response status " + strconv.Itoa(resp.StatusCode))
+	}
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
+
+	//log.Println(resp.StatusCode)
 
 	return string(b),nil
 }

@@ -2,16 +2,16 @@ package goonvif
 
 import (
 	"encoding/xml"
-	"log"
 	"fmt"
 	"github.com/beevik/etree"
 	"github.com/yakovlevdmv/gosoap"
 	"strconv"
 	"github.com/yakovlevdmv/WS-Discovery"
-	"github.com/yakovlevdmv/goonvif/Networking"
+	"github.com/yakovlevdmv/goonvif/networking"
 	"reflect"
 	"strings"
 	"github.com/yakovlevdmv/goonvif/Device"
+	"errors"
 )
 
 var xlmns = map[string]string {
@@ -96,31 +96,39 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []devi
 func (dev *device) getSupportedServices() {
 	resp, err := dev.CallMethod(Device.GetCapabilities{})
 	if err != nil {
-		log.Println(err.Error())
+		//log.Println(err.Error())
 		return
 	} else {
 		doc := etree.NewDocument()
 		if err := doc.ReadFromString(resp); err != nil {
-			log.Println(err.Error())
+			//log.Println(err.Error())
 			return
 		}
 		services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/*/XAddr")
 		for _, j := range services{
-			fmt.Println(j.Text())
-			fmt.Println(j.Parent().Tag)
+			//fmt.Println(j.Text())
+			//fmt.Println(j.Parent().Tag)
 			dev.addEndpoint(j.Parent().Tag, j.Text())
 		}
 	}
 }
 
 //NewDevice function construct a ONVIF Device entity
-func NewDevice(xaddr string) *device {
+func NewDevice(xaddr string) (*device, error) {
 	dev := new(device)
 	dev.xaddr = xaddr
 	dev.endpoints = make(map[string]string)
 	dev.addEndpoint("Device", "http://"+xaddr+"/onvif/device_service")
+
+	systemDateTime := Device.GetDeviceInformation{}
+	_, err := dev.CallMethod(systemDateTime)
+	if err != nil {
+		panic(errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services"))
+		return nil, err
+	}
+
 	dev.getSupportedServices()
-	return dev
+	return dev, nil
 }
 
 func (dev *device)addEndpoint(Key, Value string) {
@@ -144,6 +152,7 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
 		//log.Println("Got error")
+
 		return "", err
 	}
 	element := doc.Root()
@@ -175,9 +184,23 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
+		/*resp, err := dev.сallAuthorizedMethod(endpoint, method)
+		if err != nil {
+			panic(err)
+			return resp, err
+		}
+
+		return resp, err*/
 		return dev.сallAuthorizedMethod(endpoint, method)
 	} else {
+		/*resp, err := dev.сallAuthorizedMethod(endpoint, method)
+		if err != nil {
+			panic(err)
+			return resp, err
+		}
+		return resp, err*/
 		return dev.сallNonAuthorizedMethod(endpoint, method)
+
 	}
 }
 
