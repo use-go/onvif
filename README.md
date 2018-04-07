@@ -53,15 +53,15 @@ if err != nil {
 **Goonvif** берет на себя работу по созданию корректного SOAP запроса и его отправке. В **Goonvif** определены структуры, для каждой функции каждого (поддерживаемого данной бибилиотекой) сервиса ONVIF:
 - [DeviceManagement Service](Device/types.go)
 
-- [Media Service] (Media/types.go)
+- [Media Service](Media/types.go)
 
-- [Imaging Service] (Imaging/types.go)
+- [Imaging Service](Imaging/types.go)
 
-- [PTZ Service] (PTZ/types.go)
+- [PTZ Service](PTZ/types.go)
 
-- [Analytics Service] (Analytics/types.go)
+- [Analytics Service](Analytics/types.go)
 
-[Список всех сервисов стандарта (и документация к ним)] (https://www.onvif.org/profiles/specifications/)
+[Список всех сервисов стандарта (и документация к ним)](https://www.onvif.org/profiles/specifications/)
 
 Рассмторим, как организована отправка запросов в **Goonvif** на нескольких примерах.
 1. Метод GetCapabilities сервиса DeviceManagement
@@ -84,3 +84,4 @@ if err != nil {
     fmt.Println(resp)
 }
 ```
+2.
