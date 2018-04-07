@@ -86,25 +86,66 @@ func (dev *device)GetServices() map[string]string {
 	return dev.endpoints
 }
 
+func readResponse(resp *http.Response) string {
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
+}
+
 func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []device {
 	/*
 	Call an WS-Discovery Probe Message to Discover NVT type Devices
 	 */
 	devices := WS_Discovery.SendProbe(interfaceName, nil, []string{"dn:"+NVT.String()}, map[string]string{"dn":"http://www.onvif.org/ver10/network/wsdl"})
-	//nvtDevices := make([]device, len(devices))
+	nvtDevices := make([]device, 0)
+	////fmt.Println(devices)
 	for _, j := range devices {
-		fmt.Println(j)
+		doc := etree.NewDocument()
+		if err := doc.ReadFromString(j); err != nil {
+			fmt.Errorf("%s", err.Error())
+			return nil
+		}
+		////fmt.Println(j)
+		endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
+		for _, xaddr := range endpoints {
+			//fmt.Println(xaddr.Tag,strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2] )
+			xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
+			fmt.Println(xaddr)
+			c := 0
+			for c = 0; c < len(nvtDevices); c++ {
+				if nvtDevices[c].xaddr == xaddr {
+					fmt.Println(nvtDevices[c].xaddr, "==", xaddr)
+					break
+				}
+			}
+			if c < len(nvtDevices) {
+				continue
+			}
+			dev, err := NewDevice(strings.Split(xaddr, " ")[0])
+			//fmt.Println(dev)
+			if err != nil {
+				fmt.Println("Error", xaddr)
+				fmt.Println(err)
+				continue
+			} else {
+				////fmt.Println(dev)
+				nvtDevices = append(nvtDevices, *dev)
+			}
+		}
+		////fmt.Println(j)
 		//nvtDevices[i] = NewDevice()
 	}
-	return nil
+	return nvtDevices
 }
 
-func (dev *device) getSupportedServices() {
-	resp, err := dev.CallMethod(Device.GetCapabilities{Category:"All"})
-	if err != nil {
-		//log.Println(err.Error())
-		return
-	} else {
+func (dev *device) getSupportedServices(resp *http.Response) {
+	//resp, err := dev.CallMethod(Device.GetCapabilities{Category:"All"})
+	//if err != nil {
+	//	log.Println(err.Error())
+		//return
+	//} else {
 		doc := etree.NewDocument()
 
 		data, _ := ioutil.ReadAll(resp.Body)
@@ -115,11 +156,11 @@ func (dev *device) getSupportedServices() {
 		}
 		services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/*/XAddr")
 		for _, j := range services{
-			//fmt.Println(j.Text())
-			//fmt.Println(j.Parent().Tag)
+			////fmt.Println(j.Text())
+			////fmt.Println(j.Parent().Tag)
 			dev.addEndpoint(j.Parent().Tag, j.Text())
 		}
-	}
+	//}
 }
 
 //NewDevice function construct a ONVIF Device entity
@@ -129,15 +170,17 @@ func NewDevice(xaddr string) (*device, error) {
 	dev.endpoints = make(map[string]string)
 	dev.addEndpoint("Device", "http://"+xaddr+"/onvif/device_service")
 
-	systemDateTime := Device.GetSystemDateAndTime{}
-	resp, err := dev.CallMethod(systemDateTime)
+	getCapabilities := Device.GetCapabilities{Category: "All"}
 
+	resp, err := dev.CallMethod(getCapabilities)
+	//fmt.Println(resp.Request.Host)
+	//fmt.Println(readResponse(resp))
 	if err != nil || resp.StatusCode != http.StatusOK {
 		//panic(errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services"))
 		return nil, errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services")
 	}
 
-	dev.getSupportedServices()
+	dev.getSupportedServices(resp)
 	return dev, nil
 }
 
@@ -188,7 +231,7 @@ func (dev device) CallMethod(method interface{}) (*http.Response, error) {
 		case "PTZ": endpoint = dev.endpoints["PTZ"]
 	}
 
-	//fmt.Println("endpoint", endpoint)
+	////fmt.Println("endpoint", endpoint)
 
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
