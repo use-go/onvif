@@ -21,11 +21,16 @@ go get github.com/yakovlevdmv/goonvif
 функция вернет не `nil` error, а в качестве указателя на объект вернет `nil`.
 ### Пример подключения к камере
 Пусть камера в сети находится по адресу 192.168.13.42, а ее ONVIF сервисы расположены на 1234 порту. Тогда,
-```dev, err := goonvif.NewDevice("192.168.13.42:1234")```
+```
+dev, err := goonvif.NewDevice("192.168.13.42:1234")
+```
 сработает успешно, а
-```dev, err := goonvif.NewDevice("192.168.13.42:80")```
+```
+dev, err := goonvif.NewDevice("192.168.13.42:80")
+```
 вернет нулевой объект камеры и ошибку:
 > camera is not available at 192.168.13.42:80 or it does not support ONVIF services
+
 Модернизируем код, чтобы обрабатывать ошибку и получим:
 ```
 	dev, err := goonvif.NewDevice("192.168.13.42:80")
