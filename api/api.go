@@ -1,66 +1,293 @@
 package api
 
 import (
-	"github.com/yakovlevdmv/goonvif"
-	"github.com/yakovlevdmv/goonvif/Device"
 	"fmt"
 	"reflect"
+	"regexp"
+	"errors"
+	"strings"
+	"github.com/beevik/etree"
+	"github.com/gin-gonic/gin"
+	"github.com/yakovlevdmv/gosoap"
+	"github.com/yakovlevdmv/goonvif"
+	"github.com/yakovlevdmv/goonvif/networking"
+	"log"
+	"net/http"
 )
 
-//func RunApi ()  {
-//	router := gin.Default()
+func RunApi ()  {
+	router := gin.Default()
+
+	router.POST("/:service/:method", func(c *gin.Context) {
+		serviceName := c.Param("service")
+		methodName := c.Param("method")
+		acceptedData, err := c.GetRawData()
+		acpData := string(acceptedData)
+		_=err
+		//fmt.Println(string(acceptedData), err,serviceName, methodName)
+		message := callNecessaryMethod(serviceName, methodName, &acpData, "192.168.13.12")
+		c.XML(http.StatusOK, message)
+	})
+	router.Run()
+}
+
+//func soapHandling(tp interface{}, tags* map[string]string)  {
+//	ifaceValue := reflect.ValueOf(tp).Elem()
+//	typeOfStruct := ifaceValue.Type()
+//	if ifaceValue.Kind() != reflect.Struct {
+//		return
+//	}
+//	for i := 0; i < ifaceValue.NumField(); i++ {
+//		field := ifaceValue.Field(i)
+//		tg, err := typeOfStruct.FieldByName(typeOfStruct.Field(i).Name)
+//		if err == false {
+//			fmt.Println(err)
+//		}
+//		(*tags)[typeOfStruct.Field(i).Name] = string(tg.Tag)
 //
-//	router.POST("/:service/:method", func(c *gin.Context) {
-//		serviceName := c.Param("service")
-//		methodName := c.Param("method")
-//		message := callNecessaryMethod(&serviceName, &methodName, "192.168.13.12")
-//		c.XML(http.StatusOK, message)
-//	})
-//	router.Run()
+//		subStruct := reflect.New(reflect.TypeOf( field.Interface() ))
+//		soapHandling(subStruct.Interface(), tags)
+//	}
 //}
 
-func soapHandling(tp interface{}, tags* map[string]string)  {
-	ifaceValue := reflect.ValueOf(tp).Elem()
-	typeOfStruct := ifaceValue.Type()
-	if ifaceValue.Kind() != reflect.Struct {
+
+func callNecessaryMethod(serviceName string, methodName string, acceptedData* string, deviceXaddr string) *string {
+	var methodStruct interface{}
+	var err error
+	switch serviceName {
+	case "Device", "device":
+		methodStruct, err = GetDeviceStructByName(methodName)
+	case "PTZ", "ptz":
+		methodStruct, err = GetPTZStructByName(methodName)
+	}
+	if err != nil {
+		//todo: нормально написать
+	}
+	resp, err := xmlAnalize(methodStruct, acceptedData)
+	if err != nil {
+		//todo: нормально написать
+	}
+
+	soap := gosoap.NewEmptySOAP()
+	soap.AddStringBodyContent(*resp)
+	soap.AddRootNamespaces(goonvif.Xlmns)
+	log.Println(soap.String())
+	servResp, srvErr := networking.SendSoap(getEndpoint(methodStruct, deviceXaddr), soap.String())
+	if srvErr != nil {
+		//todo: нормально написать
+	}
+	return &servResp
+}
+
+func getEndpoint(method interface{}, deviceXaddr string)  string {
+	dev := goonvif.NewDevice(deviceXaddr)
+
+	pkgPath := strings.Split(reflect.TypeOf(method).PkgPath(),"/")
+	pkg := pkgPath[len(pkgPath)-1]
+
+	var endpoint string
+	switch pkg {
+		case "Device": endpoint = dev.GetEndpoint("Device")
+		case "Event": endpoint = dev.GetEndpoint("Event")
+		case "Imaging": endpoint = dev.GetEndpoint("Imaging")
+		case "Media": endpoint = dev.GetEndpoint("Media")
+		case "PTZ": endpoint = dev.GetEndpoint("PTZ")
+	}
+	return endpoint
+}
+
+/*
+NEW
+ */
+
+func xmlAnalize(methodStruct interface{}, acceptedData* string) (*string, error) {
+	test := make([]map[string]string, 0) //tags
+	testunMarshal := make([][]interface{}, 0) //data
+	//tmp, err := GetPTZStructByName("Stop")
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+
+	soapHandling(methodStruct, &test)
+	test = mapProcessing(test)
+
+	doc := etree.NewDocument()
+	if err := doc.ReadFromString(*acceptedData); err != nil {
+		fmt.Println(err)
+		return nil, nil //todo: нормально написать
+	}
+	etr := doc.FindElements("./*")
+	xmlUnmarshal(etr, &testunMarshal)
+
+	etr_ := doc.FindElements("./*")
+	var mas []string //idnt
+	getPos(etr_, &mas)
+	ident(&mas)
+
+	//todo: может возникнуть проблема с типами данных без тегов. От таких типов надо избавляться
+	//todo: попробовать всунуть все вызовы (soapHandling, xmlUnmarshal)сюда
+
+
+	document:= etree.NewDocument()
+	var el *etree.Element
+	var idntIndex = 0
+
+	for lstIndex := 0; lstIndex < len(testunMarshal); {
+		lst := (testunMarshal)[lstIndex]
+		elemName, attr, value:= xmlMaker(&lst, &test, lstIndex)
+
+		if mas[lstIndex] == "Push" && lstIndex == 0 { //done
+			el = document.CreateElement(elemName)
+			el.SetText(value)
+			if len(attr) != 0 {
+				for key, value := range attr {
+					el.CreateAttr(key, value)
+				}
+			}
+		} else if mas[idntIndex] == "Push" {
+			pushTmp := etree.NewElement(elemName)
+			pushTmp.SetText(value)
+			if len(attr) != 0 {
+				for key, value := range attr {
+					pushTmp.CreateAttr(key, value)
+				}
+			}
+			el.AddChild(pushTmp)
+			el = pushTmp
+		} else if mas[idntIndex] == "PushPop" { //done
+			popTmp := etree.NewElement(elemName)
+			popTmp.SetText(value)
+			if len(attr) != 0 {
+				for key, value := range attr {
+					popTmp.CreateAttr(key, value)
+				}
+			}
+			el.AddChild(popTmp)
+		} else if mas[idntIndex] == "Pop" {
+			el = el.Parent()
+			lstIndex  -= 1
+		}
+		idntIndex += 1
+		lstIndex  += 1
+	}
+	//document.Indent(2)
+	//fmt.Println(document.WriteToString())
+	resp, err := document.WriteToString()
+	if err != nil {
+		//todo нормально расписать
+	}
+	return &resp, err
+}
+
+func xmlMaker(lst* []interface{}, tags* []map[string]string, lstIndex int) (string, map[string]string, string)  {
+	var elemName, value string
+	attr := make(map[string]string)
+	for tgIndx, tg := range *tags {
+		if tgIndx == lstIndex {
+			for index, elem := range *lst {
+				if reflect.TypeOf(elem).String() == "[]etree.Attr" {
+					conversion := elem.([]etree.Attr)
+					for _, i := range conversion {
+						attr[i.Key] = i.Value
+					}
+				} else {
+					conversion := elem.(string)
+					if index == 0 && lstIndex == 0 {
+						res, err := xmlProcessing(tg["XMLName"])
+						if err != nil {
+							fmt.Println(err)
+						}
+						elemName = res
+					} else if index == 0 {
+						res, err := xmlProcessing(tg[conversion])
+						if err != nil {
+							fmt.Println(err)
+						}
+						elemName = res
+					} else {
+						value = conversion
+					}
+				}
+			}
+		}
+	}
+	return elemName, attr, value
+}
+
+func xmlProcessing (tg string) (string, error) {
+	r, _ := regexp.Compile(`\"(.*?)\"`)
+	str := r.FindStringSubmatch(tg)
+	if len(str) == 0 {
+		return "", errors.New("out of range")
+	}
+	attr := strings.Index(str[1], ",attr")
+	if attr == -1 {
+		return str[1], nil
+	} else {
+		return str[0:attr][0], nil
+	}
+	return "", errors.New("something went wrong")
+}
+
+func mapProcessing(mapVar []map[string]string) []map[string]string {
+	for indx := 0; indx < len(mapVar); indx++ {
+		element := mapVar[indx]
+		for _, value := range element {
+			if value == "" {
+				mapVar = append(mapVar[:indx], mapVar[indx+1:]...)
+				indx--
+			}
+			if strings.Index(value, ",attr") != -1 {
+				mapVar = append(mapVar[:indx], mapVar[indx+1:]...)
+				indx--
+			}
+		}
+	}
+	return mapVar
+}
+
+func soapHandling(tp interface{}, tags* []map[string]string)  {
+	s := reflect.ValueOf(tp).Elem()
+	typeOfT := s.Type()
+	if s.Kind() != reflect.Struct {
 		return
 	}
-	for i := 0; i < ifaceValue.NumField(); i++ {
-		field := ifaceValue.Field(i)
-		tg, err := typeOfStruct.FieldByName(typeOfStruct.Field(i).Name)
+	for i := 0; i < s.NumField(); i++ {
+		f := s.Field(i)
+		tmp, err := typeOfT.FieldByName(typeOfT.Field(i).Name)
 		if err == false {
 			fmt.Println(err)
 		}
-		(*tags)[typeOfStruct.Field(i).Name] = string(tg.Tag)
-
-		subStruct := reflect.New(reflect.TypeOf( field.Interface() ))
+		*tags = append(*tags, map[string]string{typeOfT.Field(i).Name : string(tmp.Tag)})
+		subStruct := reflect.New(reflect.TypeOf( f.Interface() ))
 		soapHandling(subStruct.Interface(), tags)
 	}
 }
 
-
-func callNecessaryMethod(serviceName* string, methodName* string, deviceXaddr* string) *string {
-	switch *serviceName {
-	case "Device", "device":
-		return callDeviceMethods(methodName, deviceXaddr)
-	}
-	return nil
-}
-
-func callDeviceMethods(methodName* string, deviceXaddr* string) *string {
-	switch *methodName {
-	case "GetCapabilities":
-		return GetCapabilities(deviceXaddr)
-	default:
-		return nil
+//todo: передавать в него отступы
+func xmlUnmarshal(elems []*etree.Element, data* [][]interface{}) {
+	for _, elem := range elems {
+		*data = append(*data, []interface{}{elem.Tag,elem.Attr,elem.Text()})
+		xmlUnmarshal(elem.FindElements("./*"), data)
 	}
 }
 
-func GetCapabilities(deviceXaddr* string) *string {
-	device := goonvif.NewDevice(*deviceXaddr)
-	data, err := device.CallMethod(Device.GetCapabilities{Category:"All"})
-	if err != nil {
-		fmt.Println(err)
+
+//todo лишняя функция, засунуть в xmlUnmarshal
+func getPos(elems []*etree.Element,  mas* []string)  {
+	for _, elem := range elems {
+		*mas = append(*mas, "Push")
+		getPos(elem.FindElements("./*"), mas)
+		*mas = append(*mas, "Pop")
 	}
-	return &data
+}
+
+func ident(mas* []string)  {
+	var buffer string
+	for _, j := range *mas {
+		buffer += j + " "
+	}
+	buffer = strings.Replace(buffer, "Push Pop ", "PushPop ", -1)
+	buffer = strings.TrimSpace(buffer)
+	*mas = strings.Split(buffer, " ")
 }

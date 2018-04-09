@@ -10,12 +10,12 @@ import (
 	"reflect"
 	"strings"
 	"github.com/yakovlevdmv/goonvif/Device"
-	"github.com/yakovlevdmv/goonvif/networking"
 	"github.com/yakovlevdmv/WS-Discovery"
 	"errors"
+	"github.com/yakovlevdmv/goonvif/networking"
 )
 
-var xlmns = map[string]string {
+var Xlmns = map[string]string {
 	"onvif":"http://www.onvif.org/ver10/schema",
 	"tds":"http://www.onvif.org/ver10/device/wsdl",
 	"trt":"http://www.onvif.org/ver10/media/wsdl",
@@ -138,6 +138,10 @@ func (dev *device) Authenticate(username, password string) {
 	dev.password = password
 }
 
+func (dev *device) GetEndpoint(name string) string {
+	return dev.endpoints[name]
+}
+
 func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
@@ -172,7 +176,7 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 	}
 
 	if len(endpoint) == 0 {
-		return "", errors.New("Requested service is not implemented")
+		return "", errors.New("requested service is not implemented")
 	}
 
 	//TODO: Get endpoint automatically
@@ -204,7 +208,7 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 		return "", err
 	}
 
-	soap.AddRootNamespaces(xlmns)
+	soap.AddRootNamespaces(Xlmns)
 
 	/*
 	Sending request and returns the response
@@ -243,7 +247,7 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	soap.AddRootNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext1.0.xsd")
 	soap.AddRootNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility1.0.xsd")
 
-	soap.AddRootNamespaces(xlmns)
+	soap.AddRootNamespaces(Xlmns)
 
 	soapReq, err := xml.MarshalIndent(auth, "", "  ")
 	if err != nil {

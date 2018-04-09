@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/yakovlevdmv/goonvif/PTZ"
 	"errors"
+	"github.com/yakovlevdmv/goonvif/Device"
 )
 
 func GetPTZStructByName(name string) (interface{}, error) {
@@ -63,6 +64,15 @@ func GetPTZStructByName(name string) (interface{}, error) {
 		return &PTZ.RemovePresetTour{}, nil
 	case "GetCompatibleConfigurations":
 		return &PTZ.GetCompatibleConfigurations{}, nil
+	default:
+		return nil, errors.New("invalid structure")
+	}
+}
+
+func GetDeviceStructByName(name string) (interface{}, error) {
+	switch name {
+	case "CreateUsers":
+		return &Device.CreateUsers{}, nil
 	default:
 		return nil, errors.New("invalid structure")
 	}
