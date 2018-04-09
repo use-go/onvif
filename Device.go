@@ -2,16 +2,17 @@ package goonvif
 
 import (
 	"encoding/xml"
-	"log"
 	"fmt"
 	"github.com/beevik/etree"
 	"github.com/yakovlevdmv/gosoap"
 	"strconv"
-	"reflect"
+	"net/http"
+	"io/ioutil"
+	"github.com/yakovlevdmv/WS-Discovery"
 	"strings"
 	"github.com/yakovlevdmv/goonvif/Device"
-	"github.com/yakovlevdmv/WS-Discovery"
 	"errors"
+	"reflect"
 	"github.com/yakovlevdmv/goonvif/networking"
 )
 
@@ -81,52 +82,110 @@ type device struct {
 
 }
 
-func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) {
+func (dev *device)GetServices() map[string]string {
+	return dev.endpoints
+}
+
+func readResponse(resp *http.Response) string {
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
+}
+
+func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []device {
 	/*
 	Call an WS-Discovery Probe Message to Discover NVT type Devices
 	 */
 	devices := WS_Discovery.SendProbe(interfaceName, nil, []string{"dn:"+NVT.String()}, map[string]string{"dn":"http://www.onvif.org/ver10/network/wsdl"})
+	nvtDevices := make([]device, 0)
+	////fmt.Println(devices)
 	for _, j := range devices {
-		fmt.Println(j)
+		doc := etree.NewDocument()
+		if err := doc.ReadFromString(j); err != nil {
+			fmt.Errorf("%s", err.Error())
+			return nil
+		}
+		////fmt.Println(j)
+		endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
+		for _, xaddr := range endpoints {
+			//fmt.Println(xaddr.Tag,strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2] )
+			xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
+			fmt.Println(xaddr)
+			c := 0
+			for c = 0; c < len(nvtDevices); c++ {
+				if nvtDevices[c].xaddr == xaddr {
+					fmt.Println(nvtDevices[c].xaddr, "==", xaddr)
+					break
+				}
+			}
+			if c < len(nvtDevices) {
+				continue
+			}
+			dev, err := NewDevice(strings.Split(xaddr, " ")[0])
+			//fmt.Println(dev)
+			if err != nil {
+				fmt.Println("Error", xaddr)
+				fmt.Println(err)
+				continue
+			} else {
+				////fmt.Println(dev)
+				nvtDevices = append(nvtDevices, *dev)
+			}
+		}
+		////fmt.Println(j)
+		//nvtDevices[i] = NewDevice()
 	}
+	return nvtDevices
 }
 
-func (dev *device) getSupportedServices() {
-	resp, err := dev.CallMethod(Device.GetCapabilities{})
-	if err != nil {
-		log.Println(err.Error())
-		return
-	} else {
+func (dev *device) getSupportedServices(resp *http.Response) {
+	//resp, err := dev.CallMethod(Device.GetCapabilities{Category:"All"})
+	//if err != nil {
+	//	log.Println(err.Error())
+		//return
+	//} else {
 		doc := etree.NewDocument()
-		if err := doc.ReadFromString(resp); err != nil {
-			log.Println(err.Error())
+
+		data, _ := ioutil.ReadAll(resp.Body)
+
+		if err := doc.ReadFromBytes(data); err != nil {
+			//log.Println(err.Error())
 			return
 		}
 		services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/*/XAddr")
 		for _, j := range services{
-			fmt.Println(j.Text())
-			fmt.Println(j.Parent().Tag)
+			////fmt.Println(j.Text())
+			////fmt.Println(j.Parent().Tag)
 			dev.addEndpoint(j.Parent().Tag, j.Text())
 		}
-	}
+	//}
 }
 
 //NewDevice function construct a ONVIF Device entity
-func NewDevice(xaddr string) *device {
+func NewDevice(xaddr string) (*device, error) {
 	dev := new(device)
 	dev.xaddr = xaddr
 	dev.endpoints = make(map[string]string)
 	dev.addEndpoint("Device", "http://"+xaddr+"/onvif/device_service")
-	dev.getSupportedServices()
-	return dev
+
+	getCapabilities := Device.GetCapabilities{Category: "All"}
+
+	resp, err := dev.CallMethod(getCapabilities)
+	//fmt.Println(resp.Request.Host)
+	//fmt.Println(readResponse(resp))
+	if err != nil || resp.StatusCode != http.StatusOK {
+		//panic(errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services"))
+		return nil, errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services")
+	}
+
+	dev.getSupportedServices(resp)
+	return dev, nil
 }
 
 func (dev *device)addEndpoint(Key, Value string) {
 	dev.endpoints[Key]=Value
-}
-
-func newDeviceEntity() *device {
-	return &device{}
 }
 
 //Authenticate function authenticate client in the ONVIF Device.
@@ -146,6 +205,7 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
 		//log.Println("Got error")
+
 		return "", err
 	}
 	element := doc.Root()
@@ -162,7 +222,7 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 
 //CallMethod functions call an method, defined <method> struct.
 //You should use Authenticate method to call authorized requests.
-func (dev device) CallMethod(method interface{}) (string, error) {
+func (dev device) CallMethod(method interface{}) (*http.Response, error) {
 	pkgPath := strings.Split(reflect.TypeOf(method).PkgPath(),"/")
 	pkg := pkgPath[len(pkgPath)-1]
 
@@ -175,20 +235,30 @@ func (dev device) CallMethod(method interface{}) (string, error) {
 		case "PTZ": endpoint = dev.endpoints["PTZ"]
 	}
 
-	if len(endpoint) == 0 {
-		return "", errors.New("requested service is not implemented")
-	}
-
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
-		return dev.CallAuthorizedMethod(endpoint, method)
+		/*resp, err := dev.сallAuthorizedMethod(endpoint, method)
+		if err != nil {
+			panic(err)
+			return resp, err
+		}
+
+		return resp, err*/
+		return dev.callAuthorizedMethod(endpoint, method)
 	} else {
-		return dev.CallNonAuthorizedMethod(endpoint, method)
+		/*resp, err := dev.сallAuthorizedMethod(endpoint, method)
+		if err != nil {
+			panic(err)
+			return resp, err
+		}
+		return resp, err*/
+		return dev.callNonAuthorizedMethod(endpoint, method)
+
 	}
 }
 
 //CallNonAuthorizedMethod functions call an method, defined <method> struct without authentication data
-func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (*http.Response, error) {
 	//TODO: Get endpoint automatically
 	/*
 	Converting <method> struct to xml string representation
@@ -196,7 +266,7 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 	output, err := xml.MarshalIndent(method, "  ", "    ")
 	if err != nil {
 		//log.Printf("error: %v\n", err.Error())
-		return "", err
+		return nil, err
 	}
 
 	/*
@@ -205,7 +275,7 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		//log.Printf("error: %v\n", err)
-		return "", err
+		return nil, err
 	}
 
 	soap.AddRootNamespaces(Xlmns)
@@ -217,14 +287,14 @@ func (dev device) CallNonAuthorizedMethod(endpoint string, method interface{}) (
 }
 
 //CallMethod functions call an method, defined <method> struct with authentication data
-func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (string, error) {
+func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (*http.Response, error) {
 	/*
 	Converting <method> struct to xml string representation
 	 */
 	output, err := xml.MarshalIndent(method, "  ", "    ")
 	if err != nil {
 		//log.Printf("error: %v\n", err.Error())
-		return "", err
+		return nil, err
 	}
 
 	/*
@@ -233,7 +303,7 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	soap, err := buildMethodSOAP(string(output))
 	if err != nil {
 		//log.Printf("error: %v\n", err.Error())
-		return "", err
+		return nil, err
 	}
 
 	/*
@@ -252,7 +322,7 @@ func (dev device) CallAuthorizedMethod(endpoint string, method interface{}) (str
 	soapReq, err := xml.MarshalIndent(auth, "", "  ")
 	if err != nil {
 		//log.Printf("error: %v\n", err.Error())
-		return "", err
+		return nil, err
 	}
 
 	/*
