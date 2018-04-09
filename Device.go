@@ -235,22 +235,19 @@ func (dev device) CallMethod(method interface{}) (*http.Response, error) {
 
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
-		/*resp, err := dev.сallAuthorizedMethod(endpoint, method)
-		if err != nil {
-			panic(err)
-			return resp, err
+		resp, err := dev.callAuthorizedMethod(endpoint, method)
+		if resp.StatusCode == 401 {
+			return resp, errors.New("device requires HTTP digest authentication, which is not implemented there")
 		}
-
-		return resp, err*/
-		return dev.callAuthorizedMethod(endpoint, method)
+		return resp, err
+		//return dev.callAuthorizedMethod(endpoint, method)
 	} else {
-		/*resp, err := dev.сallAuthorizedMethod(endpoint, method)
-		if err != nil {
-			panic(err)
-			return resp, err
+		resp, err := dev.callNonAuthorizedMethod(endpoint, method)
+		if resp.StatusCode == 401 {
+			return resp, errors.New("device requires HTTP digest authentication, which is not implemented there")
 		}
-		return resp, err*/
-		return dev.callNonAuthorizedMethod(endpoint, method)
+		return resp, err
+		//return dev.callNonAuthorizedMethod(endpoint, method)
 
 	}
 }
@@ -304,29 +301,7 @@ func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (*ht
 		return nil, err
 	}
 
-	/*
-	Getting an WS-Security struct representation
-	 */
-	auth := newSecurity(dev.login, dev.password)
-
-	/*
-	Adding WS-Security namespaces to root element of SOAP message
-	 */
-	soap.AddRootNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext1.0.xsd")
-	soap.AddRootNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility1.0.xsd")
-
-	soap.AddRootNamespaces(xlmns)
-
-	soapReq, err := xml.MarshalIndent(auth, "", "  ")
-	if err != nil {
-		//log.Printf("error: %v\n", err.Error())
-		return nil, err
-	}
-
-	/*
-	Adding WS-Security struct to SOAP header
-	 */
-	soap.AddStringHeaderContent(string(soapReq))
+	soap.AddWSSecurity(dev.login, dev.password)
 
 	/*
 	Sending request and returns the response
