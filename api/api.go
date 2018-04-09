@@ -13,6 +13,8 @@ import (
 	"github.com/yakovlevdmv/goonvif/networking"
 	"log"
 	"net/http"
+	"io/ioutil"
+	"encoding/xml"
 )
 
 func RunApi ()  {
@@ -22,10 +24,10 @@ func RunApi ()  {
 		serviceName := c.Param("service")
 		methodName := c.Param("method")
 		acceptedData, err := c.GetRawData()
-		acpData := string(acceptedData)
-		_=err
-		//fmt.Println(string(acceptedData), err,serviceName, methodName)
-		message := callNecessaryMethod(serviceName, methodName, &acpData, "192.168.13.12")
+		if err != nil {
+			fmt.Println(err)
+		}
+		message := callNecessaryMethod(serviceName, methodName, string(acceptedData), "192.168.13.12")
 		c.XML(http.StatusOK, message)
 	})
 	router.Run()
@@ -51,7 +53,7 @@ func RunApi ()  {
 //}
 
 
-func callNecessaryMethod(serviceName string, methodName string, acceptedData* string, deviceXaddr string) *string {
+func callNecessaryMethod(serviceName string, methodName string, acceptedData string, deviceXaddr string) string {
 	var methodStruct interface{}
 	var err error
 	switch serviceName {
@@ -63,7 +65,7 @@ func callNecessaryMethod(serviceName string, methodName string, acceptedData* st
 	if err != nil {
 		//todo: нормально написать
 	}
-	resp, err := xmlAnalize(methodStruct, acceptedData)
+	resp, err := xmlAnalize(methodStruct, &acceptedData)
 	if err != nil {
 		//todo: нормально написать
 	}
@@ -71,27 +73,55 @@ func callNecessaryMethod(serviceName string, methodName string, acceptedData* st
 	soap := gosoap.NewEmptySOAP()
 	soap.AddStringBodyContent(*resp)
 	soap.AddRootNamespaces(goonvif.Xlmns)
-	log.Println(soap.String())
-	servResp, srvErr := networking.SendSoap(getEndpoint(methodStruct, deviceXaddr), soap.String())
+
+	/*
+	Getting an WS-Security struct representation
+	 */
+	auth := goonvif.NewSecurity("admin", "Supervisor")
+
+	/*
+	Adding WS-Security namespaces to root element of SOAP message
+	 */
+	soap.AddRootNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext1.0.xsd")
+	soap.AddRootNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility1.0.xsd")
+
+	soapReq, err := xml.MarshalIndent(auth, "", "  ")
+
+	/*
+	Adding WS-Security struct to SOAP header
+	 */
+	soap.AddStringHeaderContent(string(soapReq))
+
+	endpoint:= getEndpoint(serviceName, deviceXaddr)
+	servResp, srvErr := networking.SendSoap(endpoint, soap.String())
 	if srvErr != nil {
+		panic(srvErr)
 		//todo: нормально написать
 	}
-	return &servResp
+
+	rsp, err := ioutil.ReadAll(servResp.Body)
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+	return string(rsp)
 }
 
-func getEndpoint(method interface{}, deviceXaddr string)  string {
-	dev := goonvif.NewDevice(deviceXaddr)
-
-	pkgPath := strings.Split(reflect.TypeOf(method).PkgPath(),"/")
-	pkg := pkgPath[len(pkgPath)-1]
+func getEndpoint(service, xaddr string)  string {
+	dev, err := goonvif.NewDevice(xaddr)
+	if err != nil {
+		log.Println(err)
+		return ""
+	}
+	pkg := strings.ToLower(service)
 
 	var endpoint string
 	switch pkg {
-		case "Device": endpoint = dev.GetEndpoint("Device")
-		case "Event": endpoint = dev.GetEndpoint("Event")
-		case "Imaging": endpoint = dev.GetEndpoint("Imaging")
-		case "Media": endpoint = dev.GetEndpoint("Media")
-		case "PTZ": endpoint = dev.GetEndpoint("PTZ")
+		case "device": endpoint = dev.GetEndpoint("Device")
+		case "event": endpoint = dev.GetEndpoint("Event")
+		case "imaging": endpoint = dev.GetEndpoint("Imaging")
+		case "media": endpoint = dev.GetEndpoint("Media")
+		case "ptz": endpoint = dev.GetEndpoint("PTZ")
 	}
 	return endpoint
 }
@@ -221,9 +251,12 @@ func xmlProcessing (tg string) (string, error) {
 		return "", errors.New("out of range")
 	}
 	attr := strings.Index(str[1], ",attr")
-	if attr == -1 {
+	omit := strings.Index(str[1], ",omitempty")
+	if attr == -1 && omit == -1 { //todo: проработать вариант, когдв omitempty и attr вместе
 		return str[1], nil
-	} else {
+	} else if omit > -1 {
+		return str[1][0:omit], nil
+	}else {
 		return str[0:attr][0], nil
 	}
 	return "", errors.New("something went wrong")

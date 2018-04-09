@@ -309,7 +309,7 @@ func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (*ht
 	/*
 	Getting an WS-Security struct representation
 	 */
-	auth := newSecurity(dev.login, dev.password)
+	auth := NewSecurity(dev.login, dev.password)
 
 	/*
 	Adding WS-Security namespaces to root element of SOAP message
