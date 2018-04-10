@@ -197,9 +197,11 @@ func (dev *device) Authenticate(username, password string) {
 	dev.password = password
 }
 
+//GetEndpoint returns specific ONVIF service endpoint address
 func (dev *device) GetEndpoint(name string) string {
 	return dev.endpoints[name]
 }
+
 
 func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
@@ -213,7 +215,7 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 
 	soap := gosoap.NewEmptySOAP()
 	soap.AddBodyContent(element)
-	soap.AddRootNamespace("onvif", "http://www.onvif.org/ver10/device/wsdl")
+	//soap.AddRootNamespace("onvif", "http://www.onvif.org/ver10/device/wsdl")
 
 	return soap, nil
 }
@@ -237,20 +239,9 @@ func (dev device) CallMethod(method interface{}) (*http.Response, error) {
 
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
-		resp, err := dev.callAuthorizedMethod(endpoint, method)
-		if resp.StatusCode == 401 {
-			return resp, errors.New("device requires HTTP digest authentication, which is not implemented there")
-		}
-		return resp, err
-		//return dev.callAuthorizedMethod(endpoint, method)
+		return dev.callAuthorizedMethod(endpoint, method)
 	} else {
-		resp, err := dev.callNonAuthorizedMethod(endpoint, method)
-		if resp.StatusCode == 401 {
-			return resp, errors.New("device requires HTTP digest authentication, which is not implemented there")
-		}
-		return resp, err
-		//return dev.callNonAuthorizedMethod(endpoint, method)
-
+		return dev.callNonAuthorizedMethod(endpoint, method)
 	}
 }
 
@@ -275,6 +266,9 @@ func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (
 		return nil, err
 	}
 
+	/*
+	Adding namespaces
+	 */
 	soap.AddRootNamespaces(Xlmns)
 
 	/*
@@ -303,6 +297,10 @@ func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (*ht
 		return nil, err
 	}
 
+	/*
+	Adding namespaces and WS-Security headers
+	 */
+	soap.AddRootNamespaces(Xlmns)
 	soap.AddWSSecurity(dev.login, dev.password)
 
 
