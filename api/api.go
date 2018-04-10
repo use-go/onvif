@@ -11,10 +11,8 @@ import (
 	"github.com/yakovlevdmv/gosoap"
 	"github.com/yakovlevdmv/goonvif"
 	"github.com/yakovlevdmv/goonvif/networking"
-	"log"
 	"net/http"
 	"io/ioutil"
-	"encoding/xml"
 )
 
 func RunApi ()  {
@@ -23,12 +21,21 @@ func RunApi ()  {
 	router.POST("/:service/:method", func(c *gin.Context) {
 		serviceName := c.Param("service")
 		methodName := c.Param("method")
+		//todo: login, pass, deviceXaddr
+		username := c.GetHeader("username")
+		pass := c.GetHeader("password")
+		xaddr := c.GetHeader("xaddr")
 		acceptedData, err := c.GetRawData()
 		if err != nil {
 			fmt.Println(err)
 		}
-		message := callNecessaryMethod(serviceName, methodName, string(acceptedData), "192.168.13.12")
-		c.XML(http.StatusOK, message)
+
+		message, err := callNecessaryMethod(serviceName, methodName, string(acceptedData), username, pass, xaddr)
+		if err != nil {
+			c.XML(http.StatusBadRequest, err.Error())
+		} else {
+			c.XML(http.StatusOK, message)
+		}
 	})
 	router.Run()
 }
@@ -53,65 +60,53 @@ func RunApi ()  {
 //}
 
 
-func callNecessaryMethod(serviceName string, methodName string, acceptedData string, deviceXaddr string) string {
+func callNecessaryMethod(serviceName, methodName, acceptedData, username, password, xaddr string) (string, error) {
 	var methodStruct interface{}
 	var err error
-	switch serviceName {
-	case "Device", "device":
+
+	switch strings.ToLower(serviceName) {
+	case "device":
 		methodStruct, err = GetDeviceStructByName(methodName)
-	case "PTZ", "ptz":
+	case "ptz":
 		methodStruct, err = GetPTZStructByName(methodName)
+		//todo: ошибка: неподдерживаемый сервис
 	}
-	if err != nil {
-		//todo: нормально написать
+	if err != nil { //done
+		return "", err
 	}
+
 	resp, err := xmlAnalize(methodStruct, &acceptedData)
 	if err != nil {
-		//todo: нормально написать
+		return "", err
+	}
+
+	endpoint, err := getEndpoint(serviceName, xaddr)
+	if err != nil {
+		return "", err
 	}
 
 	soap := gosoap.NewEmptySOAP()
 	soap.AddStringBodyContent(*resp)
 	soap.AddRootNamespaces(goonvif.Xlmns)
+	soap.AddWSSecurity(username, password)
 
-	/*
-	Getting an WS-Security struct representation
-	 */
-	auth := goonvif.NewSecurity("admin", "Supervisor")
-
-	/*
-	Adding WS-Security namespaces to root element of SOAP message
-	 */
-	soap.AddRootNamespace("wsse", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext1.0.xsd")
-	soap.AddRootNamespace("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility1.0.xsd")
-
-	soapReq, err := xml.MarshalIndent(auth, "", "  ")
-
-	/*
-	Adding WS-Security struct to SOAP header
-	 */
-	soap.AddStringHeaderContent(string(soapReq))
-
-	endpoint:= getEndpoint(serviceName, deviceXaddr)
-	servResp, srvErr := networking.SendSoap(endpoint, soap.String())
-	if srvErr != nil {
-		panic(srvErr)
-		//todo: нормально написать
+	servResp, err := networking.SendSoap(endpoint, soap.String())
+	if err != nil {
+		return "", err
 	}
 
 	rsp, err := ioutil.ReadAll(servResp.Body)
 	if err != nil {
-		log.Println(err)
-		return ""
+		return "", err
 	}
-	return string(rsp)
+
+	return string(rsp), nil
 }
 
-func getEndpoint(service, xaddr string)  string {
+func getEndpoint(service, xaddr string)  (string, error) {
 	dev, err := goonvif.NewDevice(xaddr)
 	if err != nil {
-		log.Println(err)
-		return ""
+		return "", err
 	}
 	pkg := strings.ToLower(service)
 
@@ -123,40 +118,24 @@ func getEndpoint(service, xaddr string)  string {
 		case "media": endpoint = dev.GetEndpoint("Media")
 		case "ptz": endpoint = dev.GetEndpoint("PTZ")
 	}
-	return endpoint
+	return endpoint, nil
 }
-
-/*
-NEW
- */
 
 func xmlAnalize(methodStruct interface{}, acceptedData* string) (*string, error) {
 	test := make([]map[string]string, 0) //tags
 	testunMarshal := make([][]interface{}, 0) //data
-	//tmp, err := GetPTZStructByName("Stop")
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
+	var mas []string //idnt
 
 	soapHandling(methodStruct, &test)
 	test = mapProcessing(test)
 
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(*acceptedData); err != nil {
-		fmt.Println(err)
-		return nil, nil //todo: нормально написать
+		return nil, err
 	}
 	etr := doc.FindElements("./*")
-	xmlUnmarshal(etr, &testunMarshal)
-
-	etr_ := doc.FindElements("./*")
-	var mas []string //idnt
-	getPos(etr_, &mas)
+	xmlUnmarshal(etr, &testunMarshal, &mas)
 	ident(&mas)
-
-	//todo: может возникнуть проблема с типами данных без тегов. От таких типов надо избавляться
-	//todo: попробовать всунуть все вызовы (soapHandling, xmlUnmarshal)сюда
-
 
 	document:= etree.NewDocument()
 	var el *etree.Element
@@ -164,7 +143,10 @@ func xmlAnalize(methodStruct interface{}, acceptedData* string) (*string, error)
 
 	for lstIndex := 0; lstIndex < len(testunMarshal); {
 		lst := (testunMarshal)[lstIndex]
-		elemName, attr, value:= xmlMaker(&lst, &test, lstIndex)
+		elemName, attr, value, err := xmlMaker(&lst, &test, lstIndex)
+		if err != nil {
+			return nil, err
+		}
 
 		if mas[lstIndex] == "Push" && lstIndex == 0 { //done
 			el = document.CreateElement(elemName)
@@ -200,16 +182,16 @@ func xmlAnalize(methodStruct interface{}, acceptedData* string) (*string, error)
 		idntIndex += 1
 		lstIndex  += 1
 	}
-	//document.Indent(2)
-	//fmt.Println(document.WriteToString())
+
 	resp, err := document.WriteToString()
 	if err != nil {
-		//todo нормально расписать
+		return nil, err
 	}
+
 	return &resp, err
 }
 
-func xmlMaker(lst* []interface{}, tags* []map[string]string, lstIndex int) (string, map[string]string, string)  {
+func xmlMaker(lst* []interface{}, tags* []map[string]string, lstIndex int) (string, map[string]string, string, error)  {
 	var elemName, value string
 	attr := make(map[string]string)
 	for tgIndx, tg := range *tags {
@@ -225,13 +207,13 @@ func xmlMaker(lst* []interface{}, tags* []map[string]string, lstIndex int) (stri
 					if index == 0 && lstIndex == 0 {
 						res, err := xmlProcessing(tg["XMLName"])
 						if err != nil {
-							fmt.Println(err)
+							return "", nil, "", err
 						}
 						elemName = res
 					} else if index == 0 {
 						res, err := xmlProcessing(tg[conversion])
 						if err != nil {
-							fmt.Println(err)
+							return "", nil, "", err
 						}
 						elemName = res
 					} else {
@@ -241,7 +223,7 @@ func xmlMaker(lst* []interface{}, tags* []map[string]string, lstIndex int) (stri
 			}
 		}
 	}
-	return elemName, attr, value
+	return elemName, attr, value, nil
 }
 
 func xmlProcessing (tg string) (string, error) {
@@ -252,13 +234,21 @@ func xmlProcessing (tg string) (string, error) {
 	}
 	attr := strings.Index(str[1], ",attr")
 	omit := strings.Index(str[1], ",omitempty")
-	if attr == -1 && omit == -1 { //todo: проработать вариант, когдв omitempty и attr вместе
-		return str[1], nil
-	} else if omit > -1 {
+	attrOmit := strings.Index(str[1], ",attr,omitempty")
+	omitAttr := strings.Index(str[1], ",omitempty,attr")
+
+	if attr > -1 && attrOmit == -1 && omitAttr == -1 {
+		return str[1][0:attr], nil
+	} else if omit > -1 && attrOmit == -1 && omitAttr == -1 {
 		return str[1][0:omit], nil
-	}else {
-		return str[0:attr][0], nil
+	} else if attr == -1 && omit == -1 {
+		return str[1], nil
+	} else if attrOmit > -1 {
+		return str[1][0:attrOmit], nil
+	} else {
+		return str[1][0:omitAttr], nil
 	}
+
 	return "", errors.New("something went wrong")
 }
 
@@ -297,20 +287,12 @@ func soapHandling(tp interface{}, tags* []map[string]string)  {
 	}
 }
 
-//todo: передавать в него отступы
-func xmlUnmarshal(elems []*etree.Element, data* [][]interface{}) {
+
+func xmlUnmarshal(elems []*etree.Element, data* [][]interface{}, mas* []string) {
 	for _, elem := range elems {
 		*data = append(*data, []interface{}{elem.Tag,elem.Attr,elem.Text()})
-		xmlUnmarshal(elem.FindElements("./*"), data)
-	}
-}
-
-
-//todo лишняя функция, засунуть в xmlUnmarshal
-func getPos(elems []*etree.Element,  mas* []string)  {
-	for _, elem := range elems {
 		*mas = append(*mas, "Push")
-		getPos(elem.FindElements("./*"), mas)
+		xmlUnmarshal(elem.FindElements("./*"), data, mas)
 		*mas = append(*mas, "Pop")
 	}
 }

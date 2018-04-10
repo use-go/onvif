@@ -12,5 +12,6 @@ func SendSoap(endpoint, message string) (*http.Response, error) {
 	if err != nil {
 		return resp, err
 	}
+
 	return resp,nil
 }

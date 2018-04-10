@@ -65,7 +65,7 @@ func GetPTZStructByName(name string) (interface{}, error) {
 	case "GetCompatibleConfigurations":
 		return &PTZ.GetCompatibleConfigurations{}, nil
 	default:
-		return nil, errors.New("invalid structure")
+		return nil, errors.New("there is no such method in the PTZ service")
 	}
 }
 
@@ -74,6 +74,6 @@ func GetDeviceStructByName(name string) (interface{}, error) {
 	case "CreateUsers":
 		return &Device.CreateUsers{}, nil
 	default:
-		return nil, errors.New("invalid structure")
+		return nil, errors.New("there is no such method in the Device service")
 	}
 }
