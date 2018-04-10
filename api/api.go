@@ -22,12 +22,15 @@ func RunApi ()  {
 		serviceName := c.Param("service")
 		methodName := c.Param("method")
 		//todo: login, pass, deviceXaddr
+		username := c.GetHeader("username")
+		pass := c.GetHeader("password")
+		xaddr := c.GetHeader("xaddr")
 		acceptedData, err := c.GetRawData()
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		message, err := callNecessaryMethod(serviceName, methodName, string(acceptedData), "192.168.13.12")
+		message, err := callNecessaryMethod(serviceName, methodName, string(acceptedData), username, pass, xaddr)
 		if err != nil {
 			c.XML(http.StatusBadRequest, err.Error())
 		} else {
@@ -57,7 +60,7 @@ func RunApi ()  {
 //}
 
 
-func callNecessaryMethod(serviceName string, methodName string, acceptedData string, deviceXaddr string) (string, error) {
+func callNecessaryMethod(serviceName, methodName, acceptedData, username, password, xaddr string) (string, error) {
 	var methodStruct interface{}
 	var err error
 
@@ -77,7 +80,7 @@ func callNecessaryMethod(serviceName string, methodName string, acceptedData str
 		return "", err
 	}
 
-	endpoint, err := getEndpoint(serviceName, deviceXaddr)
+	endpoint, err := getEndpoint(serviceName, xaddr)
 	if err != nil {
 		return "", err
 	}
@@ -85,7 +88,7 @@ func callNecessaryMethod(serviceName string, methodName string, acceptedData str
 	soap := gosoap.NewEmptySOAP()
 	soap.AddStringBodyContent(*resp)
 	soap.AddRootNamespaces(goonvif.Xlmns)
-	soap.AddWSSecurity("admin", "Supervisor")
+	soap.AddWSSecurity(username, password)
 
 	servResp, err := networking.SendSoap(endpoint, soap.String())
 	if err != nil {
