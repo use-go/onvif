@@ -65,10 +65,11 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 
 	switch strings.ToLower(serviceName) {
 	case "device":
-		methodStruct, err = GetDeviceStructByName(methodName)
+		methodStruct, err = getDeviceStructByName(methodName)
 	case "ptz":
-		methodStruct, err = GetPTZStructByName(methodName)
-		//todo: ошибка: неподдерживаемый сервис
+		methodStruct, err = getPTZStructByName(methodName)
+	default:
+		return "", errors.New("there is no such service")
 	}
 	if err != nil { //done
 		return "", err
