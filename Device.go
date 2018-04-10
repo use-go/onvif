@@ -6,17 +6,17 @@ import (
 	"github.com/beevik/etree"
 	"github.com/yakovlevdmv/gosoap"
 	"strconv"
+	"net/http"
+	"io/ioutil"
 	"github.com/yakovlevdmv/WS-Discovery"
-	"github.com/yakovlevdmv/goonvif/networking"
-	"reflect"
 	"strings"
 	"github.com/yakovlevdmv/goonvif/Device"
 	"errors"
-	"net/http"
-	"io/ioutil"
+	"reflect"
+	"github.com/yakovlevdmv/goonvif/networking"
 )
 
-var xlmns = map[string]string {
+var Xlmns = map[string]string {
 	"onvif":"http://www.onvif.org/ver10/schema",
 	"tds":"http://www.onvif.org/ver10/device/wsdl",
 	"trt":"http://www.onvif.org/ver10/media/wsdl",
@@ -197,6 +197,10 @@ func (dev *device) Authenticate(username, password string) {
 	dev.password = password
 }
 
+func (dev *device) GetEndpoint(name string) string {
+	return dev.endpoints[name]
+}
+
 func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
@@ -230,8 +234,6 @@ func (dev device) CallMethod(method interface{}) (*http.Response, error) {
 		case "Media": endpoint = dev.endpoints["Media"]
 		case "PTZ": endpoint = dev.endpoints["PTZ"]
 	}
-
-	////fmt.Println("endpoint", endpoint)
 
 	//TODO: Get endpoint automatically
 	if dev.login != "" && dev.password != "" {
@@ -273,7 +275,7 @@ func (dev device) callNonAuthorizedMethod(endpoint string, method interface{}) (
 		return nil, err
 	}
 
-	soap.AddRootNamespaces(xlmns)
+	soap.AddRootNamespaces(Xlmns)
 
 	/*
 	Sending request and returns the response
@@ -302,6 +304,7 @@ func (dev device) callAuthorizedMethod(endpoint string, method interface{}) (*ht
 	}
 
 	soap.AddWSSecurity(dev.login, dev.password)
+
 
 	/*
 	Sending request and returns the response

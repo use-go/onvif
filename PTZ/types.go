@@ -1,7 +1,9 @@
 package PTZ
 
-import "github.com/yakovlevdmv/goonvif/xsd"
-import "github.com/yakovlevdmv/goonvif/xsd/onvif"
+import (
+	"github.com/yakovlevdmv/goonvif/xsd"
+	"github.com/yakovlevdmv/goonvif/xsd/onvif"
+)
 
 type Capabilities struct {
 	EFlip 						xsd.Boolean `xml:"EFlip,attr"`
