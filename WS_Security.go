@@ -32,7 +32,7 @@ type wsAuth struct {
 	Created string    `xml:"wsse:Created"`
 }
 
-func newSecurity(username, passwd string) security {
+func NewSecurity(username, passwd string) security {
 	/** Generating Nonce sequence **/
 	charsToGenerate := 16
 	charSet := gostrgen.Lower | gostrgen.Digit
