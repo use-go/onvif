@@ -21,7 +21,6 @@ func RunApi ()  {
 	router.POST("/:service/:method", func(c *gin.Context) {
 		serviceName := c.Param("service")
 		methodName := c.Param("method")
-		//todo: login, pass, deviceXaddr
 		username := c.GetHeader("username")
 		pass := c.GetHeader("password")
 		xaddr := c.GetHeader("xaddr")
@@ -227,7 +226,7 @@ func xmlMaker(lst* []interface{}, tags* []map[string]string, lstIndex int) (stri
 }
 
 func xmlProcessing (tg string) (string, error) {
-	r, _ := regexp.Compile(`\"(.*?)\"`)
+	r, _ := regexp.Compile(`"(.*?)"`)
 	str := r.FindStringSubmatch(tg)
 	if len(str) == 0 {
 		return "", errors.New("out of range")

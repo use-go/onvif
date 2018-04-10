@@ -73,6 +73,8 @@ func GetDeviceStructByName(name string) (interface{}, error) {
 	switch name {
 	case "CreateUsers":
 		return &Device.CreateUsers{}, nil
+	case "GetCapabilities":
+		return &Device.GetCapabilities{}, nil
 	default:
 		return nil, errors.New("there is no such method in the Device service")
 	}
