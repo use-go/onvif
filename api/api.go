@@ -175,7 +175,7 @@ func xmlAnalize(methodStruct interface{}, acceptedData* string) (*string, error)
 				}
 			}
 			if el == nil {
-				el = document.CreateElement(elemName)
+				document.AddChild(popTmp)
 			} else {
 				el.AddChild(popTmp)
 			}
