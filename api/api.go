@@ -166,7 +166,7 @@ func xmlAnalize(methodStruct interface{}, acceptedData* string) (*string, error)
 			}
 			el.AddChild(pushTmp)
 			el = pushTmp
-		} else if mas[idntIndex] == "PushPop" { //done
+		} else if mas[idntIndex] == "PushPop" {
 			popTmp := etree.NewElement(elemName)
 			popTmp.SetText(value)
 			if len(attr) != 0 {
@@ -174,7 +174,11 @@ func xmlAnalize(methodStruct interface{}, acceptedData* string) (*string, error)
 					popTmp.CreateAttr(key, value)
 				}
 			}
-			el.AddChild(popTmp)
+			if el == nil {
+				el = document.CreateElement(elemName)
+			} else {
+				el.AddChild(popTmp)
+			}
 		} else if mas[idntIndex] == "Pop" {
 			el = el.Parent()
 			lstIndex  -= 1
