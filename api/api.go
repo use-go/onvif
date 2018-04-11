@@ -68,6 +68,8 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 		methodStruct, err = getDeviceStructByName(methodName)
 	case "ptz":
 		methodStruct, err = getPTZStructByName(methodName)
+	case "media":
+		methodStruct, err = getMediaStructByName(methodName)
 	default:
 		return "", errors.New("there is no such service")
 	}
