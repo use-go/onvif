@@ -13,12 +13,17 @@ import (
 	"github.com/yakovlevdmv/goonvif/networking"
 	"net/http"
 	"io/ioutil"
+	"github.com/yakovlevdmv/WS-Discovery"
+	"path"
 )
 
 func RunApi ()  {
 	router := gin.Default()
 
 	router.POST("/:service/:method", func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		//c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
+
 		serviceName := c.Param("service")
 		methodName := c.Param("method")
 		username := c.GetHeader("username")
@@ -33,11 +38,59 @@ func RunApi ()  {
 		if err != nil {
 			c.XML(http.StatusBadRequest, err.Error())
 		} else {
-			c.XML(http.StatusOK, message)
+			c.String(http.StatusOK, message)
 		}
 	})
+
+	router.GET("/discovery", func(context *gin.Context) {
+		context.Header("Access-Control-Allow-Origin", "*")
+		context.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
+
+		var response = "["
+		devices := WS_Discovery.SendProbe("Ethernet 2", nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn":"http://www.onvif.org/ver10/network/wsdl"})
+		for _, j := range devices {
+			doc := etree.NewDocument()
+			if err := doc.ReadFromString(j); err != nil {
+				context.XML(http.StatusBadRequest, err.Error())
+			} else {
+
+				endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
+				scopes 	  := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/Scopes")
+
+				flag := false
+
+				for _, xaddr := range endpoints {
+					xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
+					if strings.Contains(response, xaddr) {
+						flag = true
+						break
+					}
+					response += "{"
+					response += `"url":"` + xaddr + `",`
+				}
+				if flag {
+					break
+				}
+				for _, scope := range scopes {
+					re := regexp.MustCompile(`onvif:\/\/www\.onvif\.org\/name\/[A-Za-z0-9-]+`)
+					match := re.FindStringSubmatch(scope.Text())
+					response += `"name":"` + path.Base(match[0]) + `"`
+				}
+				response += "},"
+
+			}
+
+		}
+		response = strings.TrimRight(response, ",")
+		response += "]"
+		if response != "" {
+			context.String(http.StatusOK, response)
+		}
+	})
+
 	router.Run()
 }
+
 
 //func soapHandling(tp interface{}, tags* map[string]string)  {
 //	ifaceValue := reflect.ValueOf(tp).Elem()
