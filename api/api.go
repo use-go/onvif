@@ -46,8 +46,10 @@ func RunApi ()  {
 		context.Header("Access-Control-Allow-Origin", "*")
 		context.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
 
+		interfaceName := context.GetHeader("interface")
+
 		var response = "["
-		devices := WS_Discovery.SendProbe("Ethernet 2", nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn":"http://www.onvif.org/ver10/network/wsdl"})
+		devices := WS_Discovery.SendProbe(interfaceName, nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn":"http://www.onvif.org/ver10/network/wsdl"})
 		for _, j := range devices {
 			doc := etree.NewDocument()
 			if err := doc.ReadFromString(j); err != nil {
