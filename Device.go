@@ -225,19 +225,19 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 //You should use Authenticate method to call authorized requests.
 func (dev Device) CallMethod(method interface{}) (*http.Response, error) {
 	pkgPath := strings.Split(reflect.TypeOf(method).PkgPath(), "/")
-	pkg := pkgPath[len(pkgPath)-1]
+	pkg := strings.ToLower(pkgPath[len(pkgPath)-1])
 
 	var endpoint string
 	switch pkg {
-	case "Device":
+	case "device":
 		endpoint = dev.endpoints["Device"]
-	case "Event":
+	case "event":
 		endpoint = dev.endpoints["Event"]
-	case "Imaging":
+	case "imaging":
 		endpoint = dev.endpoints["Imaging"]
-	case "Media":
+	case "media":
 		endpoint = dev.endpoints["Media"]
-	case "PTZ":
+	case "ptz":
 		endpoint = dev.endpoints["PTZ"]
 	}
 
