@@ -19,6 +19,9 @@ The following services are fully implemented:
 - PTZ
 - Imaging
 
+### under development
+- Event
+
 ## Using
 
 ### General concept
