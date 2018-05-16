@@ -37,7 +37,7 @@ device.Authenticate("username", "password")
 ```
 
 #### Defining Data Types
-Each ONVIF service in this library has its own package, in which all data types of this service are defined, and the package name is identical to the service name and begins with a capital letter. 41 Goonvif defines the structures for each function of each ONVIF service supported by this library. 42 Define the data type of the function `GetCapabilities` of the` Device` service. This is done as follows:
+Each ONVIF service in this library has its own package, in which all data types of this service are defined, and the package name is identical to the service name and begins with a capital letter. Goonvif defines the structures for each function of each ONVIF service supported by this library. Define the data type of the `GetCapabilities` function of the `Device` service. This is done as follows:
 ```
 capabilities := Device.GetCapabilities{Category:"All"}
 ```
