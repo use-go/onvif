@@ -22,12 +22,12 @@ The following services are fully implemented:
 4) Carrying out the required method
 
 #### Connecting to the device
-If there is a device on the network at the address * 192.168.13.42 *, and its ONVIF services use the * 1234 * port, then you can connect to the device in the following way:
+If there is a device on the network at the address *192.168.13.42*, and its ONVIF services use the *1234* port, then you can connect to the device in the following way:
 ```
 dev, err := goonvif.NewDevice("192.168.13.42:1234")
 ```
 
-*The ONVIF port may differ depending on the device and to find out which port to use, you can go to the web interface of the device. ** Usually this is 80 port. ***
+*The ONVIF port may differ depending on the device and to find out which port to use, you can go to the web interface of the device. **Usually this is 80 port.***
 
 #### Authentication
 If any function of one of the ONVIF services requires authentication, you must use the `Authenticate` method.
@@ -57,7 +57,7 @@ The figure below shows that GetServiceCapabilities does not accept any arguments
 
 * Common data types are in the xsd / onvif package. The types of data (structures) that can be shared by all services are defined in the onvif package. *
 
-An example of how to define the data type of the CreateUsers function [Device](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl):
+An example of how to define the data type of the CreateUsers function in [Devicemgmt](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl):
 ```
 createUsers := Device.CreateUsers{User: onvif.User{Username:"admin", Password:"qwerty", UserLevel:"User"}}
 ```
