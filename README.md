@@ -1,75 +1,73 @@
 # Goonvif
-Простое управление IP-устройствами, включая камерами. Goonvif - это реализация протокола ONVIF для управления IP-устройствами. Целью создания данной библиотеки является удобное и легкое управление IP-камерами и другими устройствами, поддерживающими стандарт ONVIF.
+Simple management of IP-devices, including cameras. Goonvif is an implementation of the ONVIF protocol for managing IP devices. The purpose of this library is convenient and easy management of IP cameras and other devices that support the ONVIF standard.
 
-## Установка
-Для установки библиотеки необходимо воспользоваться утилитой go get:
+## Installation
+To install the library, you must use the go get utility:
 ```
 go get github.com/yakovlevdmv/goonvif
 ```
-## Поддерживаемые сервисы
-Следующие сервисы полностью реализованы:
+## Supported services
+The following services are fully implemented:
 - Device
 - Media
 - PTZ
 - Imaging
 
-## Использование
+## Using
 
-### Общая концепция
-1) Подключение к устройству
-2) Аутентификация (если необходима)
-3) Определение типов данных
-4) Выполнение необходимого метода
+### General concept
+1) Connecting to the device
+2) Authentication (if necessary)
+3) Defining Data Types
+4) Carrying out the required method
 
-#### Подключение к устройству
-Если в сети находится устройство по адресу *192.168.13.42*, а ее ONVIF сервисы используют порт *1234*, тогда подключиться к устройству можно следующим способом:
+#### Connecting to the device
+If there is a device on the network at the address * 192.168.13.42 *, and its ONVIF services use the * 1234 * port, then you can connect to the device in the following way:
 ```
 dev, err := goonvif.NewDevice("192.168.13.42:1234")
 ```
 
-*ONVIF порт может отличаться в зависимости от устройства и, чтобы узнать, какой порт использовать, можно зайти в веб-интерфейс устройства. **Обычно это 80 порт.***
+*The ONVIF port may differ depending on the device and to find out which port to use, you can go to the web interface of the device. ** Usually this is 80 port. ***
 
-#### Аутентификация
-Если какая-либо функция одного из сервисов ONVIF требует аутентификацию, необходимо использовать метод `Authenticate`.
+#### Authentication
+If any function of one of the ONVIF services requires authentication, you must use the `Authenticate` method.
 ```
 device := onvif.NewDevice("192.168.13.42:1234")
 device.Authenticate("username", "password")
 ```
 
-#### Определение типов данных
-Каждому сервису ONVIF в этой библиотеке соответствует свой пакет, в котором определены все типы данных этого сервиса, причем название пакета идентично названию сервиса и начинается с заглавной буквы.
-В Goonvif определены структуры для каждой функции каждого поддерживаемого этой библиотекой сервиса ONVIF.
-Определим тип данных функции `GetCapabilities` сервиса `Device`. Это делается следующим образом:
+#### Defining Data Types
+Each ONVIF service in this library has its own package, in which all data types of this service are defined, and the package name is identical to the service name and begins with a capital letter. 41 Goonvif defines the structures for each function of each ONVIF service supported by this library. 42 Define the data type of the function `GetCapabilities` of the` Device` service. This is done as follows:
 ```
 capabilities := Device.GetCapabilities{Category:"All"}
 ```
-Почему у структуры GetCapabilities поле Category и почему значение этого поля All?
+Why does the GetCapabilities structure have the Category field and why is the value of this field All?
 
-На рисунке ниже показана документация функции [GetCapabilities](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl). Видно, что функция принимает один пареметр Category и его значение должно быть одно из следующих:  `'All', 'Analytics', 'Device', 'Events', 'Imaging', 'Media' или 'PTZ'`. 
+The figure below shows the documentation for the [GetCapabilities](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl). It can be seen that the function takes one Category parameter and its value should be one of the following: 'All', 'Analytics',' Device ',' Events', 'Imaging', 'Media' or 'PTZ'`.
 
 ![Device GetCapabilities](img/exmp_GetCapabilities.png)
 
-Пример определения типа данных функции GetServiceCapabilities сервиса [PTZ](https://www.onvif.org/ver20/ptz/wsdl/ptz.wsdl):
+An example of defining the data type of the GetServiceCapabilities function [PTZ](https://www.onvif.org/ver20/ptz/wsdl/ptz.wsdl):
 ```
 ptzCapabilities := PTZ.GetServiceCapabilities{}
 ```
-На рисунке ниже видно, что GetServiceCapabilities не принимает никаких аргументов. 
+The figure below shows that GetServiceCapabilities does not accept any arguments.
 
 ![PTZ GetServiceCapabilities](img/GetServiceCapabilities.png)
 
-*Общие типы данных находятся в пакете xsd/onvif. Типы данных (структуры), которые могут быть общими для всех сервисов определены в пакете onvif.*
+* Common data types are in the xsd / onvif package. The types of data (structures) that can be shared by all services are defined in the onvif package. *
 
-Пример оределения типа данных функции CreateUsers сервиса [Device](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl):
+An example of how to define the data type of the CreateUsers function [Device](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl):
 ```
 createUsers := Device.CreateUsers{User: onvif.User{Username:"admin", Password:"qwerty", UserLevel:"User"}}
 ```
 
-По рисунку ниже видно, что в данном примере полем структуры CreateUsers должен быть User, типом данных которого является структура User, содержащая поля Username, Password, UserLevel и необязательный Extension. Структура User находится в пакете onvif.
+The figure below shows that in this example, the CreateUsers structure field must be a User whose data type is the User structure containing the Username, Password, UserLevel, and optional Extension fields. The User structure is in the onvif package.
 
 ![Device CreateUsers](img/exmp_CreateUsers.png)
 
-#### Выполнение необходимого метода
-Для выполнения какой-либо функции одного из сервисов ONVIF, структура которой была определена, необходимо использовать `CallMethod` объекта device.
+#### Carrying out the required method
+To perform any function of one of the ONVIF services whose structure has been defined, you must use the `CallMethod` of the device object.
 ```
 createUsers := Device.CreateUsers{User: onvif.User{Username:"admin", Password:"qwerty", UserLevel:"User"}}
 device := onvif.NewDevice("192.168.13.42:1234")
