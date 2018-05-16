@@ -1,155 +1,157 @@
 package xsd
 
 import (
-	"time"
-	iso8601 "github.com/yakovlevdmv/Golang-iso8601-duration"
-	"log"
-	"fmt"
-	"encoding/hex"
 	"encoding/base64"
-	"net/url"
-	"strings"
-	"regexp"
+	"encoding/hex"
 	"errors"
+	"fmt"
+	"log"
+	"net/url"
+	"regexp"
+	"strings"
+	"time"
+
+	iso8601 "github.com/yakovlevdmv/Golang-iso8601-duration"
 )
 
 /*
 	TODO: XML SOURCE: https://www.w3.org/2001/05/datatypes.xsd
- */
+*/
 
-type AnyType string;
+// AnyType alias for string
+type AnyType string
 
+// AnySimpleType alias for string
 type AnySimpleType string
 
 /***********************************************************
-   					Non-derived types
- ***********************************************************/
-
+  					Non-derived types
+***********************************************************/
 
 /*
-		The string datatype represents character strings in XML.
-		The ·value space· of string is the set of finite-length sequences of characters.
-		String has the following constraining facets:
-		• length
-		• minLength
-		• maxLength
-		• pattern
-		• enumeration
-		• whiteSpace
+	The string datatype represents character strings in XML.
+	The ·value space· of string is the set of finite-length sequences of characters.
+	String has the following constraining facets:
+	• length
+	• minLength
+	• maxLength
+	• pattern
+	• enumeration
+	• whiteSpace
 
-		More info: https://www.w3.org/TR/xmlschema-2/#string
+	More info: https://www.w3.org/TR/xmlschema-2/#string
 
-		//TODO: valid/invalid character declaration and process restrictions
- */
+	//TODO: valid/invalid character declaration and process restrictions
+*/
 type String string
 
 /*
 	Construct an instance of xsd String type
- */
+*/
 func (tp String) NewString(data string) String {
 	return String(data)
 }
 
 /*
-		Boolean has the ·value space· required to support the mathematical concept of binary-valued logic: {true, false}.
-		Boolean has the following ·constraining facets·:
-		• pattern
-		• whiteSpace
+	Boolean has the ·value space· required to support the mathematical concept of binary-valued logic: {true, false}.
+	Boolean has the following ·constraining facets·:
+	• pattern
+	• whiteSpace
 
-		More info: https://www.w3.org/TR/xmlschema-2/#boolean
+	More info: https://www.w3.org/TR/xmlschema-2/#boolean
 
-		//TODO: process restrictions
- */
+	//TODO: process restrictions
+*/
 type Boolean bool
 
 /*
 	Construct an instance of xsd Boolean type
- */
+*/
 func (tp Boolean) NewBool(data bool) Boolean {
 	return Boolean(data)
 }
 
 /*
-		Float is patterned after the IEEE single-precision 32-bit floating point type
-		Float has the following ·constraining facets·:
-		• pattern
-		• enumeration
-		• whiteSpace
-		• maxInclusive
-		• maxExclusive
-		• minInclusive
-		• minExclusive
+	Float is patterned after the IEEE single-precision 32-bit floating point type
+	Float has the following ·constraining facets·:
+	• pattern
+	• enumeration
+	• whiteSpace
+	• maxInclusive
+	• maxExclusive
+	• minInclusive
+	• minExclusive
 
-		More info: https://www.w3.org/TR/xmlschema-2/#float
+	More info: https://www.w3.org/TR/xmlschema-2/#float
 
-		//TODO: process restrictions
- */
+	//TODO: process restrictions
+*/
 type Float float32
 
 /*
 	Construct an instance of xsd Float type
- */
+*/
 func (tp Float) NewFloat(data float32) Float {
 	return Float(data)
 }
 
 /*
-		The double datatype is patterned after the IEEE double-precision 64-bit floating point type
-		Double has the following ·constraining facets·:
-		• pattern
-		• enumeration
-		• whiteSpace
-		• maxInclusive
-		• maxExclusive
-		• minInclusive
-		• minExclusive
+	The double datatype is patterned after the IEEE double-precision 64-bit floating point type
+	Double has the following ·constraining facets·:
+	• pattern
+	• enumeration
+	• whiteSpace
+	• maxInclusive
+	• maxExclusive
+	• minInclusive
+	• minExclusive
 
-		More info: https://www.w3.org/TR/xmlschema-2/#double
+	More info: https://www.w3.org/TR/xmlschema-2/#double
 
-		//TODO: process restrictions
- */
+	//TODO: process restrictions
+*/
 type Double float64
 
 /*
 	Construct an instance of xsd Double type
- */
+*/
 func (tp Double) NewDouble(data float64) Double {
 	return Double(data)
 }
 
 /*
-		The type decimal represents a decimal number of arbitrary precision.
-		Schema processors vary in the number of significant digits they support,
-		but a conforming processor must support a minimum of 18 significant digits.
-		The format of xsd:decimal is a sequence of digits optionally preceded by a sign ("+" or "-")
-		and optionally containing a period. The value may start or end with a period.
-		If the fractional part is 0 then the period and trailing zeros may be omitted.
-		Leading and trailing zeros are permitted, but they are not considered significant.
-		That is, the decimal values 3.0 and 3.0000 are considered equal.
+	The type decimal represents a decimal number of arbitrary precision.
+	Schema processors vary in the number of significant digits they support,
+	but a conforming processor must support a minimum of 18 significant digits.
+	The format of xsd:decimal is a sequence of digits optionally preceded by a sign ("+" or "-")
+	and optionally containing a period. The value may start or end with a period.
+	If the fractional part is 0 then the period and trailing zeros may be omitted.
+	Leading and trailing zeros are permitted, but they are not considered significant.
+	That is, the decimal values 3.0 and 3.0000 are considered equal.
 
-		Source: http://www.datypic.com/sc/xsd/t-xsd_decimal.html
+	Source: http://www.datypic.com/sc/xsd/t-xsd_decimal.html
 
-		Decimal has the following ·constraining facets·:
-		• totalDigits
-		• fractionDigits
-		• pattern
-		• whiteSpace
-		• enumeration
-		• maxInclusive
-		• maxExclusive
-		• minInclusive
-		• minExclusive
+	Decimal has the following ·constraining facets·:
+	• totalDigits
+	• fractionDigits
+	• pattern
+	• whiteSpace
+	• enumeration
+	• maxInclusive
+	• maxExclusive
+	• minInclusive
+	• minExclusive
 
-		More info: https://www.w3.org/TR/xmlschema-2/#decimal
+	More info: https://www.w3.org/TR/xmlschema-2/#decimal
 
-		//TODO: process restrictions, valid/invalid characters(commas are not permitted; the decimal separator must be a period)
+	//TODO: process restrictions, valid/invalid characters(commas are not permitted; the decimal separator must be a period)
 
- */
+*/
 type Decimal string
 
 /*
 	Construct an instance of xsd Decimal type
- */
+*/
 func (tp Decimal) NewDecimal(data string) Decimal {
 	return Decimal(data)
 }
@@ -176,13 +178,14 @@ func (tp Decimal) NewDecimal(data string) Decimal {
 
 	TODO: process restrictions
 	TODO: Look at time.Duration go type
- */
+*/
 
+//Duration alias for AnySimpleType
 type Duration AnySimpleType
 
 /*
 	Construct an instance of xsd duration type
- */
+*/
 func (tp Duration) NewDateTime(years, months, days, hours, minutes, seconds string) Duration {
 	i, err := iso8601.NewDuration(
 		years,
@@ -201,6 +204,7 @@ func (tp Duration) NewDateTime(years, months, days, hours, minutes, seconds stri
 
 	return Duration(i.ISO8601Duration())
 }
+
 /*
 	DateTime values may be viewed as objects with integer-valued year, month, day, hour
 	and minute properties, a decimal-valued second property, and a boolean timezoned property.
@@ -224,12 +228,12 @@ func (tp Duration) NewDateTime(years, months, days, hours, minutes, seconds stri
 
 	TODO: decide good type for time with proper format
 	TODO: process restrictions
- */
+*/
 type DateTime AnySimpleType
 
 /*
 	Construct an instance of xsd dateTime type
- */
+*/
 func (tp DateTime) NewDateTime(time time.Time) DateTime {
 	return DateTime(time.Format("2002-10-10T12:00:00-05:00"))
 }
@@ -253,12 +257,12 @@ func (tp DateTime) NewDateTime(time time.Time) DateTime {
 	More info: https://www.w3.org/TR/xmlschema-2/#time
 
 	TODO: process restrictions
- */
+*/
 type Time AnySimpleType
 
 /*
 	Construct an instance of xsd time type
- */
+*/
 func (tp DateTime) NewTime(time time.Time) DateTime {
 	return DateTime(time.Format("15:04:05"))
 }
@@ -272,12 +276,12 @@ func (tp DateTime) NewTime(time time.Time) DateTime {
 	For nontimezoned values, the top-open intervals disjointly
 	cover the nontimezoned timeline, one per day. For timezoned
 	values, the intervals begin at every minute and therefore overlap.
- */
+*/
 type Date AnySimpleType
 
 /*
 	Construct an instance of xsd date type
- */
+*/
 func (tp Date) NewDate(time time.Time) Date {
 	return Date(time.Format("2004-04-12-05:00"))
 }
@@ -294,14 +298,14 @@ func (tp Date) NewDate(time time.Time) Date {
 	Source: http://www.datypic.com/sc/xsd/t-xsd_gYearMonth.html
 
 	More info: https://www.w3.org/TR/xmlschema-2/#gYearMonth
- */
+*/
 type GYearMonth AnySimpleType
 
 /*
 	Construct an instance of xsd GYearMonth type
- */
+*/
 func (tp GYearMonth) NewGYearMonth(time time.Time) GYearMonth {
-	return GYearMonth(fmt.Sprintf("", time.Year(),"-",time.Month()))
+	return GYearMonth(fmt.Sprintf("", time.Year(), "-", time.Month()))
 	//return GYearMonth(time.Format("2004-04-05:00"))
 }
 
@@ -316,12 +320,12 @@ func (tp GYearMonth) NewGYearMonth(time time.Time) GYearMonth {
 	Source: http://www.datypic.com/sc/xsd/t-xsd_gYear.html
 
 	More info: https://www.w3.org/TR/xmlschema-2/#gYear
- */
+*/
 type GYear AnySimpleType
 
 /*
 	Construct an instance of xsd GYear type
- */
+*/
 func (tp GYear) NewGYear(time time.Time) GYear {
 	return GYear(fmt.Sprintf("", time.Year()))
 	//return GYearMonth(time.Format("2004-04-05:00"))
@@ -341,9 +345,9 @@ type GMonthDay AnySimpleType
 
 /*
 	Construct an instance of xsd GMonthDay type
- */
+*/
 func (tp GMonthDay) NewGMonthDay(time time.Time) GMonthDay {
-	return GMonthDay(fmt.Sprintf("--", time.Month(),"-",time.Day()))
+	return GMonthDay(fmt.Sprintf("--", time.Month(), "-", time.Day()))
 }
 
 /*
@@ -356,12 +360,12 @@ func (tp GMonthDay) NewGMonthDay(time time.Time) GMonthDay {
 	Source: http://www.datypic.com/sc/xsd/t-xsd_gDay.html
 
 	More info: https://www.w3.org/TR/xmlschema-2/#gDay
- */
+*/
 type GDay AnySimpleType
 
 /*
 	Construct an instance of xsd GDay type
- */
+*/
 func (tp GDay) NewGDay(time time.Time) GDay {
 	return GDay(fmt.Sprintf("---", time.Day()))
 }
@@ -377,7 +381,7 @@ func (tp GDay) NewGDay(time time.Time) GDay {
 	Source: http://www.datypic.com/sc/xsd/t-xsd_gMonth.html
 
 	More info: https://www.w3.org/TR/xmlschema-2/#gMonth
- */
+*/
 type GMonth AnySimpleType
 
 func (tp GMonth) NewGMonth(time time.Time) GMonth {
@@ -395,12 +399,13 @@ func (tp GMonth) NewGMonth(time time.Time) GMonth {
 	Source: http://www.datypic.com/sc/xsd/t-xsd_hexBinary.html
 
 	More info: https://www.w3.org/TR/xmlschema-2/#hexBinary
- */
+*/
 type HexBinary AnySimpleType
 
 func (tp HexBinary) NewHexBinary(data []byte) HexBinary {
 	return HexBinary(hex.EncodeToString(data))
 }
+
 /*
 	base64Binary represents Base64-encoded arbitrary binary data.
 	The ·value space· of base64Binary is the set of finite-length sequences of binary octets.
@@ -415,7 +420,7 @@ func (tp HexBinary) NewHexBinary(data []byte) HexBinary {
 	• whiteSpace
 
 	More info: https://www.w3.org/TR/xmlschema-2/#base64Binary
- */
+*/
 type Base64Binary AnySimpleType
 
 func (tp Base64Binary) NewBase64Binary(data []byte) Base64Binary {
@@ -438,7 +443,7 @@ func (tp Base64Binary) NewBase64Binary(data []byte) Base64Binary {
 	• whiteSpace
 
 	More info: https://www.w3.org/TR/xmlschema-2/#anyURI
- */
+*/
 type AnyURI AnySimpleType
 
 func (tp AnyURI) NewAnyURI(data url.URL) AnyURI {
@@ -459,7 +464,7 @@ func (tp AnyURI) NewAnyURI(data url.URL) AnyURI {
 	• whiteSpace
 
 	More info: https://www.w3.org/TR/xmlschema-2/#QName
- */
+*/
 type QName AnySimpleType
 
 func (tp QName) NewQName(prefix, local string) QName {
@@ -477,7 +482,7 @@ func (tp QName) NewQName(prefix, local string) QName {
 
 /*
    Derived types
- */
+*/
 
 type NormalizedString String
 
@@ -513,7 +518,7 @@ func (tp Language) NewLanguage(data Token) (Language, error) {
 		return Language(""), errors.New("String does not match pattern ([a-zA-Z]{2}|[iI]-[a-zA-Z]+|[xX]-[a-zA-Z]{1,8})(-[a-zA-Z]{1,8})*")
 	}
 	return Language(data), nil
-	}
+}
 
 type NMTOKEN Token
 
