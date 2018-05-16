@@ -47,7 +47,7 @@ The figure below shows the documentation for the [GetCapabilities](https://www.o
 
 ![Device GetCapabilities](img/exmp_GetCapabilities.png)
 
-An example of defining the data type of the GetServiceCapabilities function [PTZ](https://www.onvif.org/ver20/ptz/wsdl/ptz.wsdl):
+An example of defining the data type of the GetServiceCapabilities function in [PTZ](https://www.onvif.org/ver20/ptz/wsdl/ptz.wsdl):
 ```
 ptzCapabilities := PTZ.GetServiceCapabilities{}
 ```
