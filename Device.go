@@ -11,9 +11,9 @@ import (
 	"strings"
 
 	"github.com/beevik/etree"
-	"github.com/use-go/go-onvif/device"
+	"github.com/use-go/goonvif/device"
+	"github.com/use-go/goonvif/networking"
 	"github.com/yakovlevdmv/WS-Discovery"
-	"github.com/yakovlevdmv/goonvif/networking"
 	"github.com/yakovlevdmv/gosoap"
 )
 
