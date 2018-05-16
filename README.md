@@ -2,7 +2,7 @@
 Simple management of IP-devices, including cameras. Goonvif is an implementation of the ONVIF protocol for managing IP devices. The purpose of this library is convenient and easy management of IP cameras and other devices that support the ONVIF standard.
 
 ## Installation
-To install the library,  use *go get*:
+To install the library,  use **go get**:
 ```
 go get github.com/yakovlevdmv/goonvif
 ```
