@@ -55,7 +55,7 @@ The figure below shows that GetServiceCapabilities does not accept any arguments
 
 ![PTZ GetServiceCapabilities](img/GetServiceCapabilities.png)
 
-* Common data types are in the xsd / onvif package. The types of data (structures) that can be shared by all services are defined in the onvif package. *
+*Common data types are in the xsd / onvif package. The types of data (structures) that can be shared by all services are defined in the onvif package.*
 
 An example of how to define the data type of the CreateUsers function in [Devicemgmt](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl):
 ```
