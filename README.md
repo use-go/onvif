@@ -7,7 +7,7 @@ Simple management of onvif IP-devices cameras. Goonvif is an implementation of  
 To install the library,  use **go get**:
 
 ```go
-go get github.com/yakovlevdmv/goonvif
+go get github.com/use-go/goonvif
 ```
 
 ## Supported services
