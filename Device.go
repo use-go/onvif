@@ -188,7 +188,11 @@ func NewDevice(xaddr string) (*Device, error) {
 }
 
 func (dev *Device) addEndpoint(Key, Value string) {
-	dev.endpoints[Key] = Value
+
+	//use lowCaseKey
+	//make key having ability to handle Mixed Case for Different vendor devcie (e.g. Events EVENTS, events)
+	lowCaseKey := strings.ToLower(Key)
+	dev.endpoints[lowCaseKey] = Value
 }
 
 //Authenticate function authenticate client in the ONVIF Device.
@@ -221,32 +225,45 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	return soap, nil
 }
 
+//getEndpoint functions get the target service endpoint in a better way
+func (dev Device) getEndpoint(endpointMark string) (string, error) {
+
+	// common condition, endpointMark equl targetKey in map we use this.
+	var endpointURL string
+	for targetKey := range dev.endpoints {
+		if strings.Compare(targetKey, endpointMark) == 0 {
+			endpointURL = dev.endpoints[targetKey]
+			return endpointURL, nil
+		}
+	}
+	//but ,if we have enpointMark like event、analytic
+	//and sametime the Targetkey like : events、analytics
+	//we use this find the best match url
+	for targetKey := range dev.endpoints {
+		if strings.Contains(targetKey, endpointMark) {
+			endpointURL = dev.endpoints[targetKey]
+			return endpointURL, nil
+		}
+	}
+	return endpointURL, errors.New("target endpoint service not found")
+}
+
 //CallMethod functions call an method, defined <method> struct.
 //You should use Authenticate method to call authorized requests.
 func (dev Device) CallMethod(method interface{}) (*http.Response, error) {
 	pkgPath := strings.Split(reflect.TypeOf(method).PkgPath(), "/")
 	pkg := strings.ToLower(pkgPath[len(pkgPath)-1])
 
-	var endpoint string
-	switch pkg {
-	case "device":
-		endpoint = dev.endpoints["Device"]
-	case "event":
-		endpoint = dev.endpoints["Event"]
-	case "imaging":
-		endpoint = dev.endpoints["Imaging"]
-	case "media":
-		endpoint = dev.endpoints["Media"]
-	case "ptz":
-		endpoint = dev.endpoints["PTZ"]
+	if endpoint, err := dev.getEndpoint(pkg); err != nil {
+		return nil, err
+	} else {
+		if dev.login != "" && dev.password != "" {
+			return dev.callAuthorizedMethod(endpoint, method)
+		} else {
+			return dev.callNonAuthorizedMethod(endpoint, method)
+		}
 	}
 
-	//TODO: Get endpoint automatically
-	if dev.login != "" && dev.password != "" {
-		return dev.callAuthorizedMethod(endpoint, method)
-	} else {
-		return dev.callNonAuthorizedMethod(endpoint, method)
-	}
 }
 
 //CallNonAuthorizedMethod functions call an method, defined <method> struct without authentication data
