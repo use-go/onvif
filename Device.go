@@ -226,21 +226,19 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 }
 
 //getEndpoint functions get the target service endpoint in a better way
-func (dev Device) getEndpoint(endpointMark string) (string, error) {
+func (dev Device) getEndpoint(endpoint string) (string, error) {
 
-	// common condition, endpointMark equl targetKey in map we use this.
+	// common condition, endpointMark in map we use this.
+	if endpointURL, bFound := dev.endpoints[endpoint]; bFound {
+		return endpointURL, nil
+	}
+
+	//but ,if we have endpoint like event、analytic
+	//and sametime the Targetkey like : events、analytics
+	//we use fuzzy way to find the best match url
 	var endpointURL string
 	for targetKey := range dev.endpoints {
-		if strings.Compare(targetKey, endpointMark) == 0 {
-			endpointURL = dev.endpoints[targetKey]
-			return endpointURL, nil
-		}
-	}
-	//but ,if we have enpointMark like event、analytic
-	//and sametime the Targetkey like : events、analytics
-	//we use this find the best match url
-	for targetKey := range dev.endpoints {
-		if strings.Contains(targetKey, endpointMark) {
+		if strings.Contains(targetKey, endpoint) {
 			endpointURL = dev.endpoints[targetKey]
 			return endpointURL, nil
 		}
