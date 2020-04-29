@@ -13,7 +13,7 @@ go get github.com/use-go/onvif
 
 ## Supported services
 
-The following services are fully implemented:
+The following services are implemented:
 
 - Auth(More Options)
 - Device
