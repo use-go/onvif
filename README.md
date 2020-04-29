@@ -51,7 +51,7 @@ device.Authenticate("username", "password")
 
 #### Defining Data Types
 
-Each ONVIF service in this library has its own package, in which all data types of this service are defined, and the package name is identical to the service name and begins with a capital letter. Goonvif defines the structures for each function of each ONVIF service supported by this library. Define the data type of the `GetCapabilities` function of the Device service. This is done as follows:
+Each ONVIF service in this library has its own package, in which all data types of this service are defined, and the package name is identical to the service name and begins with a capital letter. onvif defines the structures for each function of each ONVIF service supported by this library. Define the data type of the `GetCapabilities` function of the Device service. This is done as follows:
 
 ```go
 capabilities := device.GetCapabilities{Category:"All"}
@@ -61,7 +61,7 @@ Why does the `GetCapabilities` structure have the Category field and why is the 
 
 The figure below shows the documentation for the [GetCapabilities](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl). It can be seen that the function takes one Category parameter and its value should be one of the following: 'All', 'Analytics',' Device ',' Events', 'Imaging', 'Media' or 'PTZ'`.
 
-![Device GetCapabilities](img/exmp_GetCapabilities.png)
+![Device GetCapabilities](docs/img/exmp_GetCapabilities.png)
 
 An example of defining the data type of `GetServiceCapabilities` function in [PTZ](https://www.onvif.org/ver20/ptz/wsdl/ptz.wsdl):
 
@@ -71,7 +71,7 @@ ptzCapabilities := ptz.GetServiceCapabilities{}
 
 The figure below shows that `GetServiceCapabilities` does not accept any arguments.
 
-![PTZ GetServiceCapabilities](img/GetServiceCapabilities.png)
+![PTZ GetServiceCapabilities](docs/img/GetServiceCapabilities.png)
 
 *Common data types are in the xsd/onvif package. The types of data (structures) that can be shared by all services are defined in the onvif package.*
 
@@ -83,7 +83,7 @@ createUsers := device.CreateUsers{User: onvif.User{Username:"admin", Password:"q
 
 The figure below shows that ,in this example, the `CreateUsers` structure field must be a User whose data type is the User structure containing the Username, Password, UserLevel, and optional Extension fields. The User structure is in the onvif package.
 
-![Device CreateUsers](img/exmp_CreateUsers.png)
+![Device CreateUsers](docs/img/exmp_CreateUsers.png)
 
 #### Carrying out the required method
 
