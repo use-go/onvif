@@ -1,13 +1,14 @@
-# Goonvif
+# onvif[golang]
 
-Simple management of onvif IP-devices cameras. Goonvif is an implementation of  ONVIF protocol for managing onvif IP devices. The purpose of this library is convenient and easy management of IP cameras and other devices that support ONVIF standard.
+Simple management of onvif IP-devices cameras. onvif is an implementation of  ONVIF protocol for managing onvif IP devices. The purpose of this library is convenient and easy management of IP cameras and other devices that support ONVIF standard.
 
 ## Installation
 
 To install the library,  use **go get**:
 
 ```go
-go get github.com/use-go/goonvif
+go get github.com/use-go/onvif
+
 ```
 
 ## Supported services
@@ -18,8 +19,6 @@ The following services are fully implemented:
 - Media
 - PTZ
 - Imaging
-
-### under development
 - Event
 
 ## Using
@@ -36,7 +35,7 @@ The following services are fully implemented:
 If there is a device on the network at the address *192.168.13.42*, and its ONVIF services use the *1234* port, then you can connect to the device in the following way:
 
 ```go
-dev, err := goonvif.NewDevice("192.168.13.42:1234")
+dev, err := onvif.NewDevice("192.168.13.42:1234")
 ```
 
 *The ONVIF port may differ depending on the device , to find out which port to use, you can go to the web interface of the device. **Usually this is 80 port.***
@@ -55,7 +54,7 @@ device.Authenticate("username", "password")
 Each ONVIF service in this library has its own package, in which all data types of this service are defined, and the package name is identical to the service name and begins with a capital letter. Goonvif defines the structures for each function of each ONVIF service supported by this library. Define the data type of the `GetCapabilities` function of the Device service. This is done as follows:
 
 ```go
-capabilities := Device.GetCapabilities{Category:"All"}
+capabilities := device.GetCapabilities{Category:"All"}
 ```
 
 Why does the `GetCapabilities` structure have the Category field and why is the value of this field `All`?
@@ -67,7 +66,7 @@ The figure below shows the documentation for the [GetCapabilities](https://www.o
 An example of defining the data type of `GetServiceCapabilities` function in [PTZ](https://www.onvif.org/ver20/ptz/wsdl/ptz.wsdl):
 
 ```go
-ptzCapabilities := PTZ.GetServiceCapabilities{}
+ptzCapabilities := ptz.GetServiceCapabilities{}
 ```
 
 The figure below shows that `GetServiceCapabilities` does not accept any arguments.
@@ -79,7 +78,7 @@ The figure below shows that `GetServiceCapabilities` does not accept any argumen
 An example of how to define the data type of the CreateUsers function in [Devicemgmt](https://www.onvif.org/ver10/device/wsdl/devicemgmt.wsdl):
 
 ```go
-createUsers := Device.CreateUsers{User: onvif.User{Username:"admin", Password:"qwerty", UserLevel:"User"}}
+createUsers := device.CreateUsers{User: onvif.User{Username:"admin", Password:"qwerty", UserLevel:"User"}}
 ```
 
 The figure below shows that ,in this example, the `CreateUsers` structure field must be a User whose data type is the User structure containing the Username, Password, UserLevel, and optional Extension fields. The User structure is in the onvif package.
@@ -91,8 +90,12 @@ The figure below shows that ,in this example, the `CreateUsers` structure field 
 To perform any function of one of the ONVIF services whose structure has been defined, you must use the `CallMethod` of the device object.
 
 ```go
-createUsers := Device.CreateUsers{User: onvif.User{Username:"admin", Password:"qwerty", UserLevel:"User"}}
+createUsers := device.CreateUsers{User: onvif.User{Username:"admin", Password:"qwerty", UserLevel:"User"}}
 device := onvif.NewDevice("192.168.13.42:1234")
 device.Authenticate("username", "password")
 resp, err := dev.CallMethod(createUsers)
 ```
+
+## Great Thanks
+
+Modified from: [goonvif](https://github.com/yakovlevdmv/goonvif)
