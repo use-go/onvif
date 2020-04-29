@@ -15,11 +15,13 @@ go get github.com/use-go/onvif
 
 The following services are fully implemented:
 
+- Auth(More Options)
 - Device
 - Media
 - PTZ
 - Imaging
 - Event
+- Discovery
 
 ## Using
 
