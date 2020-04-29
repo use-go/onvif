@@ -1,8 +1,8 @@
 package media
 
 import (
-	"github.com/use-go/goonvif/xsd"
-	"github.com/use-go/goonvif/xsd/onvif"
+	"github.com/use-go/onvif/xsd"
+	"github.com/use-go/onvif/xsd/onvif"
 )
 
 type Capabilities struct {
@@ -86,7 +86,7 @@ type GetProfiles struct {
 }
 
 type GetProfilesResponse struct {
-	Profiles onvif.Profile
+	Profiles []onvif.Profile
 }
 
 type AddVideoEncoderConfiguration struct {

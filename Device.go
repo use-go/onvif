@@ -1,4 +1,4 @@
-package goonvif
+package onvif
 
 import (
 	"encoding/xml"
@@ -11,10 +11,10 @@ import (
 	"strings"
 
 	"github.com/beevik/etree"
-	"github.com/use-go/goonvif/device"
-	"github.com/use-go/goonvif/networking"
-	"github.com/yakovlevdmv/WS-Discovery"
-	"github.com/yakovlevdmv/gosoap"
+	"github.com/use-go/onvif/device"
+	"github.com/use-go/onvif/gosoap"
+	"github.com/use-go/onvif/networking"
+	wsdiscovery "github.com/use-go/onvif/ws-discovery"
 )
 
 //Xlmns XML Scheam
@@ -99,9 +99,9 @@ func readResponse(resp *http.Response) string {
 //GetAvailableDevicesAtSpecificEthernetInterface ...
 func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []Device {
 	/*
-		Call an WS-Discovery Probe Message to Discover NVT type Devices
+		Call an ws-discovery Probe Message to Discover NVT type Devices
 	*/
-	devices := WS_Discovery.SendProbe(interfaceName, nil, []string{"dn:" + NVT.String()}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+	devices := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:" + NVT.String()}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
 	nvtDevices := make([]Device, 0)
 	////fmt.Println(devices)
 	for _, j := range devices {
@@ -144,7 +144,7 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []Devi
 }
 
 func (dev *Device) getSupportedServices(resp *http.Response) {
-	//resp, err := dev.CallMethod(Device.GetCapabilities{Category:"All"})
+	//resp, err := dev.CallMethod(device.GetCapabilities{Category:"All"})
 	//if err != nil {
 	//	log.Println(err.Error())
 	//return
@@ -195,7 +195,7 @@ func (dev *Device) addEndpoint(Key, Value string) {
 	dev.endpoints[lowCaseKey] = Value
 }
 
-//Authenticate function authenticate client in the ONVIF Device.
+//Authenticate function authenticate client in the ONVIF device.
 //Function takes <username> and <password> params.
 //You should use this function to allow authorized requests to the ONVIF Device
 //To change auth data call this function again.
@@ -252,52 +252,15 @@ func (dev Device) CallMethod(method interface{}) (*http.Response, error) {
 	pkgPath := strings.Split(reflect.TypeOf(method).PkgPath(), "/")
 	pkg := strings.ToLower(pkgPath[len(pkgPath)-1])
 
-	if endpoint, err := dev.getEndpoint(pkg); err != nil {
-		return nil, err
-	} else {
-		if dev.login != "" && dev.password != "" {
-			return dev.callAuthorizedMethod(endpoint, method)
-		} else {
-			return dev.callNonAuthorizedMethod(endpoint, method)
-		}
-	}
-
-}
-
-//CallNonAuthorizedMethod functions call an method, defined <method> struct without authentication data
-func (dev Device) callNonAuthorizedMethod(endpoint string, method interface{}) (*http.Response, error) {
-	//TODO: Get endpoint automatically
-	/*
-		Converting <method> struct to xml string representation
-	*/
-	output, err := xml.MarshalIndent(method, "  ", "    ")
+	endpoint, err := dev.getEndpoint(pkg)
 	if err != nil {
-		//log.Printf("error: %v\n", err.Error())
 		return nil, err
 	}
-
-	/*
-		Build an SOAP request with <method>
-	*/
-	soap, err := buildMethodSOAP(string(output))
-	if err != nil {
-		//log.Printf("error: %v\n", err)
-		return nil, err
-	}
-
-	/*
-		Adding namespaces
-	*/
-	soap.AddRootNamespaces(Xlmns)
-
-	/*
-		Sending request and returns the response
-	*/
-	return networking.SendSoap(endpoint, soap.String())
+	return dev.callMethodDo(endpoint, method)
 }
 
 //CallMethod functions call an method, defined <method> struct with authentication data
-func (dev Device) callAuthorizedMethod(endpoint string, method interface{}) (*http.Response, error) {
+func (dev Device) callMethodDo(endpoint string, method interface{}) (*http.Response, error) {
 	/*
 		Converting <method> struct to xml string representation
 	*/
@@ -306,7 +269,7 @@ func (dev Device) callAuthorizedMethod(endpoint string, method interface{}) (*ht
 		//log.Printf("error: %v\n", err.Error())
 		return nil, err
 	}
-
+	//fmt.Println(gosoap.SoapMessage(string(output)).StringIndent())
 	/*
 		Build an SOAP request with <method>
 	*/
@@ -316,12 +279,21 @@ func (dev Device) callAuthorizedMethod(endpoint string, method interface{}) (*ht
 		return nil, err
 	}
 
+	//fmt.Println(soap.StringIndent())
 	/*
 		Adding namespaces and WS-Security headers
 	*/
 	soap.AddRootNamespaces(Xlmns)
-	soap.AddWSSecurity(dev.login, dev.password)
 
+	//fmt.Println(soap.StringIndent())
+	//Header handling
+	soap.AddAction()
+
+	//Auth Handling
+	if dev.login != "" && dev.password != "" {
+		soap.AddWSSecurity(dev.login, dev.password)
+	}
+	//fmt.Println(soap.StringIndent())
 	/*
 		Sending request and returns the response
 	*/

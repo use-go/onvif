@@ -1,70 +1,71 @@
 package api
 
 import (
-	"github.com/use-go/goonvif/ptz"
 	"errors"
-	"github.com/use-go/goonvif/device"
-	"github.com/use-go/goonvif/Media"
+
+	"github.com/use-go/onvif/device"
+	"github.com/use-go/onvif/media"
+	"github.com/use-go/onvif/ptz"
 )
 
 func getPTZStructByName(name string) (interface{}, error) {
 	switch name {
 	case "GetServiceCapabilities":
-		return &PTZ.GetServiceCapabilities{}, nil
+		return &ptz.GetServiceCapabilities{}, nil
 	case "GetNodes":
-		return &PTZ.GetNodes{}, nil
+		return &ptz.GetNodes{}, nil
 	case "GetNode":
-		return &PTZ.GetNode{}, nil
+		return &ptz.GetNode{}, nil
 	case "GetConfiguration":
-		return &PTZ.GetConfiguration{}, nil
+		return &ptz.GetConfiguration{}, nil
 	case "GetConfigurations":
-		return &PTZ.GetConfigurations{}, nil
+		return &ptz.GetConfigurations{}, nil
 	case "SetConfiguration":
-		return &PTZ.SetConfiguration{}, nil
+		return &ptz.SetConfiguration{}, nil
 	case "GetConfigurationOptions":
-		return &PTZ.GetConfigurationOptions{}, nil
+		return &ptz.GetConfigurationOptions{}, nil
 	case "SendAuxiliaryCommand":
-		return &PTZ.SendAuxiliaryCommand{}, nil
+		return &ptz.SendAuxiliaryCommand{}, nil
 	case "GetPresets":
-		return &PTZ.GetPresets{}, nil
+		return &ptz.GetPresets{}, nil
 	case "SetPreset":
-		return &PTZ.SetPreset{}, nil
+		return &ptz.SetPreset{}, nil
 	case "RemovePreset":
-		return &PTZ.RemovePreset{}, nil
+		return &ptz.RemovePreset{}, nil
 	case "GotoPreset":
-		return &PTZ.GotoPreset{}, nil
+		return &ptz.GotoPreset{}, nil
 	case "GotoHomePosition":
-		return &PTZ.GotoHomePosition{}, nil
+		return &ptz.GotoHomePosition{}, nil
 	case "SetHomePosition":
-		return &PTZ.SetHomePosition{}, nil
+		return &ptz.SetHomePosition{}, nil
 	case "ContinuousMove":
-		return &PTZ.ContinuousMove{}, nil
+		return &ptz.ContinuousMove{}, nil
 	case "RelativeMove":
-		return &PTZ.RelativeMove{}, nil
+		return &ptz.RelativeMove{}, nil
 	case "GetStatus":
-		return &PTZ.GetStatus{}, nil
+		return &ptz.GetStatus{}, nil
 	case "AbsoluteMove":
-		return &PTZ.AbsoluteMove{}, nil
+		return &ptz.AbsoluteMove{}, nil
 	case "GeoMove":
-		return &PTZ.GeoMove{}, nil
+		return &ptz.GeoMove{}, nil
 	case "Stop":
-		return &PTZ.Stop{}, nil
+		return &ptz.Stop{}, nil
 	case "GetPresetTours":
-		return &PTZ.GetPresetTours{}, nil
+		return &ptz.GetPresetTours{}, nil
 	case "GetPresetTour":
-		return &PTZ.GetPresetTour{}, nil
+		return &ptz.GetPresetTour{}, nil
 	case "GetPresetTourOptions":
-		return &PTZ.GetPresetTourOptions{}, nil
+		return &ptz.GetPresetTourOptions{}, nil
 	case "CreatePresetTour":
-		return &PTZ.CreatePresetTour{}, nil
+		return &ptz.CreatePresetTour{}, nil
 	case "ModifyPresetTour":
-		return &PTZ.ModifyPresetTour{}, nil
+		return &ptz.ModifyPresetTour{}, nil
 	case "OperatePresetTour":
-		return &PTZ.OperatePresetTour{}, nil
+		return &ptz.OperatePresetTour{}, nil
 	case "RemovePresetTour":
-		return &PTZ.RemovePresetTour{}, nil
+		return &ptz.RemovePresetTour{}, nil
 	case "GetCompatibleConfigurations":
-		return &PTZ.GetCompatibleConfigurations{}, nil
+		return &ptz.GetCompatibleConfigurations{}, nil
 	default:
 		return nil, errors.New("there is no such method in the PTZ service")
 	}
@@ -73,352 +74,350 @@ func getPTZStructByName(name string) (interface{}, error) {
 func getDeviceStructByName(name string) (interface{}, error) {
 	switch name {
 	case "GetServices":
-		return &Device.GetServices{}, nil
+		return &device.GetServices{}, nil
 	case "GetServiceCapabilities":
-		return &Device.GetServiceCapabilities{}, nil
+		return &device.GetServiceCapabilities{}, nil
 	case "GetDeviceInformation":
-		return &Device.GetDeviceInformation{}, nil
+		return &device.GetDeviceInformation{}, nil
 	case "SetSystemDateAndTime":
-		return &Device.SetSystemDateAndTime{}, nil
+		return &device.SetSystemDateAndTime{}, nil
 	case "GetSystemDateAndTime":
-		return &Device.GetSystemDateAndTime{}, nil
+		return &device.GetSystemDateAndTime{}, nil
 	case "SetSystemFactoryDefault":
-		return &Device.SetSystemFactoryDefault{}, nil
+		return &device.SetSystemFactoryDefault{}, nil
 	case "UpgradeSystemFirmware":
-		return &Device.UpgradeSystemFirmware{}, nil
+		return &device.UpgradeSystemFirmware{}, nil
 	case "SystemReboot":
-		return &Device.SystemReboot{}, nil
+		return &device.SystemReboot{}, nil
 	case "RestoreSystem":
-		return &Device.RestoreSystem{}, nil
+		return &device.RestoreSystem{}, nil
 	case "GetSystemBackup":
-		return &Device.GetSystemBackup{}, nil
+		return &device.GetSystemBackup{}, nil
 	case "GetSystemLog":
-		return &Device.GetSystemLog{}, nil
+		return &device.GetSystemLog{}, nil
 	case "GetSystemSupportInformation":
-		return &Device.GetSystemSupportInformation{}, nil
+		return &device.GetSystemSupportInformation{}, nil
 	case "GetScopes":
-		return &Device.GetScopes{}, nil
+		return &device.GetScopes{}, nil
 	case "SetScopes":
-		return &Device.SetScopes{}, nil
+		return &device.SetScopes{}, nil
 	case "AddScopes":
-		return &Device.AddScopes{}, nil
+		return &device.AddScopes{}, nil
 	case "RemoveScopes":
-		return &Device.RemoveScopes{}, nil
+		return &device.RemoveScopes{}, nil
 	case "GetDiscoveryMode":
-		return &Device.GetDiscoveryMode{}, nil
+		return &device.GetDiscoveryMode{}, nil
 	case "SetDiscoveryMode":
-		return &Device.SetDiscoveryMode{}, nil
+		return &device.SetDiscoveryMode{}, nil
 	case "GetRemoteDiscoveryMode":
-		return &Device.GetRemoteDiscoveryMode{}, nil
+		return &device.GetRemoteDiscoveryMode{}, nil
 	case "SetRemoteDiscoveryMode":
-		return &Device.SetRemoteDiscoveryMode{}, nil
+		return &device.SetRemoteDiscoveryMode{}, nil
 	case "GetDPAddresses":
-		return &Device.GetDPAddresses{}, nil
+		return &device.GetDPAddresses{}, nil
 	case "SetDPAddresses":
-		return &Device.SetDPAddresses{}, nil
+		return &device.SetDPAddresses{}, nil
 	case "GetEndpointReference":
-		return &Device.GetEndpointReference{}, nil
+		return &device.GetEndpointReference{}, nil
 	case "GetRemoteUser":
-		return &Device.GetRemoteUser{}, nil
+		return &device.GetRemoteUser{}, nil
 	case "SetRemoteUser":
-		return &Device.SetRemoteUser{}, nil
+		return &device.SetRemoteUser{}, nil
 	case "GetUsers":
-		return &Device.GetUsers{}, nil
+		return &device.GetUsers{}, nil
 	case "CreateUsers":
-		return &Device.CreateUsers{}, nil
+		return &device.CreateUsers{}, nil
 	case "DeleteUsers":
-		return &Device.DeleteUsers{}, nil
+		return &device.DeleteUsers{}, nil
 	case "SetUser":
-		return &Device.SetUser{}, nil
+		return &device.SetUser{}, nil
 	case "GetWsdlUrl":
-		return &Device.GetWsdlUrl{}, nil
+		return &device.GetWsdlUrl{}, nil
 	case "GetCapabilities":
-		return &Device.GetCapabilities{}, nil
+		return &device.GetCapabilities{}, nil
 	case "GetHostname":
-		return &Device.GetHostname{}, nil
+		return &device.GetHostname{}, nil
 	case "SetHostname":
-		return &Device.SetHostname{}, nil
+		return &device.SetHostname{}, nil
 	case "SetHostnameFromDHCP":
-		return &Device.SetHostnameFromDHCP{}, nil
+		return &device.SetHostnameFromDHCP{}, nil
 	case "GetDNS":
-		return &Device.GetDNS{}, nil
+		return &device.GetDNS{}, nil
 	case "SetDNS":
-		return &Device.SetDNS{}, nil
+		return &device.SetDNS{}, nil
 	case "GetNTP":
-		return &Device.GetNTP{}, nil
+		return &device.GetNTP{}, nil
 	case "SetNTP":
-		return &Device.SetNTP{}, nil
+		return &device.SetNTP{}, nil
 	case "GetDynamicDNS":
-		return &Device.GetDynamicDNS{}, nil
+		return &device.GetDynamicDNS{}, nil
 	case "SetDynamicDNS":
-		return &Device.SetDynamicDNS{}, nil
+		return &device.SetDynamicDNS{}, nil
 	case "GetNetworkInterfaces":
-		return &Device.GetNetworkInterfaces{}, nil
+		return &device.GetNetworkInterfaces{}, nil
 	case "SetNetworkInterfaces":
-		return &Device.SetNetworkInterfaces{}, nil
+		return &device.SetNetworkInterfaces{}, nil
 	case "GetNetworkProtocols":
-		return &Device.GetNetworkProtocols{}, nil
+		return &device.GetNetworkProtocols{}, nil
 	case "SetNetworkProtocols":
-		return &Device.SetNetworkProtocols{}, nil
+		return &device.SetNetworkProtocols{}, nil
 	case "GetNetworkDefaultGateway":
-		return &Device.GetNetworkDefaultGateway{}, nil
+		return &device.GetNetworkDefaultGateway{}, nil
 	case "SetNetworkDefaultGateway":
-		return &Device.SetNetworkDefaultGateway{}, nil
+		return &device.SetNetworkDefaultGateway{}, nil
 	case "GetZeroConfiguration":
-		return &Device.GetZeroConfiguration{}, nil
+		return &device.GetZeroConfiguration{}, nil
 	case "SetZeroConfiguration":
-		return &Device.SetZeroConfiguration{}, nil
+		return &device.SetZeroConfiguration{}, nil
 	case "GetIPAddressFilter":
-		return &Device.GetIPAddressFilter{}, nil
+		return &device.GetIPAddressFilter{}, nil
 	case "SetIPAddressFilter":
-		return &Device.SetIPAddressFilter{}, nil
+		return &device.SetIPAddressFilter{}, nil
 	case "AddIPAddressFilter":
-		return &Device.AddIPAddressFilter{}, nil
+		return &device.AddIPAddressFilter{}, nil
 	case "RemoveIPAddressFilter":
-		return &Device.RemoveIPAddressFilter{}, nil
+		return &device.RemoveIPAddressFilter{}, nil
 	case "GetAccessPolicy":
-		return &Device.GetAccessPolicy{}, nil
+		return &device.GetAccessPolicy{}, nil
 	case "SetAccessPolicy":
-		return &Device.SetAccessPolicy{}, nil
+		return &device.SetAccessPolicy{}, nil
 	case "CreateCertificate":
-		return &Device.CreateCertificate{}, nil
+		return &device.CreateCertificate{}, nil
 	case "GetCertificates":
-		return &Device.GetCertificates{}, nil
+		return &device.GetCertificates{}, nil
 	case "GetCertificatesStatus":
-		return &Device.GetCertificatesStatus{}, nil
+		return &device.GetCertificatesStatus{}, nil
 	case "SetCertificatesStatus":
-		return &Device.SetCertificatesStatus{}, nil
+		return &device.SetCertificatesStatus{}, nil
 	case "DeleteCertificates":
-		return &Device.DeleteCertificates{}, nil
+		return &device.DeleteCertificates{}, nil
 	case "GetPkcs10Request":
-		return &Device.GetPkcs10Request{}, nil
+		return &device.GetPkcs10Request{}, nil
 	case "LoadCertificates":
-		return &Device.LoadCertificates{}, nil
+		return &device.LoadCertificates{}, nil
 	case "GetClientCertificateMode":
-		return &Device.GetClientCertificateMode{}, nil
+		return &device.GetClientCertificateMode{}, nil
 	case "SetClientCertificateMode":
-		return &Device.SetClientCertificateMode{}, nil
+		return &device.SetClientCertificateMode{}, nil
 	case "GetRelayOutputs":
-		return &Device.GetRelayOutputs{}, nil
+		return &device.GetRelayOutputs{}, nil
 	case "SetRelayOutputSettings":
-		return &Device.SetRelayOutputSettings{}, nil
+		return &device.SetRelayOutputSettings{}, nil
 	case "SetRelayOutputState":
-		return &Device.SetRelayOutputState{}, nil
+		return &device.SetRelayOutputState{}, nil
 	case "SendAuxiliaryCommand":
-		return &Device.SendAuxiliaryCommand{}, nil
+		return &device.SendAuxiliaryCommand{}, nil
 	case "GetCACertificates":
-		return &Device.GetCACertificates{}, nil
+		return &device.GetCACertificates{}, nil
 	case "LoadCertificateWithPrivateKey":
-		return &Device.LoadCertificateWithPrivateKey{}, nil
+		return &device.LoadCertificateWithPrivateKey{}, nil
 	case "GetCertificateInformation":
-		return &Device.GetCertificateInformation{}, nil
+		return &device.GetCertificateInformation{}, nil
 	case "LoadCACertificates":
-		return &Device.LoadCACertificates{}, nil
+		return &device.LoadCACertificates{}, nil
 	case "CreateDot1XConfiguration":
-		return &Device.CreateDot1XConfiguration{}, nil
+		return &device.CreateDot1XConfiguration{}, nil
 	case "SetDot1XConfiguration":
-		return &Device.SetDot1XConfiguration{}, nil
+		return &device.SetDot1XConfiguration{}, nil
 	case "GetDot1XConfiguration":
-		return &Device.GetDot1XConfiguration{}, nil
+		return &device.GetDot1XConfiguration{}, nil
 	case "GetDot1XConfigurations":
-		return &Device.GetDot1XConfigurations{}, nil
+		return &device.GetDot1XConfigurations{}, nil
 	case "DeleteDot1XConfiguration":
-		return &Device.DeleteDot1XConfiguration{}, nil
+		return &device.DeleteDot1XConfiguration{}, nil
 	case "GetDot11Capabilities":
-		return &Device.GetDot11Capabilities{}, nil
+		return &device.GetDot11Capabilities{}, nil
 	case "GetDot11Status":
-		return &Device.GetDot11Status{}, nil
+		return &device.GetDot11Status{}, nil
 	case "ScanAvailableDot11Networks":
-		return &Device.ScanAvailableDot11Networks{}, nil
+		return &device.ScanAvailableDot11Networks{}, nil
 	case "GetSystemUris":
-		return &Device.GetSystemUris{}, nil
+		return &device.GetSystemUris{}, nil
 	case "StartFirmwareUpgrade":
-		return &Device.StartFirmwareUpgrade{}, nil
+		return &device.StartFirmwareUpgrade{}, nil
 	case "StartSystemRestore":
-		return &Device.StartSystemRestore{}, nil
+		return &device.StartSystemRestore{}, nil
 	case "GetStorageConfigurations":
-		return &Device.GetStorageConfigurations{}, nil
+		return &device.GetStorageConfigurations{}, nil
 	case "CreateStorageConfiguration":
-		return &Device.CreateStorageConfiguration{}, nil
+		return &device.CreateStorageConfiguration{}, nil
 	case "GetStorageConfiguration":
-		return &Device.GetStorageConfiguration{}, nil
+		return &device.GetStorageConfiguration{}, nil
 	case "SetStorageConfiguration":
-		return &Device.SetStorageConfiguration{}, nil
+		return &device.SetStorageConfiguration{}, nil
 	case "DeleteStorageConfiguration":
-		return &Device.DeleteStorageConfiguration{}, nil
+		return &device.DeleteStorageConfiguration{}, nil
 	case "GetGeoLocation":
-		return &Device.GetGeoLocation{}, nil
+		return &device.GetGeoLocation{}, nil
 	case "SetGeoLocation":
-		return &Device.SetGeoLocation{}, nil
+		return &device.SetGeoLocation{}, nil
 	case "DeleteGeoLocation":
-		return &Device.DeleteGeoLocation{}, nil
+		return &device.DeleteGeoLocation{}, nil
 	default:
 		return nil, errors.New("there is no such method in the Device service")
 	}
 }
 
-
-
 func getMediaStructByName(name string) (interface{}, error) {
 	switch name {
 	case "GetServiceCapabilities":
-		return &Media.GetServiceCapabilities{}, nil
+		return &media.GetServiceCapabilities{}, nil
 	case "GetVideoSources":
-		return &Media.GetVideoSources{}, nil
+		return &media.GetVideoSources{}, nil
 	case "GetAudioSources":
-		return &Media.GetAudioSources{}, nil
+		return &media.GetAudioSources{}, nil
 	case "GetAudioOutputs":
-		return &Media.GetAudioOutputs{}, nil
+		return &media.GetAudioOutputs{}, nil
 	case "CreateProfile":
-		return &Media.CreateProfile{}, nil
+		return &media.CreateProfile{}, nil
 	case "GetProfile":
-		return &Media.GetProfile{}, nil
+		return &media.GetProfile{}, nil
 	case "GetProfiles":
-		return &Media.GetProfiles{}, nil
+		return &media.GetProfiles{}, nil
 	case "AddVideoEncoderConfiguration":
-		return &Media.AddVideoEncoderConfiguration{}, nil
+		return &media.AddVideoEncoderConfiguration{}, nil
 	case "RemoveVideoEncoderConfiguration":
-		return &Media.RemoveVideoEncoderConfiguration{}, nil
+		return &media.RemoveVideoEncoderConfiguration{}, nil
 	case "AddVideoSourceConfiguration":
-		return &Media.AddVideoSourceConfiguration{}, nil
+		return &media.AddVideoSourceConfiguration{}, nil
 	case "RemoveVideoSourceConfiguration":
-		return &Media.RemoveVideoSourceConfiguration{}, nil
+		return &media.RemoveVideoSourceConfiguration{}, nil
 	case "AddAudioEncoderConfiguration":
-		return &Media.AddAudioEncoderConfiguration{}, nil
+		return &media.AddAudioEncoderConfiguration{}, nil
 	case "RemoveAudioEncoderConfiguration":
-		return &Media.RemoveAudioEncoderConfiguration{}, nil
+		return &media.RemoveAudioEncoderConfiguration{}, nil
 	case "AddAudioSourceConfiguration":
-		return &Media.AddAudioSourceConfiguration{}, nil
+		return &media.AddAudioSourceConfiguration{}, nil
 	case "RemoveAudioSourceConfiguration":
-		return &Media.RemoveAudioSourceConfiguration{}, nil
+		return &media.RemoveAudioSourceConfiguration{}, nil
 	case "AddPTZConfiguration":
-		return &Media.AddPTZConfiguration{}, nil
+		return &media.AddPTZConfiguration{}, nil
 	case "RemovePTZConfiguration":
-		return &Media.RemovePTZConfiguration{}, nil
+		return &media.RemovePTZConfiguration{}, nil
 	case "AddVideoAnalyticsConfiguration":
-		return &Media.AddVideoAnalyticsConfiguration{}, nil
+		return &media.AddVideoAnalyticsConfiguration{}, nil
 	case "RemoveVideoAnalyticsConfiguration":
-		return &Media.RemoveVideoAnalyticsConfiguration{}, nil
+		return &media.RemoveVideoAnalyticsConfiguration{}, nil
 	case "AddMetadataConfiguration":
-		return &Media.AddMetadataConfiguration{}, nil
+		return &media.AddMetadataConfiguration{}, nil
 	case "RemoveMetadataConfiguration":
-		return &Media.RemoveMetadataConfiguration{}, nil
+		return &media.RemoveMetadataConfiguration{}, nil
 	case "AddAudioOutputConfiguration":
-		return &Media.AddAudioOutputConfiguration{}, nil
+		return &media.AddAudioOutputConfiguration{}, nil
 	case "RemoveAudioOutputConfiguration":
-		return &Media.RemoveAudioOutputConfiguration{}, nil
+		return &media.RemoveAudioOutputConfiguration{}, nil
 	case "AddAudioDecoderConfiguration":
-		return &Media.AddAudioDecoderConfiguration{}, nil
+		return &media.AddAudioDecoderConfiguration{}, nil
 	case "RemoveAudioDecoderConfiguration":
-		return &Media.RemoveAudioDecoderConfiguration{}, nil
+		return &media.RemoveAudioDecoderConfiguration{}, nil
 	case "DeleteProfile":
-		return &Media.DeleteProfile{}, nil
+		return &media.DeleteProfile{}, nil
 	case "GetVideoSourceConfigurations":
-		return &Media.GetVideoSourceConfigurations{}, nil
+		return &media.GetVideoSourceConfigurations{}, nil
 	case "GetVideoEncoderConfigurations":
-		return &Media.GetVideoEncoderConfigurations{}, nil
+		return &media.GetVideoEncoderConfigurations{}, nil
 	case "GetAudioSourceConfigurations":
-		return &Media.GetAudioSourceConfigurations{}, nil
+		return &media.GetAudioSourceConfigurations{}, nil
 	case "GetAudioEncoderConfigurations":
-		return &Media.GetAudioEncoderConfigurations{}, nil
+		return &media.GetAudioEncoderConfigurations{}, nil
 	case "GetVideoAnalyticsConfigurations":
-		return &Media.GetVideoAnalyticsConfigurations{}, nil
+		return &media.GetVideoAnalyticsConfigurations{}, nil
 	case "GetMetadataConfigurations":
-		return &Media.GetMetadataConfigurations{}, nil
+		return &media.GetMetadataConfigurations{}, nil
 	case "GetAudioOutputConfigurations":
-		return &Media.GetAudioOutputConfigurations{}, nil
+		return &media.GetAudioOutputConfigurations{}, nil
 	case "GetAudioDecoderConfigurations":
-		return &Media.GetAudioDecoderConfigurations{}, nil
+		return &media.GetAudioDecoderConfigurations{}, nil
 	case "GetVideoSourceConfiguration":
-		return &Media.GetVideoSourceConfiguration{}, nil
+		return &media.GetVideoSourceConfiguration{}, nil
 	case "GetVideoEncoderConfiguration":
-		return &Media.GetVideoEncoderConfiguration{}, nil
+		return &media.GetVideoEncoderConfiguration{}, nil
 	case "GetAudioSourceConfiguration":
-		return &Media.GetAudioSourceConfiguration{}, nil
+		return &media.GetAudioSourceConfiguration{}, nil
 	case "GetAudioEncoderConfiguration":
-		return &Media.GetAudioEncoderConfiguration{}, nil
+		return &media.GetAudioEncoderConfiguration{}, nil
 	case "GetVideoAnalyticsConfiguration":
-		return &Media.GetVideoAnalyticsConfiguration{}, nil
+		return &media.GetVideoAnalyticsConfiguration{}, nil
 	case "GetMetadataConfiguration":
-		return &Media.GetMetadataConfiguration{}, nil
+		return &media.GetMetadataConfiguration{}, nil
 	case "GetAudioOutputConfiguration":
-		return &Media.GetAudioOutputConfiguration{},nil
+		return &media.GetAudioOutputConfiguration{}, nil
 	case "GetAudioDecoderConfiguration":
-		return &Media.GetAudioDecoderConfiguration{}, nil
+		return &media.GetAudioDecoderConfiguration{}, nil
 	case "GetCompatibleVideoEncoderConfigurations":
-		return &Media.GetCompatibleVideoEncoderConfigurations{}, nil
+		return &media.GetCompatibleVideoEncoderConfigurations{}, nil
 	case "GetCompatibleVideoSourceConfigurations":
-		return &Media.GetCompatibleVideoSourceConfigurations{}, nil
+		return &media.GetCompatibleVideoSourceConfigurations{}, nil
 	case "GetCompatibleAudioEncoderConfigurations":
-		return &Media.GetCompatibleAudioEncoderConfigurations{}, nil
+		return &media.GetCompatibleAudioEncoderConfigurations{}, nil
 	case "GetCompatibleAudioSourceConfigurations":
-		return &Media.GetCompatibleAudioSourceConfigurations{}, nil
+		return &media.GetCompatibleAudioSourceConfigurations{}, nil
 	case "GetCompatibleVideoAnalyticsConfigurations":
-		return &Media.GetCompatibleVideoAnalyticsConfigurations{}, nil
+		return &media.GetCompatibleVideoAnalyticsConfigurations{}, nil
 	case "GetCompatibleMetadataConfigurations":
-		return &Media.GetCompatibleMetadataConfigurations{}, nil
+		return &media.GetCompatibleMetadataConfigurations{}, nil
 	case "GetCompatibleAudioOutputConfigurations":
-		return &Media.GetCompatibleAudioOutputConfigurations{}, nil
+		return &media.GetCompatibleAudioOutputConfigurations{}, nil
 	case "GetCompatibleAudioDecoderConfigurations":
-		return &Media.GetCompatibleAudioDecoderConfigurations{}, nil
+		return &media.GetCompatibleAudioDecoderConfigurations{}, nil
 	case "SetVideoSourceConfiguration":
-		return &Media.SetVideoSourceConfiguration{}, nil
+		return &media.SetVideoSourceConfiguration{}, nil
 	case "SetVideoEncoderConfiguration":
-		return &Media.SetVideoEncoderConfiguration{}, nil
+		return &media.SetVideoEncoderConfiguration{}, nil
 	case "SetAudioSourceConfiguration":
-		return &Media.SetAudioSourceConfiguration{}, nil
+		return &media.SetAudioSourceConfiguration{}, nil
 	case "SetAudioEncoderConfiguration":
-		return &Media.SetAudioEncoderConfiguration{}, nil
+		return &media.SetAudioEncoderConfiguration{}, nil
 	case "SetVideoAnalyticsConfiguration":
-		return &Media.SetVideoAnalyticsConfiguration{}, nil
+		return &media.SetVideoAnalyticsConfiguration{}, nil
 	case "SetMetadataConfiguration":
-		return &Media.SetMetadataConfiguration{}, nil
+		return &media.SetMetadataConfiguration{}, nil
 	case "SetAudioOutputConfiguration":
-		return &Media.SetAudioOutputConfiguration{}, nil
+		return &media.SetAudioOutputConfiguration{}, nil
 	case "SetAudioDecoderConfiguration":
-		return &Media.SetAudioDecoderConfiguration{}, nil
+		return &media.SetAudioDecoderConfiguration{}, nil
 	case "GetVideoSourceConfigurationOptions":
-		return &Media.GetVideoSourceConfigurationOptions{}, nil
+		return &media.GetVideoSourceConfigurationOptions{}, nil
 	case "GetVideoEncoderConfigurationOptions":
-		return &Media.GetVideoEncoderConfigurationOptions{}, nil
+		return &media.GetVideoEncoderConfigurationOptions{}, nil
 	case "GetAudioSourceConfigurationOptions":
-		return &Media.GetAudioSourceConfigurationOptions{}, nil
+		return &media.GetAudioSourceConfigurationOptions{}, nil
 	case "GetAudioEncoderConfigurationOptions":
-		return &Media.GetAudioEncoderConfigurationOptions{}, nil
+		return &media.GetAudioEncoderConfigurationOptions{}, nil
 	case "GetMetadataConfigurationOptions":
-		return &Media.GetMetadataConfigurationOptions{}, nil
+		return &media.GetMetadataConfigurationOptions{}, nil
 	case "GetAudioOutputConfigurationOptions":
-		return &Media.GetAudioOutputConfigurationOptions{}, nil
+		return &media.GetAudioOutputConfigurationOptions{}, nil
 	case "GetAudioDecoderConfigurationOptions":
-		return &Media.GetAudioDecoderConfigurationOptions{}, nil
+		return &media.GetAudioDecoderConfigurationOptions{}, nil
 	case "GetGuaranteedNumberOfVideoEncoderInstances":
-		return &Media.GetGuaranteedNumberOfVideoEncoderInstances{}, nil
+		return &media.GetGuaranteedNumberOfVideoEncoderInstances{}, nil
 	case "GetStreamUri":
-		return &Media.GetStreamUri{}, nil
+		return &media.GetStreamUri{}, nil
 	case "StartMulticastStreaming":
-		return &Media.StartMulticastStreaming{}, nil
+		return &media.StartMulticastStreaming{}, nil
 	case "StopMulticastStreaming":
-		return &Media.StopMulticastStreaming{}, nil
+		return &media.StopMulticastStreaming{}, nil
 	case "SetSynchronizationPoint":
-		return &Media.SetSynchronizationPoint{}, nil
+		return &media.SetSynchronizationPoint{}, nil
 	case "GetSnapshotUri":
-		return &Media.GetSnapshotUri{}, nil
+		return &media.GetSnapshotUri{}, nil
 	case "GetVideoSourceModes":
-		return &Media.GetVideoSourceModes{}, nil
+		return &media.GetVideoSourceModes{}, nil
 	case "SetVideoSourceMode":
-		return &Media.SetVideoSourceMode{}, nil
+		return &media.SetVideoSourceMode{}, nil
 	case "GetOSDs":
-		return &Media.GetOSDs{}, nil
+		return &media.GetOSDs{}, nil
 	case "GetOSD":
-		return &Media.GetOSD{}, nil
+		return &media.GetOSD{}, nil
 	case "GetOSDOptions":
-		return &Media.GetOSDOptions{}, nil
+		return &media.GetOSDOptions{}, nil
 	case "SetOSD":
-		return &Media.SetOSD{}, nil
+		return &media.SetOSD{}, nil
 	case "CreateOSD":
-		return &Media.CreateOSD{}, nil
+		return &media.CreateOSD{}, nil
 	case "DeleteOSD":
-		return &Media.DeleteOSD{}, nil
+		return &media.DeleteOSD{}, nil
 	default:
 		return nil, errors.New("there is no such method in the Media service")
 	}
