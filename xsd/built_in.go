@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	iso8601 "github.com/yakovlevdmv/Golang-iso8601-duration"
+	"github.com/use-go/onvif/xsd/iso8601"
 )
 
 /*
