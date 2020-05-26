@@ -101,4 +101,4 @@ resp, err := dev.CallMethod(createUsers)
 
 ## Great Thanks
 
-Modified from: [goonvif](https://github.com/yakovlevdmv/goonvif)
+Enhanced and Improved from: [goonvif](https://github.com/yakovlevdmv/goonvif)
