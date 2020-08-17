@@ -62,18 +62,19 @@ func NewSecurity(username, passwd string) Security {
 	charSet := gostrgen.Lower | gostrgen.Digit
 
 	nonceSeq, _ := gostrgen.RandGen(charsToGenerate, charSet, "", "")
+	created := time.Now().UTC().Format(time.RFC3339Nano)
 	auth := Security{
 		Auth: wsAuth{
 			Username: username,
 			Password: password{
 				Type:     passwordType,
-				Password: generateToken(username, nonceSeq, time.Now().UTC(), passwd),
+				Password: generateToken(username, nonceSeq, created, passwd),
 			},
 			Nonce: nonce{
 				Type:  encodingType,
 				Nonce: nonceSeq,
 			},
-			Created: time.Now().UTC().Format(time.RFC3339Nano),
+			Created: created,
 		},
 	}
 
@@ -81,13 +82,11 @@ func NewSecurity(username, passwd string) Security {
 }
 
 //Digest = B64ENCODE( SHA1( B64DECODE( Nonce ) + Date + Password ) )
-func generateToken(Username string, Nonce string, Created time.Time, Password string) string {
-
+func generateToken(Username string, Nonce string, Created string, Password string) string {
 	sDec, _ := base64.StdEncoding.DecodeString(Nonce)
 
 	hasher := sha1.New()
-	//hasher.Write([]byte((base64.StdEncoding.EncodeToString([]byte(Nonce)) + Created.Format(time.RFC3339) + Password)))
-	hasher.Write([]byte(string(sDec) + Created.Format(time.RFC3339Nano) + Password))
+	hasher.Write([]byte(string(sDec) + Created + Password))
 
 	return base64.StdEncoding.EncodeToString(hasher.Sum(nil))
 }
