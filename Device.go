@@ -63,8 +63,8 @@ func (devType DeviceType) String() string {
 	}
 }
 
-//deviceInfo struct contains general information about ONVIF device
-type deviceInfo struct {
+//DeviceInfo struct contains general information about ONVIF device
+type DeviceInfo struct {
 	Manufacturer    string
 	Model           string
 	FirmwareVersion string
@@ -72,7 +72,7 @@ type deviceInfo struct {
 	HardwareId      string
 }
 
-//Device for a new device of onvif and deviceInfo
+//Device for a new device of onvif and DeviceInfo
 //struct represents an abstract ONVIF device.
 //It contains methods, which helps to communicate with ONVIF device
 type Device struct {
@@ -80,13 +80,19 @@ type Device struct {
 	login     string
 	password  string
 	endpoints map[string]string
-	info      deviceInfo
+	info      DeviceInfo
 }
 
 //GetServices return available endpoints
 func (dev *Device) GetServices() map[string]string {
 	return dev.endpoints
 }
+
+//GetServices return available endpoints
+func (dev *Device) GetDeviceInfo() DeviceInfo {
+	return dev.info
+}
+
 
 func readResponse(resp *http.Response) string {
 	b, err := ioutil.ReadAll(resp.Body)
