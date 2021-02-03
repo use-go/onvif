@@ -4,14 +4,15 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/use-go/onvif/device"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
 
 	"github.com/beevik/etree"
-	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/gosoap"
 	"github.com/use-go/onvif/networking"
 	wsdiscovery "github.com/use-go/onvif/ws-discovery"
@@ -93,7 +94,6 @@ func (dev *Device) GetDeviceInfo() DeviceInfo {
 	return dev.info
 }
 
-
 func readResponse(resp *http.Response) string {
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -109,17 +109,14 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []Devi
 	*/
 	devices := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:" + NVT.String()}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
 	nvtDevices := make([]Device, 0)
-	////fmt.Println(devices)
 	for _, j := range devices {
 		doc := etree.NewDocument()
 		if err := doc.ReadFromString(j); err != nil {
 			fmt.Errorf("%s", err.Error())
 			return nil
 		}
-		////fmt.Println(j)
 		endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
 		for _, xaddr := range endpoints {
-			//fmt.Println(xaddr.Tag,strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2] )
 			xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
 			fmt.Println(xaddr)
 			c := 0
@@ -132,19 +129,9 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []Devi
 			if c < len(nvtDevices) {
 				continue
 			}
-			dev, err := NewDevice(strings.Split(xaddr, " ")[0])
-			//fmt.Println(dev)
-			if err != nil {
-				fmt.Println("Error", xaddr)
-				fmt.Println(err)
-				continue
-			} else {
-				////fmt.Println(dev)
-				nvtDevices = append(nvtDevices, *dev)
-			}
+			dev := NewDevice(strings.Split(xaddr, " ")[0])
+			nvtDevices = append(nvtDevices, *dev)
 		}
-		////fmt.Println(j)
-		//nvtDevices[i] = NewDevice()
 	}
 	return nvtDevices
 }
@@ -165,32 +152,33 @@ func (dev *Device) getSupportedServices(resp *http.Response) {
 	}
 	services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/*/XAddr")
 	for _, j := range services {
-		////fmt.Println(j.Text())
-		////fmt.Println(j.Parent().Tag)
-		dev.addEndpoint(j.Parent().Tag, j.Text())
+		url, err := url.ParseRequestURI(j.Text())
+		if err != nil {
+			continue
+		}
+		dev.addEndpoint(j.Parent().Tag, url.Path)
 	}
 	//}
 }
 
 //NewDevice function construct a ONVIF Device entity
-func NewDevice(xaddr string) (*Device, error) {
+func NewDevice(xaddr string) *Device {
 	dev := new(Device)
 	dev.xaddr = xaddr
 	dev.endpoints = make(map[string]string)
-	dev.addEndpoint("Device", "http://"+xaddr+"/onvif/device_service")
+	return dev
+}
 
+func (dev *Device) GetCapabilities() (map[string]string, error) {
+	dev.addEndpoint("Device", "/onvif/device_service")
 	getCapabilities := device.GetCapabilities{Category: "All"}
-
 	resp, err := dev.CallMethod(getCapabilities)
-	//fmt.Println(resp.Request.Host)
-	//fmt.Println(readResponse(resp))
 	if err != nil || resp.StatusCode != http.StatusOK {
-		//panic(errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services"))
-		return nil, errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services")
+		return nil, errors.New("camera is not available at " + dev.xaddr + " or it does not support ONVIF services")
 	}
 
 	dev.getSupportedServices(resp)
-	return dev, nil
+	return dev.endpoints, nil
 }
 
 func (dev *Device) addEndpoint(Key, Value string) {
@@ -236,7 +224,7 @@ func (dev Device) getEndpoint(endpoint string) (string, error) {
 
 	// common condition, endpointMark in map we use this.
 	if endpointURL, bFound := dev.endpoints[endpoint]; bFound {
-		return endpointURL, nil
+		return "http://" + dev.xaddr + endpointURL, nil
 	}
 
 	//but ,if we have endpoint like event、analytic
