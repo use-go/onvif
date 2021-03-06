@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
@@ -195,6 +196,13 @@ func (dev *Device) addEndpoint(Key, Value string) {
 	//use lowCaseKey
 	//make key having ability to handle Mixed Case for Different vendor devcie (e.g. Events EVENTS, events)
 	lowCaseKey := strings.ToLower(Key)
+
+	// Replace host with host from device params.
+	if u, err := url.Parse(Value); err == nil {
+		u.Host = dev.params.Xaddr
+		Value = u.String()
+	}
+
 	dev.endpoints[lowCaseKey] = Value
 }
 
