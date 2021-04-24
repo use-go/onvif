@@ -147,7 +147,7 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 	soap.AddRootNamespaces(onvif.Xlmns)
 	soap.AddWSSecurity(username, password)
 
-	servResp, err := networking.SendSoap(endpoint, soap.String())
+	servResp, err := networking.SendSoap(new(http.Client), endpoint, soap.String())
 	if err != nil {
 		return "", err
 	}
@@ -161,7 +161,7 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 }
 
 func getEndpoint(service, xaddr string) (string, error) {
-	dev, err := onvif.NewDevice(xaddr)
+	dev, err := onvif.NewDevice(onvif.DeviceParams{Xaddr: xaddr})
 	if err != nil {
 		return "", err
 	}

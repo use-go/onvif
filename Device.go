@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"reflect"
 	"strconv"
 	"strings"
@@ -76,11 +77,16 @@ type DeviceInfo struct {
 //struct represents an abstract ONVIF device.
 //It contains methods, which helps to communicate with ONVIF device
 type Device struct {
-	xaddr     string
-	login     string
-	password  string
+	params    DeviceParams
 	endpoints map[string]string
 	info      DeviceInfo
+}
+
+type DeviceParams struct {
+	Xaddr      string
+	Username   string
+	Password   string
+	HttpClient *http.Client
 }
 
 //GetServices return available endpoints
@@ -92,7 +98,6 @@ func (dev *Device) GetServices() map[string]string {
 func (dev *Device) GetDeviceInfo() DeviceInfo {
 	return dev.info
 }
-
 
 func readResponse(resp *http.Response) string {
 	b, err := ioutil.ReadAll(resp.Body)
@@ -109,52 +114,47 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []Devi
 	*/
 	devices := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:" + NVT.String()}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
 	nvtDevices := make([]Device, 0)
-	////fmt.Println(devices)
+
 	for _, j := range devices {
 		doc := etree.NewDocument()
 		if err := doc.ReadFromString(j); err != nil {
 			fmt.Errorf("%s", err.Error())
 			return nil
 		}
-		////fmt.Println(j)
+
 		endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
 		for _, xaddr := range endpoints {
-			//fmt.Println(xaddr.Tag,strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2] )
 			xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
 			fmt.Println(xaddr)
 			c := 0
+
 			for c = 0; c < len(nvtDevices); c++ {
-				if nvtDevices[c].xaddr == xaddr {
-					fmt.Println(nvtDevices[c].xaddr, "==", xaddr)
+				if nvtDevices[c].params.Xaddr == xaddr {
+					fmt.Println(nvtDevices[c].params.Xaddr, "==", xaddr)
 					break
 				}
 			}
+
 			if c < len(nvtDevices) {
 				continue
 			}
-			dev, err := NewDevice(strings.Split(xaddr, " ")[0])
-			//fmt.Println(dev)
+
+			dev, err := NewDevice(DeviceParams{Xaddr: strings.Split(xaddr, " ")[0]})
+
 			if err != nil {
 				fmt.Println("Error", xaddr)
 				fmt.Println(err)
 				continue
 			} else {
-				////fmt.Println(dev)
 				nvtDevices = append(nvtDevices, *dev)
 			}
 		}
-		////fmt.Println(j)
-		//nvtDevices[i] = NewDevice()
 	}
+
 	return nvtDevices
 }
 
 func (dev *Device) getSupportedServices(resp *http.Response) {
-	//resp, err := dev.CallMethod(device.GetCapabilities{Category:"All"})
-	//if err != nil {
-	//	log.Println(err.Error())
-	//return
-	//} else {
 	doc := etree.NewDocument()
 
 	data, _ := ioutil.ReadAll(resp.Body)
@@ -165,28 +165,27 @@ func (dev *Device) getSupportedServices(resp *http.Response) {
 	}
 	services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/*/XAddr")
 	for _, j := range services {
-		////fmt.Println(j.Text())
-		////fmt.Println(j.Parent().Tag)
 		dev.addEndpoint(j.Parent().Tag, j.Text())
 	}
-	//}
 }
 
 //NewDevice function construct a ONVIF Device entity
-func NewDevice(xaddr string) (*Device, error) {
+func NewDevice(params DeviceParams) (*Device, error) {
 	dev := new(Device)
-	dev.xaddr = xaddr
+	dev.params = params
 	dev.endpoints = make(map[string]string)
-	dev.addEndpoint("Device", "http://"+xaddr+"/onvif/device_service")
+	dev.addEndpoint("Device", "http://"+dev.params.Xaddr+"/onvif/device_service")
+
+	if dev.params.HttpClient == nil {
+		dev.params.HttpClient = new(http.Client)
+	}
 
 	getCapabilities := device.GetCapabilities{Category: "All"}
 
 	resp, err := dev.CallMethod(getCapabilities)
-	//fmt.Println(resp.Request.Host)
-	//fmt.Println(readResponse(resp))
+
 	if err != nil || resp.StatusCode != http.StatusOK {
-		//panic(errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services"))
-		return nil, errors.New("camera is not available at " + xaddr + " or it does not support ONVIF services")
+		return nil, errors.New("camera is not available at " + dev.params.Xaddr + " or it does not support ONVIF services")
 	}
 
 	dev.getSupportedServices(resp)
@@ -194,20 +193,17 @@ func NewDevice(xaddr string) (*Device, error) {
 }
 
 func (dev *Device) addEndpoint(Key, Value string) {
-
 	//use lowCaseKey
 	//make key having ability to handle Mixed Case for Different vendor devcie (e.g. Events EVENTS, events)
 	lowCaseKey := strings.ToLower(Key)
-	dev.endpoints[lowCaseKey] = Value
-}
 
-//Authenticate function authenticate client in the ONVIF device.
-//Function takes <username> and <password> params.
-//You should use this function to allow authorized requests to the ONVIF Device
-//To change auth data call this function again.
-func (dev *Device) Authenticate(username, password string) {
-	dev.login = username
-	dev.password = password
+	// Replace host with host from device params.
+	if u, err := url.Parse(Value); err == nil {
+		u.Host = dev.params.Xaddr
+		Value = u.String()
+	}
+
+	dev.endpoints[lowCaseKey] = Value
 }
 
 //GetEndpoint returns specific ONVIF service endpoint address
@@ -215,7 +211,7 @@ func (dev *Device) GetEndpoint(name string) string {
 	return dev.endpoints[name]
 }
 
-func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
+func (dev Device) buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(msg); err != nil {
 		//log.Println("Got error")
@@ -226,7 +222,6 @@ func buildMethodSOAP(msg string) (gosoap.SoapMessage, error) {
 
 	soap := gosoap.NewEmptySOAP()
 	soap.AddBodyContent(element)
-	//soap.AddRootNamespace("onvif", "http://www.onvif.org/ver10/device/wsdl")
 
 	return soap, nil
 }
@@ -267,41 +262,23 @@ func (dev Device) CallMethod(method interface{}) (*http.Response, error) {
 
 //CallMethod functions call an method, defined <method> struct with authentication data
 func (dev Device) callMethodDo(endpoint string, method interface{}) (*http.Response, error) {
-	/*
-		Converting <method> struct to xml string representation
-	*/
 	output, err := xml.MarshalIndent(method, "  ", "    ")
 	if err != nil {
-		//log.Printf("error: %v\n", err.Error())
 		return nil, err
 	}
-	//fmt.Println(gosoap.SoapMessage(string(output)).StringIndent())
-	/*
-		Build an SOAP request with <method>
-	*/
-	soap, err := buildMethodSOAP(string(output))
+
+	soap, err := dev.buildMethodSOAP(string(output))
 	if err != nil {
-		//log.Printf("error: %v\n", err.Error())
 		return nil, err
 	}
 
-	//fmt.Println(soap.StringIndent())
-	/*
-		Adding namespaces and WS-Security headers
-	*/
 	soap.AddRootNamespaces(Xlmns)
-
-	//fmt.Println(soap.StringIndent())
-	//Header handling
 	soap.AddAction()
 
 	//Auth Handling
-	if dev.login != "" && dev.password != "" {
-		soap.AddWSSecurity(dev.login, dev.password)
+	if dev.params.Username != "" && dev.params.Password != "" {
+		soap.AddWSSecurity(dev.params.Username, dev.params.Password)
 	}
-	//fmt.Println(soap.StringIndent())
-	/*
-		Sending request and returns the response
-	*/
-	return networking.SendSoap(endpoint, soap.String())
+
+	return networking.SendSoap(dev.params.HttpClient, endpoint, soap.String())
 }
