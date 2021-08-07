@@ -1,7 +1,7 @@
 package event
 
 import (
-	"github.com/use-go/onvif/xsd"
+	"github.com/toanqng/onvif/xsd"
 )
 
 //GetServiceCapabilities action
