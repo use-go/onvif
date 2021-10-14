@@ -282,3 +282,18 @@ func (dev Device) callMethodDo(endpoint string, method interface{}) (*http.Respo
 
 	return networking.SendSoap(dev.params.HttpClient, endpoint, soap.String())
 }
+
+func (dev *Device) GetDeviceParams() DeviceParams {
+	return dev.params
+}
+
+func (dev Device) GetEndpointByRequestStruct(requestStruct interface{}) (string, error) {
+	pkgPath := strings.Split(reflect.TypeOf(requestStruct).Elem().PkgPath(), "/")
+	pkg := strings.ToLower(pkgPath[len(pkgPath)-1])
+
+	endpoint, err := dev.getEndpoint(pkg)
+	if err != nil {
+		return "", err
+	}
+	return endpoint, err
+}

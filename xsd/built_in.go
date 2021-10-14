@@ -229,13 +229,9 @@ func (tp Duration) NewDateTime(years, months, days, hours, minutes, seconds stri
 	TODO: decide good type for time with proper format
 	TODO: process restrictions
 */
-type DateTime AnySimpleType
-
-/*
-	Construct an instance of xsd dateTime type
-*/
-func (tp DateTime) NewDateTime(time time.Time) DateTime {
-	return DateTime(time.Format("2002-10-10T12:00:00-05:00"))
+type DateTime struct {
+	Time Time
+	Date Date
 }
 
 /*
@@ -258,14 +254,15 @@ func (tp DateTime) NewDateTime(time time.Time) DateTime {
 
 	TODO: process restrictions
 */
-type Time AnySimpleType
+type Time struct {
+	Hour   string
+	Minute string
+	Second string
+}
 
 /*
 	Construct an instance of xsd time type
 */
-func (tp DateTime) NewTime(time time.Time) DateTime {
-	return DateTime(time.Format("15:04:05"))
-}
 
 /*
 	The ·value space· of date consists of top-open intervals of
@@ -277,13 +274,10 @@ func (tp DateTime) NewTime(time time.Time) DateTime {
 	cover the nontimezoned timeline, one per day. For timezoned
 	values, the intervals begin at every minute and therefore overlap.
 */
-type Date AnySimpleType
-
-/*
-	Construct an instance of xsd date type
-*/
-func (tp Date) NewDate(time time.Time) Date {
-	return Date(time.Format("2004-04-12-05:00"))
+type Date struct {
+	Year  string
+	Month string
+	date  string
 }
 
 /*
