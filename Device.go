@@ -169,7 +169,6 @@ func (dev *Device) getSupportedServices(resp *http.Response) {
 	}
 	extension_services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/Extension/*/XAddr")
 	for _, j := range extension_services {
-		fmt.Println(j.Parent().Tag)
 		dev.addEndpoint(j.Parent().Tag, j.Text())
 	}
 }
