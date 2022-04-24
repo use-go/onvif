@@ -98,7 +98,7 @@ type SetPreset struct {
 	XMLName      string               `xml:"tptz:SetPreset"`
 	ProfileToken onvif.ReferenceToken `xml:"tptz:ProfileToken"`
 	PresetName   xsd.String           `xml:"tptz:PresetName"`
-	PresetToken  onvif.ReferenceToken `xml:"tptz:PresetToken"`
+	PresetToken  onvif.ReferenceToken `xml:"tptz:PresetToken,omitempty"`
 }
 
 type SetPresetResponse struct {
