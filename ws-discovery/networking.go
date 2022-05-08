@@ -49,7 +49,7 @@ func SendProbe(interfaceName string, scopes, types []string, namespaces map[stri
 }
 
 func sendUDPMulticast(msg string, interfaceName string) []string {
-	c, err := net.ListenPacket("udp4", "0.0.0.0:1024")
+	c, err := net.ListenPacket("udp4", "0.0.0.0:0")
 	if err != nil {
 		fmt.Println(err)
 		return nil
