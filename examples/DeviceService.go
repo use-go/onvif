@@ -1,14 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
 	goonvif "github.com/use-go/onvif"
 	"github.com/use-go/onvif/device"
-	"github.com/use-go/onvif/gosoap"
+	sdk "github.com/use-go/onvif/sdk/device"
 	"github.com/use-go/onvif/xsd/onvif"
 )
 
@@ -17,15 +17,9 @@ const (
 	password = "Supervisor"
 )
 
-func readResponse(resp *http.Response) string {
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-	return string(b)
-}
-
 func main() {
+	ctx := context.Background()
+
 	//Getting an camera instance
 	dev, err := goonvif.NewDevice(goonvif.DeviceParams{
 		Xaddr:      "192.168.13.14:80",
@@ -40,34 +34,34 @@ func main() {
 	//Preparing commands
 	systemDateAndTyme := device.GetSystemDateAndTime{}
 	getCapabilities := device.GetCapabilities{Category: "All"}
-	createUser := device.CreateUsers{User: onvif.User{
-		Username:  "TestUser",
-		Password:  "TestPassword",
-		UserLevel: "User",
-	},
+	createUser := device.CreateUsers{
+		User: onvif.User{
+			Username:  "TestUser",
+			Password:  "TestPassword",
+			UserLevel: "User",
+		},
 	}
 
 	//Commands execution
-	systemDateAndTymeResponse, err := dev.CallMethod(systemDateAndTyme)
+	systemDateAndTymeResponse, err := sdk.Call_GetSystemDateAndTime(ctx, dev, systemDateAndTyme)
 	if err != nil {
 		log.Println(err)
 	} else {
-		fmt.Println(readResponse(systemDateAndTymeResponse))
+		fmt.Println(systemDateAndTymeResponse)
 	}
-	getCapabilitiesResponse, err := dev.CallMethod(getCapabilities)
+	getCapabilitiesResponse, err := sdk.Call_GetCapabilities(ctx, dev, getCapabilities)
 	if err != nil {
 		log.Println(err)
 	} else {
-		fmt.Println(readResponse(getCapabilitiesResponse))
+		fmt.Println(getCapabilitiesResponse)
 	}
-	createUserResponse, err := dev.CallMethod(createUser)
+
+	createUserResponse, err := sdk.Call_CreateUsers(ctx, dev, createUser)
 	if err != nil {
 		log.Println(err)
 	} else {
-		/*
-			You could use https://github.com/use-go/onvif/gosoap for pretty printing response
-		*/
-		fmt.Println(gosoap.SoapMessage(readResponse(createUserResponse)).StringIndent())
+		// You could use https://github.com/use-go/onvif/gosoap for pretty printing response
+		fmt.Println(createUserResponse)
 	}
 
 }
