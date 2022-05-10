@@ -49,45 +49,45 @@ func RunApi() {
 
 		interfaceName := context.GetHeader("interface")
 
-		var response = "["
-		devices := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+		devices, err := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+		if err != nil {
+			context.String(http.StatusInternalServerError, "error")
+		} else {
+			response := "["
 
-		for _, j := range devices {
-			doc := etree.NewDocument()
-			if err := doc.ReadFromString(j); err != nil {
-				context.XML(http.StatusBadRequest, err.Error())
-			} else {
+			for _, j := range devices {
+				doc := etree.NewDocument()
+				if err := doc.ReadFromString(j); err != nil {
+					context.XML(http.StatusBadRequest, err.Error())
+				} else {
 
-				endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
-				scopes := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/Scopes")
+					endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
+					scopes := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/Scopes")
 
-				flag := false
+					flag := false
 
-				for _, xaddr := range endpoints {
-					xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
-					if strings.Contains(response, xaddr) {
-						flag = true
+					for _, xaddr := range endpoints {
+						xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
+						if strings.Contains(response, xaddr) {
+							flag = true
+							break
+						}
+						response += "{"
+						response += `"url":"` + xaddr + `",`
+					}
+					if flag {
 						break
 					}
-					response += "{"
-					response += `"url":"` + xaddr + `",`
+					for _, scope := range scopes {
+						re := regexp.MustCompile(`onvif:\/\/www\.onvif\.org\/name\/[A-Za-z0-9-]+`)
+						match := re.FindStringSubmatch(scope.Text())
+						response += `"name":"` + path.Base(match[0]) + `"`
+					}
+					response += "},"
 				}
-				if flag {
-					break
-				}
-				for _, scope := range scopes {
-					re := regexp.MustCompile(`onvif:\/\/www\.onvif\.org\/name\/[A-Za-z0-9-]+`)
-					match := re.FindStringSubmatch(scope.Text())
-					response += `"name":"` + path.Base(match[0]) + `"`
-				}
-				response += "},"
-
 			}
-
-		}
-		response = strings.TrimRight(response, ",")
-		response += "]"
-		if response != "" {
+			response = strings.TrimRight(response, ",")
+			response += "]"
 			context.String(http.StatusOK, response)
 		}
 	})

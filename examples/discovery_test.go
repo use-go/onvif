@@ -1,4 +1,4 @@
-package example
+package main
 
 import (
 	"encoding/json"
@@ -16,12 +16,8 @@ import (
 )
 
 func TestGetAvailableDevicesAtSpecificEthernetInterface(t *testing.T) {
-
-	// client()
-	// runDiscovery("en0")
-	s := onvif.GetAvailableDevicesAtSpecificEthernetInterface("en0")
-
-	log.Printf("%s", s)
+	s, err := onvif.GetAvailableDevicesAtSpecificEthernetInterface("en0")
+	log.Printf("%v %v", err, s)
 }
 
 func client() {
@@ -45,7 +41,11 @@ type Host struct {
 
 func runDiscovery(interfaceName string) {
 	var hosts []*Host
-	devices := discover.SendProbe(interfaceName, nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+	devices, err := discover.SendProbe(interfaceName, nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+	if err != nil {
+		log.Printf("error %s", err)
+		return
+	}
 	for _, j := range devices {
 		doc := etree.NewDocument()
 		if err := doc.ReadFromString(j); err != nil {
