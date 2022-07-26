@@ -1,14 +1,17 @@
 package api
 
 import (
-	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path"
 	"reflect"
 	"regexp"
 	"strings"
+	"time"
+
+	"github.com/juju/errors"
+	"github.com/rs/zerolog"
 
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
@@ -16,6 +19,18 @@ import (
 	"github.com/use-go/onvif/gosoap"
 	"github.com/use-go/onvif/networking"
 	wsdiscovery "github.com/use-go/onvif/ws-discovery"
+)
+
+var (
+	// LoggerContext is the builder of a zerolog.Logger that is exposed to the application so that
+	// options at the CLI might alter the formatting and the output of the logs.
+	LoggerContext = zerolog.
+			New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}).
+			With().Timestamp()
+
+	// Logger is a zerolog logger, that can be safely used from any part of the application.
+	// It gathers the format and the output.
+	Logger = LoggerContext.Logger()
 )
 
 func RunApi() {
@@ -32,7 +47,7 @@ func RunApi() {
 		xaddr := c.GetHeader("xaddr")
 		acceptedData, err := c.GetRawData()
 		if err != nil {
-			fmt.Println(err)
+			Logger.Debug().Err(err).Msg("Failed to get rawx data")
 		}
 
 		message, err := callNecessaryMethod(serviceName, methodName, string(acceptedData), username, pass, xaddr)
@@ -49,70 +64,51 @@ func RunApi() {
 
 		interfaceName := context.GetHeader("interface")
 
-		var response = "["
-		devices := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+		devices, err := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:NetworkVideoTransmitter"}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+		if err != nil {
+			context.String(http.StatusInternalServerError, "error")
+		} else {
+			response := "["
 
-		for _, j := range devices {
-			doc := etree.NewDocument()
-			if err := doc.ReadFromString(j); err != nil {
-				context.XML(http.StatusBadRequest, err.Error())
-			} else {
+			for _, j := range devices {
+				doc := etree.NewDocument()
+				if err := doc.ReadFromString(j); err != nil {
+					context.XML(http.StatusBadRequest, err.Error())
+				} else {
 
-				endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
-				scopes := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/Scopes")
+					endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
+					scopes := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/Scopes")
 
-				flag := false
+					flag := false
 
-				for _, xaddr := range endpoints {
-					xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
-					if strings.Contains(response, xaddr) {
-						flag = true
+					for _, xaddr := range endpoints {
+						xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
+						if strings.Contains(response, xaddr) {
+							flag = true
+							break
+						}
+						response += "{"
+						response += `"url":"` + xaddr + `",`
+					}
+					if flag {
 						break
 					}
-					response += "{"
-					response += `"url":"` + xaddr + `",`
+					for _, scope := range scopes {
+						re := regexp.MustCompile(`onvif:\/\/www\.onvif\.org\/name\/[A-Za-z0-9-]+`)
+						match := re.FindStringSubmatch(scope.Text())
+						response += `"name":"` + path.Base(match[0]) + `"`
+					}
+					response += "},"
 				}
-				if flag {
-					break
-				}
-				for _, scope := range scopes {
-					re := regexp.MustCompile(`onvif:\/\/www\.onvif\.org\/name\/[A-Za-z0-9-]+`)
-					match := re.FindStringSubmatch(scope.Text())
-					response += `"name":"` + path.Base(match[0]) + `"`
-				}
-				response += "},"
-
 			}
-
-		}
-		response = strings.TrimRight(response, ",")
-		response += "]"
-		if response != "" {
+			response = strings.TrimRight(response, ",")
+			response += "]"
 			context.String(http.StatusOK, response)
 		}
 	})
 
 	router.Run()
 }
-
-//func soapHandling(tp interface{}, tags* map[string]string)  {
-//	ifaceValue := reflect.ValueOf(tp).Elem()
-//	typeOfStruct := ifaceValue.Type()
-//	if ifaceValue.Kind() != reflect.Struct {
-//		return
-//	}
-//	for i := 0; i < ifaceValue.NumField(); i++ {
-//		field := ifaceValue.Field(i)
-//		tg, err := typeOfStruct.FieldByName(typeOfStruct.Field(i).Name)
-//		if err == false {
-//			fmt.Println(err)
-//		}
-//		(*tags)[typeOfStruct.Field(i).Name] = string(tg.Tag)
-//
-//		subStruct := reflect.New(reflect.TypeOf( field.Interface() ))
-//		soapHandling(subStruct.Interface(), tags)
-//	}
-//}
 
 func callNecessaryMethod(serviceName, methodName, acceptedData, username, password, xaddr string) (string, error) {
 	var methodStruct interface{}
@@ -129,17 +125,17 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 		return "", errors.New("there is no such service")
 	}
 	if err != nil { //done
-		return "", err
+		return "", errors.Annotate(err, "getStructByName")
 	}
 
 	resp, err := xmlAnalize(methodStruct, &acceptedData)
 	if err != nil {
-		return "", err
+		return "", errors.Annotate(err, "xmlAnalize")
 	}
 
 	endpoint, err := getEndpoint(serviceName, xaddr)
 	if err != nil {
-		return "", err
+		return "", errors.Annotate(err, "getEndpoint")
 	}
 
 	soap := gosoap.NewEmptySOAP()
@@ -149,12 +145,12 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 
 	servResp, err := networking.SendSoap(new(http.Client), endpoint, soap.String())
 	if err != nil {
-		return "", err
+		return "", errors.Annotate(err, "SendSoap")
 	}
 
 	rsp, err := ioutil.ReadAll(servResp.Body)
 	if err != nil {
-		return "", err
+		return "", errors.Annotate(err, "ReadAll")
 	}
 
 	return string(rsp), nil
@@ -163,7 +159,7 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 func getEndpoint(service, xaddr string) (string, error) {
 	dev, err := onvif.NewDevice(onvif.DeviceParams{Xaddr: xaddr})
 	if err != nil {
-		return "", err
+		return "", errors.Annotate(err, "NewDevice")
 	}
 	pkg := strings.ToLower(service)
 
@@ -193,7 +189,7 @@ func xmlAnalize(methodStruct interface{}, acceptedData *string) (*string, error)
 
 	doc := etree.NewDocument()
 	if err := doc.ReadFromString(*acceptedData); err != nil {
-		return nil, err
+		return nil, errors.Annotate(err, "readFromString")
 	}
 	etr := doc.FindElements("./*")
 	xmlUnmarshal(etr, &testunMarshal, &mas)
@@ -207,7 +203,7 @@ func xmlAnalize(methodStruct interface{}, acceptedData *string) (*string, error)
 		lst := (testunMarshal)[lstIndex]
 		elemName, attr, value, err := xmlMaker(&lst, &test, lstIndex)
 		if err != nil {
-			return nil, err
+			return nil, errors.Annotate(err, "xmlMarker")
 		}
 
 		if mas[lstIndex] == "Push" && lstIndex == 0 { //done
@@ -251,10 +247,10 @@ func xmlAnalize(methodStruct interface{}, acceptedData *string) (*string, error)
 
 	resp, err := document.WriteToString()
 	if err != nil {
-		return nil, err
+		return nil, errors.Annotate(err, "writeToString")
 	}
 
-	return &resp, err
+	return &resp, nil
 }
 
 func xmlMaker(lst *[]interface{}, tags *[]map[string]string, lstIndex int) (string, map[string]string, string, error) {
@@ -273,13 +269,13 @@ func xmlMaker(lst *[]interface{}, tags *[]map[string]string, lstIndex int) (stri
 					if index == 0 && lstIndex == 0 {
 						res, err := xmlProcessing(tg["XMLName"])
 						if err != nil {
-							return "", nil, "", err
+							return "", nil, "", errors.Annotate(err, "xmlProcessing")
 						}
 						elemName = res
 					} else if index == 0 {
 						res, err := xmlProcessing(tg[conversion])
 						if err != nil {
-							return "", nil, "", err
+							return "", nil, "", errors.Annotate(err, "xmlProcessing")
 						}
 						elemName = res
 					} else {
@@ -314,8 +310,6 @@ func xmlProcessing(tg string) (string, error) {
 	} else {
 		return str[1][0:omitAttr], nil
 	}
-
-	return "", errors.New("something went wrong")
 }
 
 func mapProcessing(mapVar []map[string]string) []map[string]string {
@@ -343,9 +337,9 @@ func soapHandling(tp interface{}, tags *[]map[string]string) {
 	}
 	for i := 0; i < s.NumField(); i++ {
 		f := s.Field(i)
-		tmp, err := typeOfT.FieldByName(typeOfT.Field(i).Name)
-		if err == false {
-			fmt.Println(err)
+		tmp, ok := typeOfT.FieldByName(typeOfT.Field(i).Name)
+		if !ok {
+			Logger.Debug().Str("field", typeOfT.Field(i).Name).Msg("reflection failed")
 		}
 		*tags = append(*tags, map[string]string{typeOfT.Field(i).Name: string(tmp.Tag)})
 		subStruct := reflect.New(reflect.TypeOf(f.Interface()))

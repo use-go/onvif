@@ -11,8 +11,6 @@ package wsdiscovery
 
 import (
 	"errors"
-	"fmt"
-	"log"
 	"net"
 	"os"
 	"time"
@@ -24,7 +22,7 @@ import (
 const bufSize = 8192
 
 //SendProbe to device
-func SendProbe(interfaceName string, scopes, types []string, namespaces map[string]string) []string {
+func SendProbe(interfaceName string, scopes, types []string, namespaces map[string]string) ([]string, error) {
 	// Creating UUID Version 4
 	uuidV4 := uuid.Must(uuid.NewV4())
 	//fmt.Printf("UUIDv4: %s\n", uuidV4)
@@ -45,42 +43,40 @@ func SendProbe(interfaceName string, scopes, types []string, namespaces map[stri
 	//</Envelope>`
 
 	return sendUDPMulticast(probeSOAP.String(), interfaceName)
-
 }
 
-func sendUDPMulticast(msg string, interfaceName string) []string {
-	c, err := net.ListenPacket("udp4", "0.0.0.0:1024")
+func sendUDPMulticast(msg string, interfaceName string) ([]string, error) {
+	c, err := net.ListenPacket("udp4", "0.0.0.0:0")
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 	defer c.Close()
 
 	iface, err := net.InterfaceByName(interfaceName)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	p := ipv4.NewPacketConn(c)
 	group := net.IPv4(239, 255, 255, 250)
 	if err := p.JoinGroup(iface, &net.UDPAddr{IP: group}); err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	dst := &net.UDPAddr{IP: group, Port: 3702}
 	data := []byte(msg)
 	for _, ifi := range []*net.Interface{iface} {
 		if err := p.SetMulticastInterface(ifi); err != nil {
-			fmt.Println(err)
+			return nil, err
 		}
 		p.SetMulticastTTL(2)
 		if _, err := p.WriteTo(data, nil, dst); err != nil {
-			fmt.Println(err)
+			return nil, err
 		}
 	}
 
 	if err := p.SetReadDeadline(time.Now().Add(time.Second * 1)); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	var result []string
@@ -89,11 +85,11 @@ func sendUDPMulticast(msg string, interfaceName string) []string {
 		n, _, _, err := p.ReadFrom(b)
 		if err != nil {
 			if !errors.Is(err, os.ErrDeadlineExceeded) {
-				fmt.Println(err)
+				return nil, err
 			}
 			break
 		}
 		result = append(result, string(b[0:n]))
 	}
-	return result
+	return result, nil
 }

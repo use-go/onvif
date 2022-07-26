@@ -3,7 +3,6 @@ package onvif
 import (
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -108,50 +107,37 @@ func readResponse(resp *http.Response) string {
 }
 
 //GetAvailableDevicesAtSpecificEthernetInterface ...
-func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []Device {
-	/*
-		Call an ws-discovery Probe Message to Discover NVT type Devices
-	*/
-	devices := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:" + NVT.String()}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) ([]Device, error) {
+	// Call a ws-discovery Probe Message to Discover NVT type Devices
+	devices, err := wsdiscovery.SendProbe(interfaceName, nil, []string{"dn:" + NVT.String()}, map[string]string{"dn": "http://www.onvif.org/ver10/network/wsdl"})
+	if err != nil {
+		return nil, err
+	}
+
+	nvtDevicesSeen := make(map[string]bool)
 	nvtDevices := make([]Device, 0)
 
 	for _, j := range devices {
 		doc := etree.NewDocument()
 		if err := doc.ReadFromString(j); err != nil {
-			fmt.Errorf("%s", err.Error())
-			return nil
+			return nil, err
 		}
 
-		endpoints := doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs")
-		for _, xaddr := range endpoints {
+		for _, xaddr := range doc.Root().FindElements("./Body/ProbeMatches/ProbeMatch/XAddrs") {
 			xaddr := strings.Split(strings.Split(xaddr.Text(), " ")[0], "/")[2]
-			fmt.Println(xaddr)
-			c := 0
-
-			for c = 0; c < len(nvtDevices); c++ {
-				if nvtDevices[c].params.Xaddr == xaddr {
-					fmt.Println(nvtDevices[c].params.Xaddr, "==", xaddr)
-					break
+			if !nvtDevicesSeen[xaddr] {
+				dev, err := NewDevice(DeviceParams{Xaddr: strings.Split(xaddr, " ")[0]})
+				if err != nil {
+					// TODO(jfsmig) print a warning
+				} else {
+					nvtDevicesSeen[xaddr] = true
+					nvtDevices = append(nvtDevices, *dev)
 				}
-			}
-
-			if c < len(nvtDevices) {
-				continue
-			}
-
-			dev, err := NewDevice(DeviceParams{Xaddr: strings.Split(xaddr, " ")[0]})
-
-			if err != nil {
-				fmt.Println("Error", xaddr)
-				fmt.Println(err)
-				continue
-			} else {
-				nvtDevices = append(nvtDevices, *dev)
 			}
 		}
 	}
 
-	return nvtDevices
+	return nvtDevices, nil
 }
 
 func (dev *Device) getSupportedServices(resp *http.Response) {
