@@ -32,22 +32,25 @@ func ReadAndParse(ctx context.Context, httpReply *http.Response, reply interface
 		Str("action", tag).
 		Msg("RPC")
 	// TODO(jfsmig): extract the deadline from ctx.Deadline() and apply it on the reply reading
-	if b, err := ioutil.ReadAll(httpReply.Body); err != nil {
+	b, err := ioutil.ReadAll(httpReply.Body)
+	if err != nil {
 		return errors.Annotate(err, "read")
-	} else {
-		// my case
-		if tag == "Subscribe" ||
-			tag == "CreatePullPointSubscription" ||
-			tag == "GetStreamUri" ||
-			tag == "GetSnapshotUri" ||
-			tag == "GetEventProperties" ||
-			tag == "GetServiceCapabilities" ||
-			tag == "Unsubscribe" ||
-			tag == "GetCapabilities" {
-			fmt.Printf("body received for %s:%s\n", tag, b)
-		}
-
-		err = xml.Unmarshal(b, reply)
-		return errors.Annotate(err, "decode")
 	}
+
+	httpReply.Body.Close()
+
+	// my case
+	if tag == "Subscribe" ||
+		tag == "CreatePullPointSubscription" ||
+		tag == "GetStreamUri" ||
+		tag == "GetSnapshotUri" ||
+		tag == "GetEventProperties" ||
+		tag == "GetServiceCapabilities" ||
+		tag == "Unsubscribe" ||
+		tag == "GetCapabilities" {
+		fmt.Printf("body received for %s\n:%s\n", tag, b)
+	}
+
+	err = xml.Unmarshal(b, reply)
+	return errors.Annotate(err, "decode")
 }

@@ -140,23 +140,32 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) ([]Dev
 	return nvtDevices, nil
 }
 
-func (dev *Device) getSupportedServices(resp *http.Response) {
+func (dev *Device) getSupportedServices(resp *http.Response) error {
 	doc := etree.NewDocument()
 
-	data, _ := ioutil.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	resp.Body.Close()
 
 	if err := doc.ReadFromBytes(data); err != nil {
 		//log.Println(err.Error())
-		return
+		return err
 	}
+
 	services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/*/XAddr")
 	for _, j := range services {
 		dev.addEndpoint(j.Parent().Tag, j.Text())
 	}
+
 	extension_services := doc.FindElements("./Envelope/Body/GetCapabilitiesResponse/Capabilities/Extension/*/XAddr")
 	for _, j := range extension_services {
 		dev.addEndpoint(j.Parent().Tag, j.Text())
 	}
+
+	return nil
 }
 
 //NewDevice function construct a ONVIF Device entity
@@ -178,7 +187,11 @@ func NewDevice(params DeviceParams) (*Device, error) {
 		return nil, errors.New("camera is not available at " + dev.params.Xaddr + " or it does not support ONVIF services")
 	}
 
-	dev.getSupportedServices(resp)
+	err = dev.getSupportedServices(resp)
+	if err != nil {
+		return nil, err
+	}
+
 	return dev, nil
 }
 

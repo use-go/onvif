@@ -304,9 +304,8 @@ type GYearMonth AnySimpleType
 /*
 	Construct an instance of xsd GYearMonth type
 */
-func (tp GYearMonth) NewGYearMonth(time time.Time) GYearMonth {
-	return GYearMonth(fmt.Sprintf("", time.Year(), "-", time.Month()))
-	//return GYearMonth(time.Format("2004-04-05:00"))
+func (tp GYearMonth) NewGYearMonth(t time.Time) GYearMonth {
+	return GYearMonth(fmt.Sprintf("%4d-%2d", t.Year(), t.Month()))
 }
 
 /*
@@ -326,9 +325,8 @@ type GYear AnySimpleType
 /*
 	Construct an instance of xsd GYear type
 */
-func (tp GYear) NewGYear(time time.Time) GYear {
-	return GYear(fmt.Sprintf("", time.Year()))
-	//return GYearMonth(time.Format("2004-04-05:00"))
+func (tp GYear) NewGYear(t time.Time) GYear {
+	return GYear(fmt.Sprintf("%4d", t.Year()))
 }
 
 /*
@@ -346,8 +344,8 @@ type GMonthDay AnySimpleType
 /*
 	Construct an instance of xsd GMonthDay type
 */
-func (tp GMonthDay) NewGMonthDay(time time.Time) GMonthDay {
-	return GMonthDay(fmt.Sprintf("--", time.Month(), "-", time.Day()))
+func (tp GMonthDay) NewGMonthDay(t time.Time) GMonthDay {
+	return GMonthDay(fmt.Sprintf("--%2d-%2d", t.Month(), t.Day()))
 }
 
 /*
@@ -366,8 +364,8 @@ type GDay AnySimpleType
 /*
 	Construct an instance of xsd GDay type
 */
-func (tp GDay) NewGDay(time time.Time) GDay {
-	return GDay(fmt.Sprintf("---", time.Day()))
+func (tp GDay) NewGDay(t time.Time) GDay {
+	return GDay(fmt.Sprintf("---%2d", t.Day()))
 }
 
 /*
@@ -384,8 +382,8 @@ func (tp GDay) NewGDay(time time.Time) GDay {
 */
 type GMonth AnySimpleType
 
-func (tp GMonth) NewGMonth(time time.Time) GMonth {
-	return GMonth(fmt.Sprintf("--", time.Month()))
+func (tp GMonth) NewGMonth(t time.Time) GMonth {
+	return GMonth(fmt.Sprintf("--%2d", t.Month()))
 }
 
 /*

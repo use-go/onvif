@@ -153,6 +153,8 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 		return "", errors.Annotate(err, "ReadAll")
 	}
 
+	servResp.Body.Close()
+
 	return string(rsp), nil
 }
 

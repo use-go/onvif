@@ -509,8 +509,8 @@ type ItemList struct {
 }
 
 type SimpleItem struct {
-	Name  string            `xml:"onvif:Name,attr"`
-	Value xsd.AnySimpleType `xml:"onvif:Value,attr"`
+	Name  string            `xml:"Name,attr"`
+	Value xsd.AnySimpleType `xml:"Value,attr"`
 }
 
 type ElementItem struct {

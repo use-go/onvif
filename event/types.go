@@ -2,6 +2,7 @@ package event
 
 import (
 	"github.com/use-go/onvif/xsd"
+	"github.com/use-go/onvif/xsd/onvif"
 )
 
 //Address Alias
@@ -9,8 +10,10 @@ type Address xsd.String
 
 //CurrentTime alias
 type CurrentTime xsd.DateTime //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
+
 //TerminationTime alias
 type TerminationTime xsd.DateTime //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
+
 //FixedTopicSet alias
 type FixedTopicSet xsd.Boolean //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 
@@ -23,26 +26,32 @@ type TopicExpressionDialect xsd.AnyURI
 //Message alias
 type Message xsd.AnyType
 
+//MessageNotification alias
+type MessageNotification struct {
+	Message MessageNotificationHolderType
+}
+
+type MessageNotificationHolderType struct {
+	UtcTime           xsd.DateTime     `xml:",attr"`
+	PropertyOperation xsd.String       `xml:",attr"`
+	Source            onvif.SimpleItem `xml:"Source>SimpleItem"`
+	Data              onvif.SimpleItem `xml:"Data>SimpleItem"`
+}
+
 //ActionType for AttributedURIType
 type ActionType AttributedURIType
 
 //AttributedURIType in ws-addr
 type AttributedURIType xsd.AnyURI //wsa https://www.w3.org/2005/08/addressing/ws-addr.xsd
 
-//AbsoluteOrRelativeTimeType <xsd:union memberTypes="xsd:dateTime xsd:duration"/>
-type AbsoluteOrRelativeTimeType struct { //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
-	xsd.DateTime
-	xsd.Duration
-}
+// AbsoluteOrRelativeTimeType <xsd:union memberTypes="xsd:dateTime xsd:duration"/>
+type AbsoluteOrRelativeTimeType xsd.AnySimpleType //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 
 //EndpointReferenceType in ws-addr
 type EndpointReferenceType struct { //wsa http://www.w3.org/2005/08/addressing/ws-addr.xsd
-	// Address             AttributedURIType       `xml:"wsnt:Address"`
-	// ReferenceParameters ReferenceParametersType `xml:"wsnt:ReferenceParameters"`
-	// Metadata            MetadataType            `xml:"wsnt:Metadata"`
-	Address             AttributedURIType       `xml:"Address"`
-	ReferenceParameters ReferenceParametersType `xml:"wsnt:ReferenceParameters"`
-	Metadata            MetadataType            `xml:"wsnt:Metadata"`
+	Address             AttributedURIType
+	ReferenceParameters ReferenceParametersType
+	Metadata            MetadataType
 }
 
 // FilterType struct
@@ -94,7 +103,7 @@ type NotificationMessageHolderType struct {
 	SubscriptionReference SubscriptionReference //wsnt http://docs.oasis-open.org/wsn/b-2.xsd
 	Topic                 Topic
 	ProducerReference     ProducerReference
-	Message               Message
+	Message               MessageNotification
 }
 
 //NotificationMessage Alias
