@@ -3,7 +3,6 @@ package sdk
 import (
 	"context"
 	"encoding/xml"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -38,18 +37,6 @@ func ReadAndParse(ctx context.Context, httpReply *http.Response, reply interface
 	}
 
 	httpReply.Body.Close()
-
-	// my case
-	if tag == "Subscribe" ||
-		tag == "CreatePullPointSubscription" ||
-		tag == "GetStreamUri" ||
-		tag == "GetSnapshotUri" ||
-		tag == "GetEventProperties" ||
-		tag == "GetServiceCapabilities" ||
-		tag == "Unsubscribe" ||
-		tag == "GetCapabilities" {
-		fmt.Printf("body received for %s\n:%s\n", tag, b)
-	}
 
 	err = xml.Unmarshal(b, reply)
 	return errors.Annotate(err, "decode")
