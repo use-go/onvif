@@ -6,7 +6,6 @@ package ptz
 
 import (
 	"context"
-	"github.com/juju/errors"
 	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/sdk"
 	"github.com/use-go/onvif/ptz"
@@ -22,9 +21,9 @@ func Call_GeoMove(ctx context.Context, dev *onvif.Device, request ptz.GeoMove) (
 	}
 	var reply Envelope
 	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.GeoMoveResponse, errors.Annotate(err, "call")
+		return reply.Body.GeoMoveResponse, err
 	} else {
 		err = sdk.ReadAndParse(ctx, httpReply, &reply, "GeoMove")
-		return reply.Body.GeoMoveResponse, errors.Annotate(err, "reply")
+		return reply.Body.GeoMoveResponse, err
 	}
 }

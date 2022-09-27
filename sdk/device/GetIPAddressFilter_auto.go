@@ -6,7 +6,6 @@ package device
 
 import (
 	"context"
-	"github.com/juju/errors"
 	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/sdk"
 	"github.com/use-go/onvif/device"
@@ -22,9 +21,9 @@ func Call_GetIPAddressFilter(ctx context.Context, dev *onvif.Device, request dev
 	}
 	var reply Envelope
 	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.GetIPAddressFilterResponse, errors.Annotate(err, "call")
+		return reply.Body.GetIPAddressFilterResponse, err
 	} else {
 		err = sdk.ReadAndParse(ctx, httpReply, &reply, "GetIPAddressFilter")
-		return reply.Body.GetIPAddressFilterResponse, errors.Annotate(err, "reply")
+		return reply.Body.GetIPAddressFilterResponse, err
 	}
 }

@@ -6,7 +6,6 @@ package media
 
 import (
 	"context"
-	"github.com/juju/errors"
 	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/sdk"
 	"github.com/use-go/onvif/media"
@@ -22,9 +21,9 @@ func Call_DeleteProfile(ctx context.Context, dev *onvif.Device, request media.De
 	}
 	var reply Envelope
 	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.DeleteProfileResponse, errors.Annotate(err, "call")
+		return reply.Body.DeleteProfileResponse, err
 	} else {
 		err = sdk.ReadAndParse(ctx, httpReply, &reply, "DeleteProfile")
-		return reply.Body.DeleteProfileResponse, errors.Annotate(err, "reply")
+		return reply.Body.DeleteProfileResponse, err
 	}
 }

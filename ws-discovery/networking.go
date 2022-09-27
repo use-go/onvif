@@ -10,9 +10,8 @@ package wsdiscovery
  *******************************************************/
 
 import (
-	"errors"
+	"io"
 	"net"
-	"os"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -84,10 +83,10 @@ func sendUDPMulticast(msg string, interfaceName string) ([]string, error) {
 		b := make([]byte, bufSize)
 		n, _, _, err := p.ReadFrom(b)
 		if err != nil {
-			if !errors.Is(err, os.ErrDeadlineExceeded) {
-				return nil, err
+			if err == io.EOF {
+				break
 			}
-			break
+			return nil, err
 		}
 		result = append(result, string(b[0:n]))
 	}

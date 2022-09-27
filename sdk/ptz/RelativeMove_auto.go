@@ -6,7 +6,6 @@ package ptz
 
 import (
 	"context"
-	"github.com/juju/errors"
 	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/sdk"
 	"github.com/use-go/onvif/ptz"
@@ -22,9 +21,9 @@ func Call_RelativeMove(ctx context.Context, dev *onvif.Device, request ptz.Relat
 	}
 	var reply Envelope
 	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.RelativeMoveResponse, errors.Annotate(err, "call")
+		return reply.Body.RelativeMoveResponse, err
 	} else {
 		err = sdk.ReadAndParse(ctx, httpReply, &reply, "RelativeMove")
-		return reply.Body.RelativeMoveResponse, errors.Annotate(err, "reply")
+		return reply.Body.RelativeMoveResponse, err
 	}
 }

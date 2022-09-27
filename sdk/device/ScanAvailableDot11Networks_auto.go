@@ -6,7 +6,6 @@ package device
 
 import (
 	"context"
-	"github.com/juju/errors"
 	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/sdk"
 	"github.com/use-go/onvif/device"
@@ -22,9 +21,9 @@ func Call_ScanAvailableDot11Networks(ctx context.Context, dev *onvif.Device, req
 	}
 	var reply Envelope
 	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.ScanAvailableDot11NetworksResponse, errors.Annotate(err, "call")
+		return reply.Body.ScanAvailableDot11NetworksResponse, err
 	} else {
 		err = sdk.ReadAndParse(ctx, httpReply, &reply, "ScanAvailableDot11Networks")
-		return reply.Body.ScanAvailableDot11NetworksResponse, errors.Annotate(err, "reply")
+		return reply.Body.ScanAvailableDot11NetworksResponse, err
 	}
 }

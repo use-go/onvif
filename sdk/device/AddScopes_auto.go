@@ -6,7 +6,6 @@ package device
 
 import (
 	"context"
-	"github.com/juju/errors"
 	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/sdk"
 	"github.com/use-go/onvif/device"
@@ -22,9 +21,9 @@ func Call_AddScopes(ctx context.Context, dev *onvif.Device, request device.AddSc
 	}
 	var reply Envelope
 	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.AddScopesResponse, errors.Annotate(err, "call")
+		return reply.Body.AddScopesResponse, err
 	} else {
 		err = sdk.ReadAndParse(ctx, httpReply, &reply, "AddScopes")
-		return reply.Body.AddScopesResponse, errors.Annotate(err, "reply")
+		return reply.Body.AddScopesResponse, err
 	}
 }

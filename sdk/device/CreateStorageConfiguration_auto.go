@@ -6,7 +6,6 @@ package device
 
 import (
 	"context"
-	"github.com/juju/errors"
 	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/sdk"
 	"github.com/use-go/onvif/device"
@@ -22,9 +21,9 @@ func Call_CreateStorageConfiguration(ctx context.Context, dev *onvif.Device, req
 	}
 	var reply Envelope
 	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.CreateStorageConfigurationResponse, errors.Annotate(err, "call")
+		return reply.Body.CreateStorageConfigurationResponse, err
 	} else {
 		err = sdk.ReadAndParse(ctx, httpReply, &reply, "CreateStorageConfiguration")
-		return reply.Body.CreateStorageConfigurationResponse, errors.Annotate(err, "reply")
+		return reply.Body.CreateStorageConfigurationResponse, err
 	}
 }

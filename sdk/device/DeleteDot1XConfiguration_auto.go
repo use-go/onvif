@@ -6,7 +6,6 @@ package device
 
 import (
 	"context"
-	"github.com/juju/errors"
 	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/sdk"
 	"github.com/use-go/onvif/device"
@@ -22,9 +21,9 @@ func Call_DeleteDot1XConfiguration(ctx context.Context, dev *onvif.Device, reque
 	}
 	var reply Envelope
 	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.DeleteDot1XConfigurationResponse, errors.Annotate(err, "call")
+		return reply.Body.DeleteDot1XConfigurationResponse, err
 	} else {
 		err = sdk.ReadAndParse(ctx, httpReply, &reply, "DeleteDot1XConfiguration")
-		return reply.Body.DeleteDot1XConfigurationResponse, errors.Annotate(err, "reply")
+		return reply.Body.DeleteDot1XConfigurationResponse, err
 	}
 }
