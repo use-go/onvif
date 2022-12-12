@@ -22,15 +22,13 @@ import (
 )
 
 var (
-	// LoggerContext is the builder of a zerolog.Logger that is exposed to the application so that
-	// options at the CLI might alter the formatting and the output of the logs.
-	LoggerContext = zerolog.
-			New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}).
-			With().Timestamp()
-
 	// Logger is a zerolog logger, that can be safely used from any part of the application.
-	// It gathers the format and the output.
-	Logger = LoggerContext.Logger()
+	// It gathers the format and the output. The application can replace the default Logger
+	// for an alternative that meets its own output.
+	Logger = zerolog.
+		New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}).
+		With().Timestamp().
+		Logger()
 )
 
 func RunApi() {
@@ -47,7 +45,7 @@ func RunApi() {
 		xaddr := c.GetHeader("xaddr")
 		acceptedData, err := c.GetRawData()
 		if err != nil {
-			Logger.Debug().Err(err).Msg("Failed to get rawx data")
+			Logger.Warn().Err(err).Msg("Failed to get raw data")
 		}
 
 		message, err := callNecessaryMethod(serviceName, methodName, string(acceptedData), username, pass, xaddr)
@@ -339,7 +337,7 @@ func soapHandling(tp interface{}, tags *[]map[string]string) {
 		f := s.Field(i)
 		tmp, ok := typeOfT.FieldByName(typeOfT.Field(i).Name)
 		if !ok {
-			Logger.Debug().Str("field", typeOfT.Field(i).Name).Msg("reflection failed")
+			Logger.Warn().Str("field", typeOfT.Field(i).Name).Msg("reflection failed")
 		}
 		*tags = append(*tags, map[string]string{typeOfT.Field(i).Name: string(tmp.Tag)})
 		subStruct := reflect.New(reflect.TypeOf(f.Interface()))
