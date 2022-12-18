@@ -4,12 +4,14 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"github.com/juju/errors"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 )
 
@@ -66,4 +68,40 @@ func main() {
 func getwd() string {
 	path, _ := os.Getwd()
 	return path
+}
+
+type Method struct {
+	Name string
+
+	// Can the request being sent without parameter (it can be automated, then)
+	NoArg bool
+}
+
+func getMethods(sourceFile string) []Method {
+	out := make([]Method, 0)
+
+	fin, err := os.Open(sourceFile)
+	if err != nil {
+		Logger.Fatal().Err(err).Str("wd", getwd()).Str("file", sourceFile).Msg("Failed to open the configuration file")
+	}
+	defer func() { _ = fin.Close() }()
+
+	scanner := bufio.NewScanner(fin)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		tokens := strings.Split(line, " ")
+		method := tokens[0]
+		opts := ""
+		if len(tokens) > 1 {
+			opts = tokens[1]
+		}
+		if method == "" || strings.HasPrefix(method, "#") {
+			continue
+		}
+
+		out = append(out, Method{Name: method, NoArg: opts == "noarg"})
+	}
+
+	return out
 }

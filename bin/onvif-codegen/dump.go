@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -36,18 +35,22 @@ import (
 )
 
 type {{.PackageUpper}}Output struct { {{range $val := .Methods}}
-	{{$val}} *{{$.Package}}.Get{{$val}}Response{{end}}
+	{{ $val | printf "%-40s" }} *{{$.Package}}.Get{{$val}}Response{{end}}
 }
 
 func detail{{.PackageUpper}}(ctx context.Context, dev *device.Device) {{.PackageUpper}}Output {
 	var out {{.PackageUpper}}Output
+	calls := make([]func(c context.Context), 0)
 {{range $val := .Methods}}
-	if p, err := {{$.Package}}.Call_Get{{$val}}(ctx, dev, {{$.Package}}.Get{{$val}} {}); err == nil {
-		out.{{$val}} = &p	
-	} else {
-		Logger.Trace().Err(err).Str("rpc", "{{$val}}").Msg("{{$.Package}}")
-	}
+	calls = append(calls, func(c context.Context) {
+		if p, err := {{$.Package}}.Call_Get{{$val}}(c, dev, {{$.Package}}.Get{{$val}} {}); err == nil {
+			out.{{$val}} = &p
+		} else {
+			Logger.Trace().Err(err).Str("rpc", "{{$val}}").Msg("{{$.Package}}")
+		}
+	})
 {{end}}
+	runAll(ctx, calls...)
 	return out
 }
 `
@@ -66,21 +69,11 @@ func detail{{.PackageUpper}}(ctx context.Context, dev *device.Device) {{.Package
 		Logger.Fatal().Err(err).Msg("BUG: invalid template")
 	}
 
-	// Load the configuration
-	fin, err := os.Open(env.Source)
-	if err != nil {
-		Logger.Fatal().Err(err).Str("wd", getwd()).Str("file", env.Source).Msg("Failed to open the configuration file")
-	}
-	defer func() { _ = fin.Close() }()
-
-	scanner := bufio.NewScanner(fin)
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		method := strings.TrimSpace(scanner.Text())
-		if method == "" || !strings.HasPrefix(method, "Get") {
+	for _, method := range getMethods(env.Source) {
+		if !strings.HasPrefix(method.Name, "Get") || !method.NoArg {
 			continue
 		}
-		env.Methods = append(env.Methods, method[3:])
+		env.Methods = append(env.Methods, method.Name[3:])
 	}
 
 	if fout, err := os.Create("dump_" + env.Package + "_auto.go"); err != nil {

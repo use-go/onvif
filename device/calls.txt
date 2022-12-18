@@ -9,47 +9,47 @@ DeleteDot1XConfiguration
 DeleteGeoLocation
 DeleteStorageConfiguration
 DeleteUsers
-GetAccessPolicy
-GetCACertificates
+GetAccessPolicy noarg
+GetCACertificates noarg
 GetCapabilities
 GetCertificateInformation
-GetCertificates
-GetCertificatesStatus
-GetClientCertificateMode
-GetDNS
-GetDPAddresses
-GetDeviceInformation
-GetDiscoveryMode
-GetDot11Capabilities
+GetCertificates noarg
+GetCertificatesStatus noarg
+GetClientCertificateMode noarg
+GetDNS noarg
+GetDPAddresses noarg
+GetDeviceInformation noarg
+GetDiscoveryMode noarg
+GetDot11Capabilities noarg
 GetDot11Status
 GetDot1XConfiguration
-GetDot1XConfigurations
-GetDynamicDNS
-GetEndpointReference
-GetGeoLocation
-GetHostname
-GetIPAddressFilter
-GetNTP
-GetNetworkDefaultGateway
-GetNetworkInterfaces
-GetNetworkProtocols
+GetDot1XConfigurations noarg
+GetDynamicDNS noarg
+GetEndpointReference noarg
+GetGeoLocation noarg
+GetHostname noarg
+GetIPAddressFilter noarg
+GetNTP noarg
+GetNetworkDefaultGateway noarg
+GetNetworkInterfaces noarg
+GetNetworkProtocols noarg
 GetPkcs10Request
-GetRelayOutputs
-GetRemoteDiscoveryMode
-GetRemoteUser
-GetScopes
-GetServiceCapabilities
+GetRelayOutputs noarg
+GetRemoteDiscoveryMode noarg
+GetRemoteUser noarg
+GetScopes noarg
+GetServiceCapabilities noarg
 GetServices
 GetStorageConfiguration
-GetStorageConfigurations
-GetSystemBackup
-GetSystemDateAndTime
+GetStorageConfigurations noarg
+GetSystemBackup noarg
+GetSystemDateAndTime noarg
 GetSystemLog
-GetSystemSupportInformation
-GetSystemUris
-GetUsers
-GetWsdlUrl
-GetZeroConfiguration
+GetSystemSupportInformation noarg
+GetSystemUris noarg
+GetUsers noarg
+GetWsdlUrl noarg
+GetZeroConfiguration noarg
 LoadCACertificates
 LoadCertificateWithPrivateKey
 LoadCertificates

@@ -5,14 +5,14 @@ GeoMove
 GetCompatibleConfigurations
 GetConfiguration
 GetConfigurationOptions
-GetConfigurations
+GetConfigurations noarg
 GetNode
-GetNodes
+GetNodes noarg
 GetPresetTour
 GetPresetTourOptions
 GetPresetTours
 GetPresets
-GetServiceCapabilities
+GetServiceCapabilities noarg
 GetStatus
 GotoHomePosition
 GotoPreset

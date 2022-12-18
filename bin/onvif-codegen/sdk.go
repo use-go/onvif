@@ -1,11 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"log"
 	"os"
-	"strings"
 	"text/template"
 )
 
@@ -63,21 +61,9 @@ func Call_{{.TypeRequest}}(ctx context.Context, dev *{{if .IsNotDevicePackage}}d
 		Logger.Fatal().Err(err).Msg("BUG: invalid template")
 	}
 
-	fin, err := os.Open(env.Source)
-	if err != nil {
-		Logger.Fatal().Err(err).Str("wd", getwd()).Str("file", env.Source).Msg("Failed to open the configuration file")
-	}
-	defer func() { _ = fin.Close() }()
-
-	scanner := bufio.NewScanner(fin)
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		method := strings.TrimSpace(scanner.Text())
-		if method == "" {
-			continue
-		}
-		env.TypeRequest = method
-		env.TypeReply = method + "Response"
+	for _, method := range getMethods(env.Source) {
+		env.TypeRequest = method.Name
+		env.TypeReply = method.Name + "Response"
 		log.Println(env)
 
 		if fout, err := os.Create(env.TypeRequest + "_auto.go"); err != nil {

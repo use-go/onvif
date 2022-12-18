@@ -1,9 +1,9 @@
-GetServiceCapabilities
-Subscribe
-Renew
-Unsubscribe
 CreatePullPointSubscription
-GetEventProperties
+GetEventProperties noarg
+GetServiceCapabilities noarg
 PullMessages
+Renew
 Seek
 SetSynchronizationPoint
+Subscribe
+Unsubscribe
