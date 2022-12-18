@@ -15,7 +15,7 @@ import (
 )
 
 func TestGetAvailableDevicesAtSpecificEthernetInterface(t *testing.T) {
-	s, err := device.GetAvailableDevicesAtSpecificEthernetInterface("en0")
+	s, err := discover.GetAvailableDevicesAtSpecificEthernetInterface("en0")
 	log.Printf("%v %v", err, s)
 }
 
