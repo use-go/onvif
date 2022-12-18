@@ -11,11 +11,12 @@ jobs:
       - run: go install ./...
       - run: go test ./...
       - run: go vet ./...
-      #- run:
-      #    name: "Check the generated files have been commit"
-      #    command: |
-      #      set -euxo pipefail
-      #      go generate ./...
+      - run:
+          name: "Check the generated files have been commit"
+          command: |
+            set -euxo pipefail
+            go generate ./...
+            git diff --quiet --exit-code
 
 workflows:
   build-and-test-workflow:
