@@ -1,0 +1,9 @@
+GetServiceCapabilities
+Subscribe
+Renew
+Unsubscribe
+CreatePullPointSubscription
+GetEventProperties
+PullMessages
+Seek
+SetSynchronizationPoint
