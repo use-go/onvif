@@ -8,7 +8,6 @@ import (
 
 	goonvif "github.com/use-go/onvif"
 	"github.com/use-go/onvif/device"
-	sdk "github.com/use-go/onvif/sdk/device"
 	"github.com/use-go/onvif/xsd/onvif"
 )
 
@@ -43,20 +42,20 @@ func main() {
 	}
 
 	//Commands execution
-	systemDateAndTymeResponse, err := sdk.Call_GetSystemDateAndTime(ctx, dev, systemDateAndTyme)
+	systemDateAndTimeResponse, err := device.Call_GetSystemDateAndTime(ctx, dev, systemDateAndTyme)
 	if err != nil {
 		log.Println(err)
 	} else {
-		fmt.Println(systemDateAndTymeResponse)
+		fmt.Println(systemDateAndTimeResponse)
 	}
-	getCapabilitiesResponse, err := sdk.Call_GetCapabilities(ctx, dev, getCapabilities)
+	getCapabilitiesResponse, err := device.Call_GetCapabilities(ctx, dev, getCapabilities)
 	if err != nil {
 		log.Println(err)
 	} else {
 		fmt.Println(getCapabilitiesResponse)
 	}
 
-	createUserResponse, err := sdk.Call_CreateUsers(ctx, dev, createUser)
+	createUserResponse, err := device.Call_CreateUsers(ctx, dev, createUser)
 	if err != nil {
 		log.Println(err)
 	} else {

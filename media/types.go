@@ -5,6 +5,8 @@ import (
 	"github.com/use-go/onvif/xsd/onvif"
 )
 
+//go:generate go run github.com/use-go/onvif/bin/onvif-codegen media calls.txt
+
 type Capabilities struct {
 	SnapshotUri           bool `xml:"SnapshotUri,attr"`
 	Rotation              bool `xml:"Rotation,attr"`
@@ -725,3 +727,4 @@ type DeleteOSD struct {
 
 type DeleteOSDResponse struct {
 }
+

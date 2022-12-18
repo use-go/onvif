@@ -5,6 +5,8 @@ import (
 	"github.com/use-go/onvif/xsd/onvif"
 )
 
+//go:generate go run github.com/use-go/onvif/bin/onvif-codegen ptz calls.txt
+
 type Capabilities struct {
 	EFlip                       xsd.Boolean `xml:"EFlip,attr"`
 	Reverse                     xsd.Boolean `xml:"Reverse,attr"`
