@@ -5,7 +5,7 @@ import (
 	"github.com/use-go/onvif/xsd/onvif"
 )
 
-//go:generate go run github.com/use-go/onvif/bin/onvif-codegen ptz calls.txt
+//go:generate go run github.com/use-go/onvif/bin/onvif-codegen sdk ptz calls.txt
 
 type Capabilities struct {
 	EFlip                       xsd.Boolean `xml:"EFlip,attr"`

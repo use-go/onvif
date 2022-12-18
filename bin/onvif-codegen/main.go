@@ -4,93 +4,66 @@
 package main
 
 import (
-	"bufio"
-	"flag"
-	"log"
-	"os"
-	"strings"
-	"text/template"
-)
-
-var mainTemplate = `// Code generated : DO NOT EDIT.
-// Copyright (c) 2022 Jean-Francois SMIGIELSKI
-// Distributed under the MIT License
-
-package {{.Package}}
-
-import (
 	"context"
-	"github.com/juju/errors"{{if .IsNotDevicePackage}}
-	"github.com/use-go/onvif/device"{{end}}
-	"github.com/use-go/onvif/networking"
+	"github.com/juju/errors"
+	"github.com/rs/zerolog"
+	"github.com/spf13/cobra"
+	"os"
+	"os/signal"
+	"time"
 )
 
-// Call_{{.TypeRequest}} forwards the call to dev.CallMethod() then parses the payload of the reply as a {{.TypeReply}}.
-func Call_{{.TypeRequest}}(ctx context.Context, dev *{{if .IsNotDevicePackage}}device.{{end}}Device, request {{.TypeRequest}}) ({{.TypeReply}}, error) {
-	type Envelope struct {
-		Header struct{}
-		Body   struct {
-			{{.TypeReply}} {{.TypeReply}}
-		}
-	}
-	var reply Envelope
-	if httpReply, err := dev.CallMethod(request); err != nil {
-		return reply.Body.{{.TypeReply}}, errors.Annotate(err, "call")
-	} else {
-		err = networking.ReadAndParse(ctx, httpReply, &reply, "{{.TypeRequest}}")
-		return reply.Body.{{.TypeReply}}, errors.Annotate(err, "reply")
-	}
-}
-`
-
-type parserEnv struct {
-	Package     string
-	Source      string
-	TypeReply   string
-	TypeRequest string
-
-	// The device package requires a special management because it is both a
-	// main entry point of the onvif SDK but also a core internal API
-	IsNotDevicePackage bool
-}
+var (
+	// Logger is a zerolog logger, that can be safely used from any part of the application.
+	// It gathers the format and the output. The application can replace the default Logger
+	// for an alternative that meets its own output.
+	Logger = zerolog.
+		New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}).
+		With().Timestamp().
+		Logger()
+)
 
 func main() {
-	flag.Parse()
-	env := parserEnv{
-		Package:            flag.Arg(0),
-		IsNotDevicePackage: flag.Arg(0) != "device",
-		Source:             flag.Arg(1),
+	cmd := &cobra.Command{
+		Use:   "codegen",
+		Short: "",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return errors.New("Missing sub-command")
+		},
 	}
 
-	body, err := template.New("body").Parse(mainTemplate)
-	if err != nil {
-		log.Fatalln(err)
+	sdk := &cobra.Command{
+		Use:   "sdk",
+		Short: "Generate the files of a SDK package",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := signal.NotifyContext(context.Background(), os.Kill, os.Interrupt)
+			defer cancel()
+			return codegenSdk(ctx, args[0], args[1])
+		},
 	}
 
-	fin, err := os.Open(env.Source)
-	if err != nil {
-		log.Fatalf("Failed to open the configuration file [%s]: %v", env.Source, err)
+	dump := &cobra.Command{
+		Use:   "cli",
+		Short: "Generate the file of a CLI dump module",
+		Args:  cobra.ExactArgs(2),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := signal.NotifyContext(context.Background(), os.Kill, os.Interrupt)
+			defer cancel()
+			return codegenDump(ctx, args[0], args[1])
+		},
 	}
-	defer func() { _ = fin.Close() }()
 
-	scanner := bufio.NewScanner(fin)
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		method := strings.TrimSpace(scanner.Text())
-		if method == "" {
-			continue
-		}
-		env.TypeRequest = method
-		env.TypeReply = method + "Response"
-		log.Println(env)
+	cmd.AddCommand(sdk, dump)
 
-		if fout, err := os.Create(env.TypeRequest + "_auto.go"); err != nil {
-			log.Fatalln(err)
-		} else {
-			if err = body.Execute(fout, &env); err != nil {
-				log.Fatalln(err)
-			}
-			fout.Close()
-		}
+	if err := cmd.Execute(); err != nil {
+		Logger.Fatal().Err(err).Msg("Aborting")
+	} else {
+		Logger.Info().Msg("Exiting")
 	}
+}
+
+func getwd() string {
+	path, _ := os.Getwd()
+	return path
 }

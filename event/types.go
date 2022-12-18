@@ -4,7 +4,7 @@ import (
 	"github.com/use-go/onvif/xsd"
 )
 
-//go:generate go run github.com/use-go/onvif/bin/onvif-codegen event calls.txt
+//go:generate go run github.com/use-go/onvif/bin/onvif-codegen sdk event calls.txt
 
 // Address Alias
 type Address xsd.String

@@ -5,7 +5,7 @@ import (
 	"github.com/use-go/onvif/xsd/onvif"
 )
 
-//go:generate go run github.com/use-go/onvif/bin/onvif-codegen device calls.txt
+//go:generate go run github.com/use-go/onvif/bin/onvif-codegen sdk device calls.txt
 
 type Service struct {
 	Namespace xsd.AnyURI

@@ -5,7 +5,7 @@ import (
 	"github.com/use-go/onvif/xsd/onvif"
 )
 
-//go:generate go run github.com/use-go/onvif/bin/onvif-codegen media calls.txt
+//go:generate go run github.com/use-go/onvif/bin/onvif-codegen sdk media calls.txt
 
 type Capabilities struct {
 	SnapshotUri           bool `xml:"SnapshotUri,attr"`
