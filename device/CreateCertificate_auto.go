@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_CreateCertificate forwards the call to dev.CallMethod() then parses the payload of the reply as a CreateCertificateResponse.
-func Call_CreateCertificate(ctx context.Context, dev *onvif.Device, request CreateCertificate) (CreateCertificateResponse, error) {
+func Call_CreateCertificate(ctx context.Context, dev *Device, request CreateCertificate) (CreateCertificateResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

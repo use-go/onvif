@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetDNS forwards the call to dev.CallMethod() then parses the payload of the reply as a GetDNSResponse.
-func Call_GetDNS(ctx context.Context, dev *onvif.Device, request GetDNS) (GetDNSResponse, error) {
+func Call_GetDNS(ctx context.Context, dev *Device, request GetDNS) (GetDNSResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

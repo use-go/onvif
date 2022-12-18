@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetSystemLog forwards the call to dev.CallMethod() then parses the payload of the reply as a GetSystemLogResponse.
-func Call_GetSystemLog(ctx context.Context, dev *onvif.Device, request GetSystemLog) (GetSystemLogResponse, error) {
+func Call_GetSystemLog(ctx context.Context, dev *Device, request GetSystemLog) (GetSystemLogResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetZeroConfiguration forwards the call to dev.CallMethod() then parses the payload of the reply as a GetZeroConfigurationResponse.
-func Call_GetZeroConfiguration(ctx context.Context, dev *onvif.Device, request GetZeroConfiguration) (GetZeroConfigurationResponse, error) {
+func Call_GetZeroConfiguration(ctx context.Context, dev *Device, request GetZeroConfiguration) (GetZeroConfigurationResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

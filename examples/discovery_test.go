@@ -10,18 +10,17 @@ import (
 	"testing"
 
 	"github.com/beevik/etree"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/device"
 	discover "github.com/use-go/onvif/ws-discovery"
 )
 
 func TestGetAvailableDevicesAtSpecificEthernetInterface(t *testing.T) {
-	s, err := onvif.GetAvailableDevicesAtSpecificEthernetInterface("en0")
+	s, err := device.GetAvailableDevicesAtSpecificEthernetInterface("en0")
 	log.Printf("%v %v", err, s)
 }
 
 func client() {
-	dev, err := onvif.NewDevice(onvif.DeviceParams{Xaddr: "192.168.3.10", Username: "admin", Password: "zsyy12345"})
+	dev, err := device.NewDevice(device.DeviceParams{Xaddr: "192.168.3.10", Username: "admin", Password: "zsyy12345"})
 	if err != nil {
 		panic(err)
 	}

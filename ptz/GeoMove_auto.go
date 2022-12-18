@@ -7,12 +7,12 @@ package ptz
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GeoMove forwards the call to dev.CallMethod() then parses the payload of the reply as a GeoMoveResponse.
-func Call_GeoMove(ctx context.Context, dev *onvif.Device, request GeoMove) (GeoMoveResponse, error) {
+func Call_GeoMove(ctx context.Context, dev *device.Device, request GeoMove) (GeoMoveResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

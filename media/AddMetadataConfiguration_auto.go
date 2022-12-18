@@ -7,12 +7,12 @@ package media
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_AddMetadataConfiguration forwards the call to dev.CallMethod() then parses the payload of the reply as a AddMetadataConfigurationResponse.
-func Call_AddMetadataConfiguration(ctx context.Context, dev *onvif.Device, request AddMetadataConfiguration) (AddMetadataConfigurationResponse, error) {
+func Call_AddMetadataConfiguration(ctx context.Context, dev *device.Device, request AddMetadataConfiguration) (AddMetadataConfigurationResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

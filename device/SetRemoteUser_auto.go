@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_SetRemoteUser forwards the call to dev.CallMethod() then parses the payload of the reply as a SetRemoteUserResponse.
-func Call_SetRemoteUser(ctx context.Context, dev *onvif.Device, request SetRemoteUser) (SetRemoteUserResponse, error) {
+func Call_SetRemoteUser(ctx context.Context, dev *Device, request SetRemoteUser) (SetRemoteUserResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_SetGeoLocation forwards the call to dev.CallMethod() then parses the payload of the reply as a SetGeoLocationResponse.
-func Call_SetGeoLocation(ctx context.Context, dev *onvif.Device, request SetGeoLocation) (SetGeoLocationResponse, error) {
+func Call_SetGeoLocation(ctx context.Context, dev *Device, request SetGeoLocation) (SetGeoLocationResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

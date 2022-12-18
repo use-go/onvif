@@ -7,12 +7,12 @@ package media
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetGuaranteedNumberOfVideoEncoderInstances forwards the call to dev.CallMethod() then parses the payload of the reply as a GetGuaranteedNumberOfVideoEncoderInstancesResponse.
-func Call_GetGuaranteedNumberOfVideoEncoderInstances(ctx context.Context, dev *onvif.Device, request GetGuaranteedNumberOfVideoEncoderInstances) (GetGuaranteedNumberOfVideoEncoderInstancesResponse, error) {
+func Call_GetGuaranteedNumberOfVideoEncoderInstances(ctx context.Context, dev *device.Device, request GetGuaranteedNumberOfVideoEncoderInstances) (GetGuaranteedNumberOfVideoEncoderInstancesResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

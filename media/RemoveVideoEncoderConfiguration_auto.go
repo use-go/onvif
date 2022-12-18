@@ -7,12 +7,12 @@ package media
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_RemoveVideoEncoderConfiguration forwards the call to dev.CallMethod() then parses the payload of the reply as a RemoveVideoEncoderConfigurationResponse.
-func Call_RemoveVideoEncoderConfiguration(ctx context.Context, dev *onvif.Device, request RemoveVideoEncoderConfiguration) (RemoveVideoEncoderConfigurationResponse, error) {
+func Call_RemoveVideoEncoderConfiguration(ctx context.Context, dev *device.Device, request RemoveVideoEncoderConfiguration) (RemoveVideoEncoderConfigurationResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

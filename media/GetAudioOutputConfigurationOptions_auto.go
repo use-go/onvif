@@ -7,12 +7,12 @@ package media
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetAudioOutputConfigurationOptions forwards the call to dev.CallMethod() then parses the payload of the reply as a GetAudioOutputConfigurationOptionsResponse.
-func Call_GetAudioOutputConfigurationOptions(ctx context.Context, dev *onvif.Device, request GetAudioOutputConfigurationOptions) (GetAudioOutputConfigurationOptionsResponse, error) {
+func Call_GetAudioOutputConfigurationOptions(ctx context.Context, dev *device.Device, request GetAudioOutputConfigurationOptions) (GetAudioOutputConfigurationOptionsResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_SetDot1XConfiguration forwards the call to dev.CallMethod() then parses the payload of the reply as a SetDot1XConfigurationResponse.
-func Call_SetDot1XConfiguration(ctx context.Context, dev *onvif.Device, request SetDot1XConfiguration) (SetDot1XConfigurationResponse, error) {
+func Call_SetDot1XConfiguration(ctx context.Context, dev *Device, request SetDot1XConfiguration) (SetDot1XConfigurationResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

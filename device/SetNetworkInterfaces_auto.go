@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_SetNetworkInterfaces forwards the call to dev.CallMethod() then parses the payload of the reply as a SetNetworkInterfacesResponse.
-func Call_SetNetworkInterfaces(ctx context.Context, dev *onvif.Device, request SetNetworkInterfaces) (SetNetworkInterfacesResponse, error) {
+func Call_SetNetworkInterfaces(ctx context.Context, dev *Device, request SetNetworkInterfaces) (SetNetworkInterfacesResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

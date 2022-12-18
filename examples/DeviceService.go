@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 
-	goonvif "github.com/use-go/onvif"
 	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/xsd/onvif"
 )
@@ -19,8 +18,8 @@ const (
 func main() {
 	ctx := context.Background()
 
-	//Getting an camera instance
-	dev, err := goonvif.NewDevice(goonvif.DeviceParams{
+	//Getting a camera instance
+	dev, err := device.NewDevice(device.DeviceParams{
 		Xaddr:      "192.168.13.14:80",
 		Username:   login,
 		Password:   password,

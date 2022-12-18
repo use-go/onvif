@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetDPAddresses forwards the call to dev.CallMethod() then parses the payload of the reply as a GetDPAddressesResponse.
-func Call_GetDPAddresses(ctx context.Context, dev *onvif.Device, request GetDPAddresses) (GetDPAddressesResponse, error) {
+func Call_GetDPAddresses(ctx context.Context, dev *Device, request GetDPAddresses) (GetDPAddressesResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

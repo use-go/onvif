@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_UpgradeSystemFirmware forwards the call to dev.CallMethod() then parses the payload of the reply as a UpgradeSystemFirmwareResponse.
-func Call_UpgradeSystemFirmware(ctx context.Context, dev *onvif.Device, request UpgradeSystemFirmware) (UpgradeSystemFirmwareResponse, error) {
+func Call_UpgradeSystemFirmware(ctx context.Context, dev *Device, request UpgradeSystemFirmware) (UpgradeSystemFirmwareResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

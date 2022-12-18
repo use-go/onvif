@@ -7,12 +7,12 @@ package media
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetSnapshotUri forwards the call to dev.CallMethod() then parses the payload of the reply as a GetSnapshotUriResponse.
-func Call_GetSnapshotUri(ctx context.Context, dev *onvif.Device, request GetSnapshotUri) (GetSnapshotUriResponse, error) {
+func Call_GetSnapshotUri(ctx context.Context, dev *device.Device, request GetSnapshotUri) (GetSnapshotUriResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

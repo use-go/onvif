@@ -7,12 +7,12 @@ package ptz
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_CreatePresetTour forwards the call to dev.CallMethod() then parses the payload of the reply as a CreatePresetTourResponse.
-func Call_CreatePresetTour(ctx context.Context, dev *onvif.Device, request CreatePresetTour) (CreatePresetTourResponse, error) {
+func Call_CreatePresetTour(ctx context.Context, dev *device.Device, request CreatePresetTour) (CreatePresetTourResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

@@ -20,13 +20,13 @@ package {{.Package}}
 
 import (
 	"context"
-	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/juju/errors"{{if .IsNotDevicePackage}}
+	"github.com/use-go/onvif/device"{{end}}
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_{{.TypeRequest}} forwards the call to dev.CallMethod() then parses the payload of the reply as a {{.TypeReply}}.
-func Call_{{.TypeRequest}}(ctx context.Context, dev *onvif.Device, request {{.TypeRequest}}) ({{.TypeReply}}, error) {
+func Call_{{.TypeRequest}}(ctx context.Context, dev *{{if .IsNotDevicePackage}}device.{{end}}Device, request {{.TypeRequest}}) ({{.TypeReply}}, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {
@@ -48,13 +48,18 @@ type parserEnv struct {
 	Source      string
 	TypeReply   string
 	TypeRequest string
+
+	// The device package requires a special management because it is both a
+	// main entry point of the onvif SDK but also a core internal API
+	IsNotDevicePackage bool
 }
 
 func main() {
 	flag.Parse()
 	env := parserEnv{
-		Package: flag.Arg(0),
-		Source:  flag.Arg(1),
+		Package:            flag.Arg(0),
+		IsNotDevicePackage: flag.Arg(0) != "device",
+		Source:             flag.Arg(1),
 	}
 
 	body, err := template.New("body").Parse(mainTemplate)

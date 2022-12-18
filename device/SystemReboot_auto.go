@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_SystemReboot forwards the call to dev.CallMethod() then parses the payload of the reply as a SystemRebootResponse.
-func Call_SystemReboot(ctx context.Context, dev *onvif.Device, request SystemReboot) (SystemRebootResponse, error) {
+func Call_SystemReboot(ctx context.Context, dev *Device, request SystemReboot) (SystemRebootResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

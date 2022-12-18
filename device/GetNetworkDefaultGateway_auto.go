@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetNetworkDefaultGateway forwards the call to dev.CallMethod() then parses the payload of the reply as a GetNetworkDefaultGatewayResponse.
-func Call_GetNetworkDefaultGateway(ctx context.Context, dev *onvif.Device, request GetNetworkDefaultGateway) (GetNetworkDefaultGatewayResponse, error) {
+func Call_GetNetworkDefaultGateway(ctx context.Context, dev *Device, request GetNetworkDefaultGateway) (GetNetworkDefaultGatewayResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

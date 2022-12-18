@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_DeleteDot1XConfiguration forwards the call to dev.CallMethod() then parses the payload of the reply as a DeleteDot1XConfigurationResponse.
-func Call_DeleteDot1XConfiguration(ctx context.Context, dev *onvif.Device, request DeleteDot1XConfiguration) (DeleteDot1XConfigurationResponse, error) {
+func Call_DeleteDot1XConfiguration(ctx context.Context, dev *Device, request DeleteDot1XConfiguration) (DeleteDot1XConfigurationResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

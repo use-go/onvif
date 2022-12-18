@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_RemoveIPAddressFilter forwards the call to dev.CallMethod() then parses the payload of the reply as a RemoveIPAddressFilterResponse.
-func Call_RemoveIPAddressFilter(ctx context.Context, dev *onvif.Device, request RemoveIPAddressFilter) (RemoveIPAddressFilterResponse, error) {
+func Call_RemoveIPAddressFilter(ctx context.Context, dev *Device, request RemoveIPAddressFilter) (RemoveIPAddressFilterResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

@@ -7,12 +7,11 @@ package device
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_AddIPAddressFilter forwards the call to dev.CallMethod() then parses the payload of the reply as a AddIPAddressFilterResponse.
-func Call_AddIPAddressFilter(ctx context.Context, dev *onvif.Device, request AddIPAddressFilter) (AddIPAddressFilterResponse, error) {
+func Call_AddIPAddressFilter(ctx context.Context, dev *Device, request AddIPAddressFilter) (AddIPAddressFilterResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {

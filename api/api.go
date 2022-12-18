@@ -15,7 +15,7 @@ import (
 
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/gosoap"
 	"github.com/use-go/onvif/networking"
 	wsdiscovery "github.com/use-go/onvif/ws-discovery"
@@ -138,7 +138,7 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 
 	soap := gosoap.NewEmptySOAP()
 	soap.AddStringBodyContent(*resp)
-	soap.AddRootNamespaces(onvif.Xlmns)
+	soap.AddRootNamespaces(device.Xlmns)
 	soap.AddWSSecurity(username, password)
 
 	servResp, err := networking.SendSoap(new(http.Client), endpoint, soap.String())
@@ -155,7 +155,7 @@ func callNecessaryMethod(serviceName, methodName, acceptedData, username, passwo
 }
 
 func getEndpoint(service, xaddr string) (string, error) {
-	dev, err := onvif.NewDevice(onvif.DeviceParams{Xaddr: xaddr})
+	dev, err := device.NewDevice(device.DeviceParams{Xaddr: xaddr})
 	if err != nil {
 		return "", errors.Annotate(err, "NewDevice")
 	}

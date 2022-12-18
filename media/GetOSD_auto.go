@@ -7,12 +7,12 @@ package media
 import (
 	"context"
 	"github.com/juju/errors"
-	"github.com/use-go/onvif"
+	"github.com/use-go/onvif/device"
 	"github.com/use-go/onvif/networking"
 )
 
 // Call_GetOSD forwards the call to dev.CallMethod() then parses the payload of the reply as a GetOSDResponse.
-func Call_GetOSD(ctx context.Context, dev *onvif.Device, request GetOSD) (GetOSDResponse, error) {
+func Call_GetOSD(ctx context.Context, dev *device.Device, request GetOSD) (GetOSDResponse, error) {
 	type Envelope struct {
 		Header struct{}
 		Body   struct {
