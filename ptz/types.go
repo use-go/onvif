@@ -91,7 +91,7 @@ type GetPresets struct {
 }
 
 type GetPresetsResponse struct {
-	Preset onvif.PTZPreset
+	Preset []onvif.PTZPreset
 }
 
 type SetPreset struct {
