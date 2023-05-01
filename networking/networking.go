@@ -2,8 +2,9 @@ package networking
 
 import (
 	"bytes"
-	"github.com/juju/errors"
 	"net/http"
+
+	"github.com/juju/errors"
 )
 
 // SendSoap send soap message

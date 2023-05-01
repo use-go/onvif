@@ -3,12 +3,13 @@ package sdk
 import (
 	"context"
 	"encoding/xml"
-	"github.com/juju/errors"
-	"github.com/rs/zerolog"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/juju/errors"
+	"github.com/rs/zerolog"
 )
 
 var (
@@ -30,10 +31,13 @@ func ReadAndParse(ctx context.Context, httpReply *http.Response, reply interface
 		Str("action", tag).
 		Msg("RPC")
 	// TODO(jfsmig): extract the deadline from ctx.Deadline() and apply it on the reply reading
-	if b, err := ioutil.ReadAll(httpReply.Body); err != nil {
+	b, err := ioutil.ReadAll(httpReply.Body)
+	if err != nil {
 		return errors.Annotate(err, "read")
-	} else {
-		err = xml.Unmarshal(b, reply)
-		return errors.Annotate(err, "decode")
 	}
+
+	httpReply.Body.Close()
+
+	err = xml.Unmarshal(b, reply)
+	return errors.Annotate(err, "decode")
 }

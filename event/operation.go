@@ -21,18 +21,18 @@ type SubscriptionPolicy struct { //tev http://www.onvif.org/ver10/events/wsdl
 
 //Subscribe action for subscribe event topic
 type Subscribe struct { //http://docs.oasis-open.org/wsn/b-2.xsd
-	XMLName                struct{}              `xml:"wsnt:Subscribe"`
-	ConsumerReference      EndpointReferenceType `xml:"wsnt:ConsumerReference"`
-	Filter                 FilterType            `xml:"wsnt:Filter"`
-	SubscriptionPolicy     SubscriptionPolicy    `xml:"wsnt:SubscriptionPolicy"`
-	InitialTerminationTime TerminationTime       `xml:"wsnt:InitialTerminationTime"`
+	XMLName                struct{}                   `xml:"wsnt:Subscribe"`
+	ConsumerReference      EndpointReferenceType      `xml:"wsnt:ConsumerReference"`
+	Filter                 FilterType                 `xml:"wsnt:Filter"`
+	SubscriptionPolicy     SubscriptionPolicy         `xml:"wsnt:SubscriptionPolicy"`
+	InitialTerminationTime AbsoluteOrRelativeTimeType `xml:"wsnt:InitialTerminationTime"`
 }
 
 //SubscribeResponse message for subscribe event topic
 type SubscribeResponse struct { //http://docs.oasis-open.org/wsn/b-2.xsd
-	ConsumerReference EndpointReferenceType `xml:"wsnt:ConsumerReference"`
-	CurrentTime       CurrentTime           `xml:"wsnt:CurrentTime"`
-	TerminationTime   TerminationTime       `xml:"wsnt:TerminationTime"`
+	SubscriptionReference EndpointReferenceType
+	CurrentTime           CurrentTime
+	TerminationTime       TerminationTime
 }
 
 //Renew action for refresh event topic subscription
@@ -57,7 +57,6 @@ type UnsubscribeResponse struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 }
 
 //CreatePullPointSubscription action
-//BUG(r) Bad AbsoluteOrRelativeTimeType type
 type CreatePullPointSubscription struct {
 	XMLName                string                     `xml:"tev:CreatePullPointSubscription"`
 	Filter                 FilterType                 `xml:"tev:Filter"`
