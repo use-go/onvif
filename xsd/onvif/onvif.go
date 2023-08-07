@@ -215,17 +215,17 @@ type VideoSourceExtension struct {
 }
 
 type ImagingSettings20 struct {
-	BacklightCompensation BacklightCompensation20    `xml:"onvif:BacklightCompensation"`
-	Brightness            float64                    `xml:"onvif:Brightness"`
-	ColorSaturation       float64                    `xml:"onvif:ColorSaturation"`
-	Contrast              float64                    `xml:"onvif:Contrast"`
-	Exposure              Exposure20                 `xml:"onvif:Exposure"`
-	Focus                 FocusConfiguration20       `xml:"onvif:Focus"`
-	IrCutFilter           IrCutFilterMode            `xml:"onvif:IrCutFilter"`
-	Sharpness             float64                    `xml:"onvif:Sharpness"`
-	WideDynamicRange      WideDynamicRange20         `xml:"onvif:WideDynamicRange"`
-	WhiteBalance          WhiteBalance20             `xml:"onvif:WhiteBalance"`
-	Extension             ImagingSettingsExtension20 `xml:"onvif:Extension"`
+	BacklightCompensation *BacklightCompensation20    `xml:"onvif:BacklightCompensation"`
+	Brightness            float64                     `xml:"onvif:Brightness,omitempty"`
+	ColorSaturation       float64                     `xml:"onvif:ColorSaturation,omitempty"`
+	Contrast              float64                     `xml:"onvif:Contrast,omitempty"`
+	Exposure              *Exposure20                 `xml:"onvif:Exposure"`
+	Focus                 *FocusConfiguration20       `xml:"onvif:Focus"`
+	IrCutFilter           *IrCutFilterMode            `xml:"onvif:IrCutFilter"`
+	Sharpness             float64                     `xml:"onvif:Sharpness,omitempty"`
+	WideDynamicRange      *WideDynamicRange20         `xml:"onvif:WideDynamicRange"`
+	WhiteBalance          *WhiteBalance20             `xml:"onvif:WhiteBalance"`
+	Extension             *ImagingSettingsExtension20 `xml:"onvif:Extension"`
 }
 
 type BacklightCompensation20 struct {
@@ -234,18 +234,18 @@ type BacklightCompensation20 struct {
 }
 
 type Exposure20 struct {
-	Mode            ExposureMode     `xml:"onvif:Mode"`
-	Priority        ExposurePriority `xml:"onvif:Priority"`
-	Window          Rectangle        `xml:"onvif:Window"`
-	MinExposureTime float64          `xml:"onvif:MinExposureTime"`
-	MaxExposureTime float64          `xml:"onvif:MaxExposureTime"`
-	MinGain         float64          `xml:"onvif:MinGain"`
-	MaxGain         float64          `xml:"onvif:MaxGain"`
-	MinIris         float64          `xml:"onvif:MinIris"`
-	MaxIris         float64          `xml:"onvif:MaxIris"`
-	ExposureTime    float64          `xml:"onvif:ExposureTime"`
-	Gain            float64          `xml:"onvif:Gain"`
-	Iris            float64          `xml:"onvif:Iris"`
+	Mode            ExposureMode     `xml:"onvif:Mode,omitempty"`
+	Priority        ExposurePriority `xml:"onvif:Priority,omitempty"`
+	Window          Rectangle        `xml:"onvif:Window,omitempty"`
+	MinExposureTime float64          `xml:"onvif:MinExposureTime,omitempty"`
+	MaxExposureTime float64          `xml:"onvif:MaxExposureTime,omitempty"`
+	MinGain         float64          `xml:"onvif:MinGain,omitempty"`
+	MaxGain         float64          `xml:"onvif:MaxGain,omitempty"`
+	MinIris         float64          `xml:"onvif:MinIris,omitempty"`
+	MaxIris         float64          `xml:"onvif:MaxIris,omitempty"`
+	ExposureTime    float64          `xml:"onvif:ExposureTime,omitempty"`
+	Gain            float64          `xml:"onvif:Gain,omitempty"`
+	Iris            float64          `xml:"onvif:Iris,omitempty"`
 }
 
 type FocusConfiguration20 struct {
@@ -468,10 +468,10 @@ type IPAddress struct {
 
 type IPType xsd.String
 
-//IPv4 address
+// IPv4 address
 type IPv4Address xsd.Token
 
-//IPv6 address
+// IPv6 address
 type IPv6Address xsd.Token
 
 type AudioEncoderConfiguration struct {
@@ -819,7 +819,7 @@ type Transport struct {
 	Tunnel   *Transport        `xml:"onvif:Tunnel"`
 }
 
-//enum
+// enum
 type TransportProtocol xsd.String
 
 type MediaUri struct {
@@ -946,7 +946,7 @@ type PTZSpaces struct {
 
 type PTZSpacesExtension xsd.AnyType
 
-//TODO: restriction
+// TODO: restriction
 type AuxiliaryData xsd.String
 
 type PTZNodeExtension struct {
@@ -1213,7 +1213,7 @@ type UserExtension xsd.String
 
 type CapabilityCategory xsd.String
 
-//Capabilities of device
+// Capabilities of device
 type Capabilities struct {
 	Analytics AnalyticsCapabilities
 	Device    DeviceCapabilities
@@ -1224,14 +1224,14 @@ type Capabilities struct {
 	Extension CapabilitiesExtension
 }
 
-//AnalyticsCapabilities Check
+// AnalyticsCapabilities Check
 type AnalyticsCapabilities struct {
 	XAddr                  xsd.AnyURI
 	RuleSupport            xsd.Boolean
 	AnalyticsModuleSupport xsd.Boolean
 }
 
-//DeviceCapabilities Check
+// DeviceCapabilities Check
 type DeviceCapabilities struct {
 	XAddr     xsd.AnyURI
 	Network   NetworkCapabilities
@@ -1241,7 +1241,7 @@ type DeviceCapabilities struct {
 	Extension DeviceCapabilitiesExtension
 }
 
-//NetworkCapabilities Check
+// NetworkCapabilities Check
 type NetworkCapabilities struct {
 	IPFilter          xsd.Boolean
 	ZeroConfiguration xsd.Boolean
@@ -1250,16 +1250,16 @@ type NetworkCapabilities struct {
 	Extension         NetworkCapabilitiesExtension
 }
 
-//NetworkCapabilitiesExtension Check
+// NetworkCapabilitiesExtension Check
 type NetworkCapabilitiesExtension struct {
 	Dot11Configuration xsd.Boolean
 	Extension          NetworkCapabilitiesExtension2
 }
 
-//NetworkCapabilitiesExtension2 Extension2
+// NetworkCapabilitiesExtension2 Extension2
 type NetworkCapabilitiesExtension2 xsd.AnyType
 
-//SystemCapabilities check
+// SystemCapabilities check
 type SystemCapabilities struct {
 	DiscoveryResolve  xsd.Boolean
 	DiscoveryBye      xsd.Boolean
@@ -1454,7 +1454,7 @@ type DynamicDNSInformation struct {
 	Extension DynamicDNSInformationExtension
 }
 
-//TODO: enumeration
+// TODO: enumeration
 type DynamicDNSType xsd.String
 
 type DynamicDNSInformationExtension xsd.AnyType
@@ -1491,7 +1491,7 @@ type NetworkInterfaceConnectionSetting struct {
 	Duplex          Duplex      `xml:"onvif:Duplex"`
 }
 
-//TODO: enum
+// TODO: enum
 type Duplex xsd.String
 
 type NetworkInterfaceExtension struct {
@@ -1533,19 +1533,19 @@ type Dot11PSKPassphrase xsd.String
 
 type Dot11PSK xsd.HexBinary
 
-//TODO: enumeration
+// TODO: enumeration
 type Dot11Cipher xsd.String
 
-//TODO: enumeration
+// TODO: enumeration
 type Dot11SecurityMode xsd.String
 
-//TODO: restrictions
+// TODO: restrictions
 type NetworkInterfaceConfigPriority xsd.Integer
 
-//TODO: enumeration
+// TODO: enumeration
 type Dot11StationMode xsd.String
 
-//TODO: restrictions
+// TODO: restrictions
 type Dot11SSIDType xsd.HexBinary
 
 type Dot3Configuration xsd.String
@@ -1572,7 +1572,7 @@ type PrefixedIPv6Address struct {
 	PrefixLength xsd.Int     `xml:"onvif:PrefixLength"`
 }
 
-//TODO: enumeration
+// TODO: enumeration
 type IPv6DHCPConfiguration xsd.String
 
 type IPv4NetworkInterface struct {
@@ -1587,7 +1587,7 @@ type IPv4Configuration struct {
 	DHCP      xsd.Boolean
 }
 
-//optional, unbounded
+// optional, unbounded
 type PrefixedIPv4Address struct {
 	Address      IPv4Address `xml:"onvif:Address"`
 	PrefixLength xsd.Int     `xml:"onvif:PrefixLength"`
@@ -1632,7 +1632,7 @@ type NetworkProtocol struct {
 
 type NetworkProtocolExtension xsd.AnyType
 
-//TODO: enumeration
+// TODO: enumeration
 type NetworkProtocolType xsd.String
 
 type NetworkGateway struct {
@@ -1663,11 +1663,11 @@ type IPAddressFilter struct {
 
 type IPAddressFilterExtension xsd.AnyType
 
-//enum { 'Allow', 'Deny' }
-//TODO: enumeration
+// enum { 'Allow', 'Deny' }
+// TODO: enumeration
 type IPAddressFilterType xsd.String
 
-//TODO: attribite <xs:attribute ref="xmime:contentType" use="optional"/>
+// TODO: attribite <xs:attribute ref="xmime:contentType" use="optional"/>
 type BinaryData struct {
 	X    ContentType      `xml:"xmime:contentType,attr"`
 	Data xsd.Base64Binary `xml:"onvif:Data"`
@@ -1694,13 +1694,13 @@ type RelayOutputSettings struct {
 	IdleState RelayIdleState `xml:"onvif:IdleState"`
 }
 
-//TODO:enumeration
+// TODO:enumeration
 type RelayIdleState xsd.String
 
-//TODO: enumeration
+// TODO: enumeration
 type RelayMode xsd.String
 
-//TODO: enumeration
+// TODO: enumeration
 type RelayLogicalState xsd.String
 
 type CertificateWithPrivateKey struct {
@@ -1776,7 +1776,7 @@ type Dot11Status struct {
 	ActiveConfigAlias ReferenceToken
 }
 
-//TODO: enumeration
+// TODO: enumeration
 type Dot11SignalStrength xsd.String
 
 type Dot11AvailableNetworks struct {
@@ -1791,7 +1791,7 @@ type Dot11AvailableNetworks struct {
 
 type Dot11AvailableNetworksExtension xsd.AnyType
 
-//TODO: enumeration
+// TODO: enumeration
 type Dot11AuthAndMangementSuite xsd.String
 
 type SystemLogUriList struct {
