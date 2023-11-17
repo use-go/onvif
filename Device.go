@@ -263,7 +263,7 @@ func (dev Device) CallMethod(method interface{}) (*http.Response, error) {
 	}
 
 	// override endpoint for Unsubscribe method
-	if req, ok := method.(event.Unsubscribe); ok {
+	if req, ok := method.(event.Unsubscribe); ok && req.Any != "" {
 		endpoint = req.Any
 	}
 
