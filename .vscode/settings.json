@@ -27,7 +27,9 @@
     "go.testTimeout": "10s",
     "go.formatTool": "goimports",
     "cSpell.allowCompoundWords": true,
-    "editor.codeActionsOnSave": {"source.organizeImports": true},
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
     "cSpell.words": [
         "wsdiscovery"
     ]

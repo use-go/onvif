@@ -355,6 +355,10 @@ type Profile struct {
 	Extension                   ProfileExtension
 }
 
+type ProfileItem struct {
+	Name string `xml:"Name"`
+}
+
 type VideoSourceConfiguration struct {
 	ConfigurationEntity
 	ViewMode    string                            `xml:"ViewMode,attr"`
