@@ -78,7 +78,7 @@ type GetProfile struct {
 }
 
 type GetProfileResponse struct {
-	Profile onvif.Profile
+	Profile onvif.ProfileItem
 }
 
 type GetProfiles struct {

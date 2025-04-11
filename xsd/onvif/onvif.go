@@ -355,6 +355,10 @@ type Profile struct {
 	Extension                   ProfileExtension
 }
 
+type ProfileItem struct {
+	Name string `xml:"Name"`
+}
+
 type VideoSourceConfiguration struct {
 	ConfigurationEntity
 	ViewMode    string                            `xml:"ViewMode,attr"`
@@ -1205,6 +1209,11 @@ type User struct {
 	Password  string        `xml:"onvif:Password"`
 	UserLevel UserLevel     `xml:"onvif:UserLevel"`
 	Extension UserExtension `xml:"onvif:Extension"`
+}
+
+type UserResponseItem struct {
+	Username  string `xml:"Username"`
+	UserLevel string `xml:"UserLevel"`
 }
 
 type UserLevel xsd.String
