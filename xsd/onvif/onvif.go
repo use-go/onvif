@@ -1207,6 +1207,11 @@ type User struct {
 	Extension UserExtension `xml:"onvif:Extension"`
 }
 
+type UserResponseItem struct {
+	Username  string `xml:"Username"`
+	UserLevel string `xml:"UserLevel"`
+}
+
 type UserLevel xsd.String
 
 type UserExtension xsd.String
