@@ -108,7 +108,7 @@ type GetServices struct {
 }
 
 type GetServicesResponse struct {
-	Service Service
+	Service []Service
 }
 
 type GetServiceCapabilities struct {
