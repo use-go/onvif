@@ -6,14 +6,19 @@ import (
 )
 
 type Service struct {
-	Namespace xsd.AnyURI
-	XAddr     xsd.AnyURI
-	Capabilities
-	Version onvif.OnvifVersion
+	Namespace    xsd.AnyURI
+	XAddr        xsd.AnyURI
+	Capabilities ServiceCapabilities
+	Version      onvif.OnvifVersion
 }
 
-type Capabilities struct {
-	Any string
+// ServiceCapabilities holds the per-service <Capabilities> payload as raw XML.
+// The WSDL declares xs:any here, so the content namespace differs per service
+// (trt:Capabilities, tev:Capabilities, tptz:Capabilities, ...). Callers should
+// re-unmarshal Any into the appropriate per-service capability type based on
+// Service.Namespace.
+type ServiceCapabilities struct {
+	Any string `xml:",innerxml"`
 }
 
 type DeviceServiceCapabilities struct {
