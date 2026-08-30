@@ -62,10 +62,10 @@ type UnsubscribeResponse struct { //http://docs.oasis-open.org/wsn/b-2.xsd
 
 //CreatePullPointSubscription action
 type CreatePullPointSubscription struct {
-	XMLName                string                     `xml:"tev:CreatePullPointSubscription"`
-	Filter                 FilterType                 `xml:"tev:Filter"`
-	InitialTerminationTime AbsoluteOrRelativeTimeType `xml:"wsnt:InitialTerminationTime"`
-	SubscriptionPolicy     SubscriptionPolicy         `xml:"wsnt:SubscriptionPolicy"`
+	XMLName                string                      `xml:"tev:CreatePullPointSubscription"`
+	Filter                 *FilterType                 `xml:"tev:Filter,omitempty"`
+	InitialTerminationTime *AbsoluteOrRelativeTimeType `xml:"tev:InitialTerminationTime,omitempty"`
+	SubscriptionPolicy     *SubscriptionPolicy         `xml:"tev:SubscriptionPolicy,omitempty"`
 }
 
 //CreatePullPointSubscriptionResponse action
